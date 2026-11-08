@@ -147,7 +147,14 @@
         const token = localStorage.getItem('adminToken');
         try {
             const response = await fetch(`${API_URL}/api/admin/usuarios`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
-            if (response.status === 401 || response.status === 403) { sairAdmin(); return; }
+            
+            // PROTEÇÃO: Se o token expirou, desloga e recarrega a página
+            if (response.status === 401 || response.status === 403) {
+                sairAdmin();
+                alert("Sua sessão expirou. Faça login novamente.");
+                return;
+            }
+
             if (response.ok) { const data = await response.json(); renderizarCards(data.usuarios); }
         } catch (error) { console.log("Erro ao carregar dados."); }
     }
@@ -200,6 +207,14 @@
         const token = localStorage.getItem('adminToken');
         try {
             const response = await fetch(`${API_URL}/api/admin/mensagens`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
+            
+            // PROTEÇÃO: Se o token expirou, desloga
+            if (response.status === 401 || response.status === 403) {
+                sairAdmin();
+                alert("Sua sessão expirou. Faça login novamente.");
+                return;
+            }
+
             if (response.ok) { 
                 const data = await response.json(); 
                 renderizarMensagens(data.mensagens); 
@@ -252,10 +267,9 @@
             });
             
             if (res.ok) {
-                // A mensagem some da tela imediatamente
-                carregarMensagens(); 
+                carregarMensagens(); // Recarrega a tela, e a mensagem sumirá
             } else {
-                alert("Erro ao marcar. O servidor está atualizado?");
+                alert("Erro ao marcar. Faça login novamente.");
             }
         } catch (e) { alert("Erro de conexão."); }
     }
@@ -292,6 +306,7 @@
       document.getElementById('telaLogin').style.display = 'block';
       document.getElementById('painelDados').style.display = 'none';
       document.getElementById('btnSair').style.display = 'none';
+      document.getElementById('senhaAdmin').value = '';
     }
   </script>
 </body>
