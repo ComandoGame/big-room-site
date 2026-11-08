@@ -37,9 +37,15 @@
     .btn-nav-login { background: transparent; border: 1px solid var(--laranja); color: var(--laranja); padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-right: 10px; font-size: 0.95rem; }
     .btn-nav-cadastro { background: var(--laranja); border: 1px solid var(--laranja); color: #fff; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
     body { user-select: none; -webkit-user-drag: none; }
-    .tradutor { display: flex; align-items: center; gap: 5px; margin-right: 15px; border: 1px solid var(--borda); border-radius: 8px; padding: 2px; background: rgba(0,0,0,0.3); }
-    .btn-idioma { background: transparent; border: none; color: #fff; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 1.1rem; transition: 0.2s; opacity: 0.6; }
-    .btn-idioma.ativo { opacity: 1; background: rgba(249, 115, 22, 0.2); border: 1px solid var(--laranja); }
+    
+    /* ESTILOS DO SININHO */
+    .sino-container { position: relative; margin-right: 15px; cursor: pointer; display: none; }
+    .sino-icon { font-size: 1.5rem; }
+    .sino-badge { position: absolute; top: -5px; right: -8px; background: var(--vermelho); color: #fff; font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 10px; border: 2px solid var(--bg); }
+    .notificacoes-painel { display: none; position: absolute; top: 40px; right: 0; width: 300px; background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1rem; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(16px); }
+    .notif-item { border-bottom: 1px solid var(--borda); padding-bottom: 0.8rem; margin-bottom: 0.8rem; }
+    .notif-item:last-child { border: none; margin-bottom: 0; padding-bottom: 0; }
+    .notif-resposta { color: var(--verde); font-size: 0.85rem; margin-top: 0.5rem; background: rgba(16, 185, 129, 0.1); padding: 0.5rem; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -48,51 +54,33 @@
   <header class="navbar">
     <a href="index.html" class="logo">🎮 BIG<span>Room</span></a>
     <nav>
-      <a href="precos.html" data-i18n="nav_credits">Créditos</a>
-      <a href="como-funciona.html" data-i18n="nav_how">Como funciona</a>
+      <a href="precos.html">Créditos</a>
+      <a href="como-funciona.html">Como funciona</a>
       <div class="user-area">
-        <div class="tradutor">
-            <button class="btn-idioma ativo" id="btn-pt" onclick="traduzir('pt')">🇧🇷</button>
-            <button class="btn-idioma" id="btn-en" onclick="traduzir('en')">🇺🇸</button>
+        <div class="sino-container" id="sinoContainer" onclick="toggleNotificacoes()">
+            <span class="sino-icon">🔔</span>
+            <span class="sino-badge" id="sinoBadge" style="display:none;">0</span>
+            <div class="notificacoes-painel" id="painelNotificacoes" onclick="event.stopPropagation()"></div>
         </div>
-        <div class="saldo" id="saldoDisplay" style="display: none;"><span data-i18n="nav_balance">Saldo</span>: <strong>R$ 0,00</strong></div>
+
+        <div class="saldo" id="saldoDisplay" style="display: none;">Saldo: <strong>R$ 0,00</strong></div>
         <div id="botoesDeslogado" style="display: flex;">
-          <button class="btn-nav-login" onclick="abrirModal('login')" data-i18n="nav_login">Entrar</button>
-          <button class="btn-nav-cadastro" onclick="abrirModal('cadastro')" data-i18n="nav_register">Criar Conta</button>
+          <button class="btn-nav-login" onclick="abrirModal('login')">Entrar</button>
+          <button class="btn-nav-cadastro" onclick="abrirModal('cadastro')">Criar Conta</button>
         </div>
         <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
           <span style="color:var(--laranja); font-weight:bold;" id="nomeUsuario"></span>
-          <button class="btn-outline" onclick="sair()" data-i18n="nav_logout">Sair</button>
+          <button class="btn-outline" onclick="sair()">Sair</button>
         </div>
       </div>
     </nav>
   </header>
 
   <section class="hero">
-    <h1><span data-i18n="hero_title_1">Pare de se preocupar com hardware.</span><br><span data-i18n="hero_title_2">Jogue no nosso PC Gamer.</span></h1>
-    <p data-i18n="hero_sub">Acesso total a um computador potente direto no seu navegador. Instale mods, baixe jogos na Steam e jogue com seus amigos.</p>
-    <!-- BOTÃO ATUALIZADO PARA CHECAR LOGIN -->
-    <div class="cta-container"><button onclick="irParaTeste()" class="btn-cta" data-i18n="hero_btn">Testar Grátis Agora</button></div>
+    <h1><span>Pare de se preocupar com hardware.</span><br><span>Jogue no nosso PC Gamer.</span></h1>
+    <p>Acesso total a um computador potente direto no seu navegador. Instale mods, baixe jogos na Steam e jogue com seus amigos.</p>
+    <div class="cta-container"><button onclick="irParaTeste()" class="btn-cta">Testar Grátis Agora</button></div>
     <div class="video-showcase"><video src="games_showcase_final.mp4" autoplay loop muted playsinline></video></div>
-  </section>
-
-  <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 24px; margin: 0 auto 4rem; backdrop-filter: blur(10px); max-width: 1100px; padding: 4rem 2rem;">
-    <h2 data-i18n="pcs_title">Escolha a Máquina Ideal</h2>
-    <p class="sub" data-i18n="pcs_sub">Nós cuidamos do PC, você só se preocupa em jogar.</p>
-    <div class="pcs-grid">
-      <div class="pc-card"><h3 data-i18n="pcs_basic">💻 Modo Casual</h3><p data-i18n="pcs_basic_desc">Perfeito para: Jogar Minecraft com mods, LOL, Valorant. Roda tudo liso em 1080p.</p></div>
-      <div class="pc-card"><h3 data-i18n="pcs_mid">🎮 Modo Gamer</h3><p data-i18n="pcs_mid_desc">Perfeito para: Jogos AAA pesados, GTA V, CS2. Gráficos no alto e fluidez garantida.</p></div>
-      <div class="pc-card" style="border-color: var(--laranja);"><h3 data-i18n="pcs_vip">🚀 Modo Ultra (VIP)</h3><p data-i18n="pcs_vip_desc">Perfeito para: Jogar no máximo, 2K, Ray Tracing. A máquina mais forte para rodar tudo no Ultra.</p></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <h2 data-i18n="feat_title">Mais que um PC, uma experiência completa</h2>
-    <div class="features-list">
-      <div class="feature-item"><h4 data-i18n="feat_steam">🛒 Suas lojas favoritas</h4><p data-i18n="feat_steam_desc">Acesse sua conta da Steam, Epic Games e baixe seus jogos. Ferramentas como Steam Tools são liberadas.</p></div>
-      <div class="feature-item"><h4 data-i18n="feat_mine">⛏️ Mods e Shaders</h4><p data-i18n="feat_mine_desc">Jogue Minecraft no TLauncher, instale shaders pesados e crie servidores. Nada é bloqueado.</p></div>
-      <div class="feature-item"><h4 data-i18n="feat_priv">🔒 Privacidade Total</h4><p data-i18n="feat_priv_desc">Você não tem acesso a senhas ou dados bancários. Cada sessão é formatada e limpa após o término.</p></div>
-    </div>
   </section>
 
   <footer>
@@ -108,8 +96,8 @@
   <div class="modal-bg" id="modalBg">
     <div class="modal">
       <button class="fechar" onclick="fecharModal()">✕</button>
-      <h3 id="modalTitulo" data-i18n="modal_login_title">Entrar</h3>
-      <p id="modalSubtitulo" data-i18n="modal_login_sub">Acesse sua conta para continuar.</p>
+      <h3 id="modalTitulo">Entrar</h3>
+      <p id="modalSubtitulo">Acesse sua conta para continuar.</p>
       <form onsubmit="fazerLogin(event)">
         <input type="text" id="inpNome" placeholder="Seu nome" style="display: none;" />
         <input type="email" id="inpEmail" placeholder="E-mail" required />
@@ -121,26 +109,10 @@
 
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
-    const traducoes = {
-        pt: { nav_credits: "Créditos", nav_how: "Como funciona", nav_balance: "Saldo", nav_login: "Entrar", nav_register: "Criar Conta", nav_logout: "Sair", hero_title_1: "Pare de se preocupar com hardware.", hero_title_2: "Jogue no nosso PC Gamer.", hero_sub: "Acesso total a um computador potente direto no seu navegador.", hero_btn: "Testar Grátis Agora", pcs_title: "Escolha a Máquina Ideal", pcs_sub: "Nós cuidamos do PC.", pcs_basic: "💻 Modo Casual", pcs_basic_desc: "Perfeito para jogos leves.", pcs_mid: "🎮 Modo Gamer", pcs_mid_desc: "Perfeito para jogos AAA.", pcs_vip: "🚀 Modo Ultra (VIP)", pcs_vip_desc: "A máquina mais forte.", feat_title: "Mais que um PC", feat_steam: "Suas lojas", feat_steam_desc: "Steam e Epic.", feat_mine: "Mods e Shaders", feat_mine_desc: "Minecraft.", feat_priv: "Privacidade", feat_priv_desc: "Sessão limpa.", modal_login_title: "Entrar", modal_login_sub: "Acesse sua conta.", ban_title: "ACESSO NEGADO" },
-        en: { nav_credits: "Credits", nav_how: "How it works", nav_balance: "Balance", nav_login: "Login", nav_register: "Sign Up", nav_logout: "Logout", hero_title_1: "Stop worrying about hardware.", hero_title_2: "Play on our Gaming PC.", hero_sub: "Full access to a powerful computer right in your browser.", hero_btn: "Try Free Now", pcs_title: "Choose the Ideal Machine", pcs_sub: "We take care of the PC.", pcs_basic: "💻 Casual Mode", pcs_basic_desc: "Perfect for light games.", pcs_mid: "🎮 Gamer Mode", pcs_mid_desc: "Perfect for AAA games.", pcs_vip: "🚀 Ultra Mode (VIP)", pcs_vip_desc: "The strongest machine.", feat_title: "More than a PC", feat_steam: "Your stores", feat_steam_desc: "Steam and Epic.", feat_mine: "Mods and Shaders", feat_mine_desc: "Minecraft.", feat_priv: "Privacy", feat_priv_desc: "Clean session.", modal_login_title: "Login", modal_login_sub: "Access your account.", ban_title: "ACCESS DENIED" }
-    };
-
-    function traduzir(idioma) {
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const chave = el.getAttribute('data-i18n');
-            if (traducoes[idioma] && traducoes[idioma][chave]) el.innerText = traducoes[idioma][chave];
-        });
-        document.getElementById('btn-pt').classList.remove('ativo');
-        document.getElementById('btn-en').classList.remove('ativo');
-        document.getElementById('btn-' + idioma).classList.add('ativo');
-        localStorage.setItem('bigroom_lingua', idioma);
-    }
-
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    
     let modoModal = 'login';
     let usuarioLogado = false;
+
+    document.addEventListener('click', () => { document.getElementById('painelNotificacoes').style.display = 'none'; });
 
     async function sincronizarUsuario() {
         try {
@@ -153,28 +125,52 @@
                 document.getElementById('botoesDeslogado').style.display = 'none';
                 document.getElementById('perfilLogado').style.display = 'flex';
                 document.getElementById('saldoDisplay').style.display = 'block';
+                document.getElementById('sinoContainer').style.display = 'block';
                 document.getElementById('nomeUsuario').innerText = data.usuario.nome;
-                document.getElementById('saldoDisplay').innerHTML = `<span data-i18n="nav_balance">Saldo</span>: <strong>R$ ${data.usuario.saldo.toFixed(2)}</strong>`;
-                traduzir(localStorage.getItem('bigroom_lingua') || 'pt');
+                document.getElementById('saldoDisplay').innerHTML = `Saldo: <strong>R$ ${data.usuario.saldo.toFixed(2)}</strong>`;
+                verificarNotificacoes();
             } else {
                 usuarioLogado = false;
                 document.getElementById('botoesDeslogado').style.display = 'flex';
                 document.getElementById('perfilLogado').style.display = 'none';
                 document.getElementById('saldoDisplay').style.display = 'none';
+                document.getElementById('sinoContainer').style.display = 'none';
             }
         } catch (e) {}
     }
 
-    window.onload = () => { if(localStorage.getItem('bigroom_lingua')) traduzir(localStorage.getItem('bigroom_lingua')); sincronizarUsuario(); setInterval(sincronizarUsuario, 5000); }
-    
-    // FUNÇÃO NOVA: VERIFICA SE ESTÁ LOGADO ANTES DE IR PARA PREÇOS
-    function irParaTeste() {
-        if (usuarioLogado) {
-            window.location.href = 'precos.html';
-        } else {
-            abrirModal('login');
-        }
+    async function verificarNotificacoes() {
+        try {
+            const res = await fetch(`${API_URL}/api/notificacoes`, { credentials: 'include' });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.notificacoes.length > 0) {
+                    document.getElementById('sinoBadge').style.display = 'block';
+                    document.getElementById('sinoBadge').innerText = data.notificacoes.length;
+                    const painel = document.getElementById('painelNotificacoes');
+                    painel.innerHTML = '';
+                    data.notificacoes.forEach(notif => {
+                        painel.innerHTML += `
+                            <div class="notif-item">
+                                <p style="font-size:0.85rem; color:#ccc;">Você perguntou: ${notif.mensagem}</p>
+                                <div class="notif-resposta"><strong>Admin-Support:</strong> ${notif.resposta}</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    document.getElementById('sinoBadge').style.display = 'none';
+                }
+            }
+        } catch (e) {}
     }
+
+    function toggleNotificacoes() {
+        const painel = document.getElementById('painelNotificacoes');
+        painel.style.display = painel.style.display === 'block' ? 'none' : 'block';
+    }
+
+    window.onload = () => { sincronizarUsuario(); setInterval(sincronizarUsuario, 5000); }
+    function irParaTeste() { if (usuarioLogado) window.location.href = 'precos.html'; else abrirModal('login'); }
 
     function abrirModal(m) { modoModal = m; document.getElementById('modalBg').classList.add('ativo'); document.getElementById('inpNome').style.display = m==='cadastro'?'block':'none'; document.getElementById('btnLoginText').innerText = m==='cadastro'?'Cadastrar':'Entrar'; }
     function fecharModal() { document.getElementById('modalBg').classList.remove('ativo'); }
