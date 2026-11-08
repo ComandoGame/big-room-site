@@ -6,9 +6,9 @@
   <title>BIG-Room — Sua Lan House na Nuvem</title>
   <link rel="stylesheet" href="style.css" />
   
-  <!-- SCRIPT DO FINGERPRINT (COLOQUE SUA PUBLIC KEY AQUI) -->
+  <!-- SCRIPT DO FINGERPRINT (COLE SUA PUBLIC KEY AQUI) -->
   <script>
-    const fpPromise = import('https://fpjscdn.net/v4/SUA_PUBLIC_KEY_FINGERPRINT_AQUI')
+    const fpPromise = import('https://fpjscdn.net/v4/M9iggYeksMpBeVbRCwPX')
       .then(Fingerprint => Fingerprint.start());
 
     async function obterVisitorId() {
@@ -17,7 +17,6 @@
         const result = await fp.get();
         return result.visitor_id;
       } catch (error) {
-        console.error("Erro no Fingerprint:", error);
         return "Desconhecido";
       }
     }
@@ -254,7 +253,7 @@
       const email = document.getElementById('inpEmail').value;
       const senha = document.getElementById('inpSenha').value;
       
-      // Pega o Visitor ID do dispositivo (Fingerprint)
+      // Pega o Visitor ID do dispositivo
       const visitorId = await obterVisitorId();
 
       try {
