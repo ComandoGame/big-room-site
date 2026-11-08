@@ -1,9 +1,39 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><title>Regras da Comunidade — BIG-Room</title><link rel="stylesheet" href="style.css" /></head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Regras da Comunidade — BIG-Room</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* CSS embutido para corrigir o layout */
+    .page-content { 
+        max-width: 800px; 
+        margin: 5rem auto; 
+        padding: 3rem 4rem; 
+        background: rgba(25, 25, 30, 0.8); 
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.08); 
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        text-align: left; 
+        position: relative;
+        z-index: 1;
+    }
+    .page-content h1 { color: #f97316; margin-bottom: 2rem; text-align: center; font-size: 2.2rem; font-weight: 800; }
+    .page-content p, .page-content li { color: #9ca3af; margin-bottom: 1rem; font-size: 1.05rem; line-height: 1.8; }
+    .page-content strong { color: #fff; }
+    .page-content ul { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+  </style>
+</head>
 <body>
   <div class="bg-animation"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="grid-overlay"></div></div>
-  <header class="navbar"><a href="index.html" class="logo">🎮 BIG<span>Room</span></a><nav><a href="index.html">← Voltar ao Início</a></nav></header>
+  
+  <header class="navbar">
+    <a href="index.html" class="logo">🎮 BIG<span>Room</span></a>
+    <nav><a href="index.html">← Voltar ao Início</a></nav>
+  </header>
+
   <div class="page-content">
     <h1>Regras da Comunidade</h1>
     <p>Para manter a BIG-Room segura e divertida para todos:</p>
@@ -13,5 +43,15 @@
       <li><strong>Uso do Google/Web:</strong> A navegação é liberada, mas sites maliciosos ou tentativas de ataque cibernético no servidor são bloqueados automaticamente pelo sistema de defesa.</li>
     </ul>
   </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col"><h4>Sobre o Projeto</h4><p>Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.</p></div>
+      <div class="footer-col"><h4>Equipe e Créditos</h4><p><strong>Idealizador:</strong> Luiz</p><p><strong>Criador:</strong> ComandoGame</p><p><strong>Design:</strong> Mikael</p><p><strong>Colaborador:</strong> Kalleo</p></div>
+      <div class="footer-col"><h4>Diretrizes de Uso</h4><a href="termos.html">Termos de Serviço</a><a href="privacidade.html">Política de Privacidade</a><a href="regras.html">Regras da Comunidade</a><a href="reembolsos.html">Reembolsos e Cancelamentos</a></div>
+      <div class="footer-col"><h4>Suporte</h4><a href="suporte.html">Central de Ajuda / FAQ</a><a href="#">Comunidade no Discord (Em breve)</a><a href="contato.html">Contatar Desenvolvedor</a></div>
+    </div>
+    <div class="footer-bottom">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
+  </footer>
 </body>
 </html>
