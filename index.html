@@ -94,6 +94,16 @@
     </div>
   </section>
 
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col"><h4>Sobre o Projeto</h4><p>Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.</p></div>
+      <div class="footer-col"><h4>Equipe e Créditos</h4><p><strong>Idealizador:</strong> Luiz</p><p><strong>Criador:</strong> ComandoGame</p><p><strong>Design:</strong> Mikael</p><p><strong>Colaborador:</strong> Kalleo</p></div>
+      <div class="footer-col"><h4>Diretrizes de Uso</h4><a href="termos.html">Termos de Serviço</a><a href="privacidade.html">Política de Privacidade</a><a href="regras.html">Regras da Comunidade</a><a href="reembolsos.html">Reembolsos e Cancelamentos</a></div>
+      <div class="footer-col"><h4>Suporte</h4><a href="suporte.html">Central de Ajuda / FAQ</a><a href="#">Comunidade no Discord (Em breve)</a><a href="contato.html">Contatar Desenvolvedor</a></div>
+    </div>
+    <div class="footer-bottom">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
+  </footer>
+
   <div class="modal-bg" id="modalBg">
     <div class="modal">
       <button class="fechar" onclick="fecharModal()">✕</button>
@@ -127,15 +137,13 @@
     }
 
     document.addEventListener('contextmenu', e => e.preventDefault());
+    document.onkeydown = e => { if(e.keyCode==123 || (e.ctrlKey && e.shiftKey && e.keyCode=='I'.charCodeAt(0))) return false; };
 
     let modoModal = 'login';
-    
-    // FUNÇÃO QUE SUBSTITUI O LOCALSTORAGE
     async function sincronizarUsuario() {
         try {
             const res = await fetch(`${API_URL}/api/me`, { credentials: 'include' });
             if (res.status === 403) return document.body.innerHTML = '<div style="height:100vh; background:#7f1d1d; color:white; display:flex; align-items:center; justify-content:center; font-size:3rem;">ACESSO NEGADO</div>';
-            
             if (res.ok) {
                 const data = await res.json();
                 document.getElementById('botoesDeslogado').style.display = 'none';
@@ -153,24 +161,20 @@
     }
 
     window.onload = () => { if(localStorage.getItem('bigroom_lingua')) traduzir(localStorage.getItem('bigroom_lingua')); sincronizarUsuario(); setInterval(sincronizarUsuario, 5000); }
-    
     function abrirModal(m) { modoModal = m; document.getElementById('modalBg').classList.add('ativo'); document.getElementById('inpNome').style.display = m==='cadastro'?'block':'none'; document.getElementById('btnLoginText').innerText = m==='cadastro'?'Cadastrar':'Entrar'; }
     function fecharModal() { document.getElementById('modalBg').classList.remove('ativo'); }
-    
     async function fazerLogin(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitLogin'); btn.disabled = true;
       const visitorId = await obterVisitorId();
       let url = modoModal === 'cadastro' ? '/api/cadastro' : '/api/login';
       let bodyData = modoModal === 'cadastro' ? { nome: document.getElementById('inpNome').value, email: document.getElementById('inpEmail').value, senha: document.getElementById('inpSenha').value, visitorId } : { email: document.getElementById('inpEmail').value, senha: document.getElementById('inpSenha').value, visitorId };
-
       try {
         let res = await fetch(`${API_URL}${url}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(bodyData) });
         let data = await res.json();
         if (res.ok) { alert(data.mensagem); fecharModal(); sincronizarUsuario(); } else { alert(data.erro); }
       } catch (error) { alert("Erro de conexão."); } finally { btn.disabled = false; }
     }
-
     async function sair() { await fetch(`${API_URL}/api/logout`, { method: 'POST', credentials: 'include' }); window.location.reload(); }
   </script>
 </body>
