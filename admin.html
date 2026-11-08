@@ -6,7 +6,7 @@
   <title>Painel do Host — BIG-Room</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* CSS COMPLETO DO PAINEL */
+    /* CSS DO PAINEL */
     .admin-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; position: relative; z-index: 1; }
     .header-admin { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
     .header-admin h1 { color: #fff; font-size: 2rem; font-weight: 800; }
@@ -25,7 +25,6 @@
     .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.95rem; margin-bottom: 0.5rem; }
     .metrica-card strong { font-size: 2.5rem; color: #fff; font-weight: 800; }
 
-    /* ESTILOS DOS CARDS DE USUÁRIO */
     .users-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
     .user-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); border-radius: 16px; padding: 1.5rem; }
     .user-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 1rem; }
@@ -62,7 +61,6 @@
     .msg.admin { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--verde); align-self: flex-end; color: #fff;}
     .msg-sender { font-size: 0.7rem; color: #aaa; display: block; margin-bottom: 4px; }
     
-    /* LISTA DE CONVERSAS */
     .conversa-card { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; cursor: pointer; transition: 0.2s; }
     .conversa-card:hover { border-color: var(--laranja); transform: translateX(5px); }
     .conversa-nome { font-weight: bold; color: #fff; font-size: 1.2rem; }
@@ -111,7 +109,7 @@
             <div class="chat-mensagens" id="chatAdminMensagens"></div>
             <div style="display:flex; gap:10px;">
                 <input type="text" id="inpAdminResposta" placeholder="Digite a resposta..." style="flex:1; padding:1rem; border-radius:10px; background:rgba(0,0,0,0.5); border:1px solid var(--borda); color:#fff;" onkeypress="if(event.key==='Enter') enviarRespostaAdmin()" />
-                <button class="btn-primary" onclick="enviarRespostaAdmin()">Enviar</button>
+                <button class="btn-primary" onclick="enviarRespostaAdmin()" id="btnEnviarAdmin">Enviar</button>
             </div>
         </div>
       </div>
@@ -122,12 +120,16 @@
     const API_URL = 'https://big-room-servidor.onrender.com';
     let conversasGlobais = [];
     let usuarioChatAtual = null;
+    let intervaloChat = null;
 
     window.onload = () => { if (sessionStorage.getItem('adminToken')) carregarPainel(); }
 
     function mudarAba(aba) {
         document.querySelectorAll('.aba').forEach(b => b.classList.remove('ativa'));
         document.getElementById(`aba-${aba}`).classList.add('ativa');
+        
+        if (intervaloChat) clearInterval(intervaloChat); // Para o chat se mudar de aba
+
         if (aba === 'usuarios') {
             document.getElementById('conteudo-usuarios').style.display = 'block';
             document.getElementById('conteudo-mensagens').style.display = 'none';
@@ -136,6 +138,10 @@
             document.getElementById('conteudo-usuarios').style.display = 'none';
             document.getElementById('conteudo-mensagens').style.display = 'block';
             carregarConversas();
+            // Atualiza o chat a cada 5 segundos
+            intervaloChat = setInterval(() => {
+                if (usuarioChatAtual) carregarConversas(); 
+            }, 5000);
         }
     }
 
@@ -156,12 +162,13 @@
       } catch (error) { alert("Erro ao conectar. O servidor pode estar acordando."); }
     }
 
+    // --- USUÁRIOS ---
     async function carregarPainel() {
         const token = sessionStorage.getItem('adminToken');
         try {
             const response = await fetch(`${API_URL}/api/admin/usuarios`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
             if (response.ok) { const data = await response.json(); renderizarCards(data.usuarios); }
-        } catch (error) { alert("Erro ao carregar dados."); }
+        } catch (error) { console.log("Erro ao carregar dados."); }
     }
 
     function renderizarCards(usuarios) {
@@ -208,6 +215,7 @@
       document.getElementById('saldoTotal').innerText = `R$ ${saldoTotalGeral.toFixed(2)}`;
     }
 
+    // --- CHAT ---
     async function carregarConversas() {
         const token = sessionStorage.getItem('adminToken');
         try {
@@ -215,9 +223,13 @@
             if (response.ok) { 
                 const data = await response.json(); 
                 conversasGlobais = data.conversas;
-                renderizarListaConversas();
+                if (usuarioChatAtual) {
+                    renderizarChatAdmin(); // Se estiver num chat, atualiza a tela
+                } else {
+                    renderizarListaConversas();
+                }
             }
-        } catch (error) { alert("Erro ao carregar mensagens."); }
+        } catch (error) { console.log("Erro ao carregar conversas."); }
     }
 
     function renderizarListaConversas() {
@@ -271,27 +283,33 @@
 
     async function enviarRespostaAdmin() {
         const input = document.getElementById('inpAdminResposta');
+        const btn = document.getElementById('btnEnviarAdmin');
         const texto = input.value;
         if (!texto || !usuarioChatAtual) return;
+        
         input.value = "Enviando...";
+        btn.disabled = true;
         const token = sessionStorage.getItem('adminToken');
+
         try {
             await fetch(`${API_URL}/api/admin/responder`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ idUsuario: usuarioChatAtual, mensagem: texto })
             });
             input.value = "";
-            carregarConversas();
-            setTimeout(() => { if (usuarioChatAtual) abrirChat(usuarioChatAtual, 'Jogador'); }, 500);
-        } catch (e) { alert("Erro ao enviar."); }
+            carregarConversas(); // Recarrega a lista e a tela na hora
+        } catch (e) { alert("Erro ao enviar."); } 
+        finally { btn.disabled = false; }
     }
 
     function voltarLista() {
+        usuarioChatAtual = null;
         document.getElementById('chatAdminContainer').style.display = 'none';
         document.getElementById('listaConversas').style.display = 'block';
         carregarConversas();
     }
 
+    // --- FUNÇÕES DE AÇÃO ---
     async function alterarSaldo(idUsuario) {
       let valor = parseFloat(prompt("Valor para adicionar (ex: 50) ou remover (ex: -10):"));
       if (isNaN(valor)) return;
