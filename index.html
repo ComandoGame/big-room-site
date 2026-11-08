@@ -6,7 +6,7 @@
   <title>BIG-Room — Sua Lan House na Nuvem</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* (Mantenha os estilos que já estavam aqui) */
+    /* Estilos da Página */
     .hero { text-align: center; padding: 5rem 2rem 3rem; }
     .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero h1 span { color: var(--laranja); }
@@ -41,9 +41,26 @@
     .seguranca-box { background: rgba(239, 68, 68, 0.15) !important; border: 1px solid var(--vermelho) !important; padding: 2.5rem; max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; text-align: left; }
     .seguranca-box h3 { color: var(--vermelho); margin-bottom: 0.5rem; font-size: 1.4rem; }
     .seguranca-box p { color: #ddd; font-size: 1rem; line-height: 1.6; }
+
+    /* NOVO: Tela de Banimento */
+    .tela-banido { position: fixed; inset: 0; background: #7f1d1d; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
+    .tela-banido h1 { font-size: 4rem; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 5px; }
+    .tela-banido p { font-size: 1.2rem; color: #fca5a5; max-width: 600px; line-height: 1.6; }
+    
+    /* Spinner de carregamento no botão de login */
+    .spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
+
+  <!-- TELA DE BANIMENTO (Aparece se for banido) -->
+  <div class="tela-banido" id="telaBanido">
+      <h1>🚫 ACESSO NEGADO</h1>
+      <p>Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room (Tentativa de fraude, injeção de scripts ou burlar pagamentos).</p>
+      <p style="margin-top: 1rem; font-size: 0.9rem;">Seu endereço IP foi registrado. Se você acha que isso é um erro, contate o suporte.</p>
+  </div>
+
   <div class="bg-animation">
     <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="grid-overlay"></div>
   </div>
@@ -53,11 +70,20 @@
     <nav>
       <a href="precos.html">Preços</a>
       <a href="como-funciona.html">Como funciona</a>
+      
+      <!-- ÁREA DO USUÁRIO (LOGIN E SALDO) -->
       <div class="user-area">
-        <div class="saldo" id="saldoDisplay">Saldo: <strong>R$ 0,00</strong></div>
+        <div class="saldo" id="saldoDisplay" style="display: none;">Saldo: <strong>R$ 0,00</strong></div>
+        
+        <!-- Botão que abre o Modal (Visível se não estiver logado) -->
         <button class="btn-primary" id="btnLogin" onclick="abrirModal()">Entrar / Criar Conta</button>
+        
+        <!-- Perfil Logado (Visível se estiver logado) -->
         <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
-          <span style="color:var(--laranja); font-weight:bold;" id="nomeUsuario"></span>
+          <div style="text-align: right; line-height: 1.2;">
+            <span style="color:var(--laranja); font-weight:bold; display: block;" id="nomeUsuario"></span>
+            <span style="color:#9ca3af; font-size:0.75rem; display: block;" id="codigoUsuario"></span>
+          </div>
           <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sair()">Sair</button>
         </div>
       </div>
@@ -82,6 +108,7 @@
     </div>
   </section>
 
+  <!-- (O resto das seções: Máquinas, Imagem, Features, Segurança e Footer continuam iguais, pode manter o seu) -->
   <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 20px; margin: 2rem auto; backdrop-filter: blur(5px);">
     <h2>Máquinas Disponíveis</h2>
     <p class="sub">Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.</p>
@@ -132,6 +159,7 @@
     <div class="footer-bottom">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
   </footer>
 
+  <!-- MODAL DE LOGIN / CADASTRO -->
   <div class="modal-bg" id="modalBg">
     <div class="modal">
       <button class="fechar" onclick="fecharModal()">✕</button>
@@ -139,9 +167,12 @@
       <p>Faça login para liberar seus 15 minutos de teste grátis.</p>
       <form onsubmit="fazerLogin(event)">
         <input type="text" id="inpNome" placeholder="Seu nome / Nick" required />
-        <input type="email" id="inpEmail" placeholder="Email" required />
+        <input type="email" id="inpEmail" placeholder="E-mail (Gmail, Hotmail...)" required />
         <input type="password" id="inpSenha" placeholder="Senha" required />
-        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem;">Entrar / Cadastrar</button>
+        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 10px;">
+          <span id="btnLoginText">Entrar / Cadastrar</span>
+          <div class="spinner" id="loginSpinner"></div>
+        </button>
       </form>
     </div>
   </div>
@@ -149,27 +180,34 @@
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
 
-    // Sincroniza o saldo com o servidor (não confia no localStorage)
+    // Sincroniza o saldo e CHECA SE FOI BANIDO
     async function sincronizarSaldo() {
         const id = localStorage.getItem('bigroom_usuario_id');
         if (!id) return;
 
         try {
             const response = await fetch(`${API_URL}/api/saldo/${id}`);
+            
+            // SE A CONTA FOI BANIDA (Status 403)
+            if (response.status === 403) {
+                localStorage.clear();
+                document.body.innerHTML = ''; // Apaga a tela
+                document.getElementById('telaBanido').style.display = 'flex'; // Mostra tela vermelha
+                return;
+            }
+
             if (response.ok) {
                 const data = await response.json();
-                localStorage.setItem('bigroom_saldo', data.saldo); // Salva apenas para visualização rápida
+                localStorage.setItem('bigroom_saldo', data.saldo);
                 atualizarInterface();
             }
-        } catch (error) {
-            console.log("Aguardando servidor acordar...");
-        }
+        } catch (error) { }
     }
 
-    // Acorda o servidor ao carregar a página
     window.onload = () => {
         fetch(`${API_URL}/api/saldo/1`).catch(()=>{}); 
         sincronizarSaldo();
+        setInterval(sincronizarSaldo, 5000); // Checa banimento a cada 5s
     }
 
     function abrirModal() { document.getElementById('modalBg').classList.add('ativo'); }
@@ -177,11 +215,20 @@
     
     async function fazerLogin(e) {
       e.preventDefault();
+      const btn = document.getElementById('btnSubmitLogin');
+      const btnText = document.getElementById('btnLoginText');
+      const spinner = document.getElementById('loginSpinner');
+      
+      btn.disabled = true;
+      btnText.innerText = "Conectando...";
+      spinner.style.display = 'block';
+
       const nome = document.getElementById('inpNome').value;
       const email = document.getElementById('inpEmail').value;
       const senha = document.getElementById('inpSenha').value;
 
       try {
+        // Tenta cadastrar
         let response = await fetch(`${API_URL}/api/cadastro`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -190,7 +237,8 @@
 
         let data = await response.json();
 
-        if (!response.ok && data.erro === "E-mail já cadastrado.") {
+        // Se já existe, tenta logar
+        if (!response.ok && data.erro === "Este e-mail já está cadastrado.") {
             response = await fetch(`${API_URL}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -203,6 +251,7 @@
             alert(data.mensagem + " Bem-vindo(a)!");
             localStorage.setItem('bigroom_usuario_id', data.usuario.id);
             localStorage.setItem('bigroom_usuario', data.usuario.nome);
+            localStorage.setItem('bigroom_codigo_conta', data.usuario.codigo_conta || '');
             localStorage.setItem('bigroom_saldo', data.usuario.saldo);
             
             atualizarInterface(); 
@@ -212,25 +261,30 @@
         }
       } catch (error) {
         alert("O servidor demorou muito para responder. Recarregue a página.");
+      } finally {
+        btn.disabled = false;
+        btnText.innerText = "Entrar / Cadastrar";
+        spinner.style.display = 'none';
       }
     }
 
     function sair() {
-      localStorage.removeItem('bigroom_usuario');
-      localStorage.removeItem('bigroom_usuario_id');
-      localStorage.removeItem('bigroom_saldo');
+      localStorage.clear();
       atualizarInterface();
     }
 
     function atualizarInterface() {
       const nome = localStorage.getItem('bigroom_usuario');
+      const codigo = localStorage.getItem('bigroom_codigo_conta');
       const saldo = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
       
       if (nome) {
         document.getElementById('btnLogin').style.display = 'none';
         document.getElementById('perfilLogado').style.display = 'flex';
         document.getElementById('saldoDisplay').style.display = 'block';
+        
         document.getElementById('nomeUsuario').innerText = nome;
+        document.getElementById('codigoUsuario').innerText = codigo;
         document.getElementById('saldoDisplay').innerHTML = `Saldo: <strong>R$ ${saldo.toFixed(2)}</strong>`;
       } else {
         document.getElementById('btnLogin').style.display = 'block';
@@ -239,8 +293,7 @@
       }
     }
 
-    // Fica puxando o saldo do servidor a cada 15 segundos para ver se o Admin mudou
-    setInterval(sincronizarSaldo, 15000);
+    atualizarInterface();
   </script>
 </body>
 </html>
