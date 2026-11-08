@@ -6,54 +6,26 @@
   <title>Painel do Host — BIG-Room</title>
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* (Mantenha os estilos de admin-container, abas, login-box, etc) */
     .admin-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; position: relative; z-index: 1; }
     .header-admin { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .header-admin h1 { color: #fff; font-size: 2rem; font-weight: 800; }
-    
     .abas { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--borda); padding-bottom: 1rem; }
     .aba { background: transparent; border: none; color: var(--texto-fraco); font-size: 1.1rem; font-weight: bold; cursor: pointer; padding: 0.5rem 1rem; border-radius: 8px; transition: 0.2s; }
-    .aba:hover { color: #fff; background: rgba(255,255,255,0.05); }
     .aba.ativa { color: var(--laranja); background: rgba(249, 115, 22, 0.1); border: 1px solid var(--laranja); }
-
-    .login-box { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); padding: 3rem; border-radius: 16px; max-width: 400px; margin: 0 auto; text-align: center; }
-    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 10px; border: 1px solid var(--borda); background: rgba(0,0,0,0.5); color: #fff; }
-    .login-box button { width: 100%; padding: 1rem; border-radius: 10px; background: var(--laranja); color: #fff; border: none; font-weight: bold; cursor: pointer; }
     
-    .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-    .metrica-card { padding: 2rem; text-align: center; border-top: 4px solid var(--laranja); background: var(--bg-card); border-radius: 12px; }
-    .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.95rem; margin-bottom: 0.5rem; }
-    .metrica-card strong { font-size: 2.5rem; color: #fff; font-weight: 800; }
-
-    .users-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
-    .user-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); border-radius: 16px; padding: 1.5rem; }
-    .user-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 1rem; }
-    .user-name { font-size: 1.2rem; font-weight: bold; color: #fff; }
-    .user-email { color: var(--texto-fraco); font-size: 0.9rem; display: block; margin-top: 0.2rem; }
-    .user-code { font-family: monospace; font-size: 0.8rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 2px 6px; border-radius: 4px; }
+    /* ESTILOS DO CHAT ADMIN */
+    .chat-admin-container { max-width: 800px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--borda); border-radius: 16px; padding: 2rem; display: none; flex-direction: column; height: 600px; }
+    .chat-mensagens { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 1rem; }
+    .msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.95rem; }
+    .msg.user { background: rgba(249, 115, 22, 0.2); border: 1px solid var(--laranja); align-self: flex-start; }
+    .msg.admin { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--verde); align-self: flex-end; }
+    .msg-sender { font-size: 0.7rem; color: #aaa; display: block; margin-bottom: 4px; }
     
-    .saldo-destaque { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-    .saldo-destaque span { color: var(--verde); font-weight: bold; }
-    .saldo-destaque strong { color: var(--verde); font-size: 1.4rem; }
-    
-    .sessao-box { background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-    .tag-plano { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
-    .tag-tempo { background: rgba(16, 185, 129, 0.2); color: var(--verde); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
-
-    .acoes { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-    .btn-acao { flex: 1; padding: 0.6rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.8rem; color: #fff; }
-    .btn-saldo { background: rgba(249, 115, 22, 0.2); color: var(--laranja); border: 1px solid var(--laranja); }
-    .btn-tempo { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
-    .btn-zerar { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid #6b7280; }
-    .btn-banir { background: rgba(239, 68, 68, 0.2); color: var(--vermelho); border: 1px solid var(--vermelho); }
-    .btn-desbanir { background: rgba(16, 185, 129, 0.2); color: var(--verde); border: 1px solid var(--verde); }
-
-    .mensagens-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
-    .msg-card { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1.5rem; }
-    .msg-header { display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 0.5rem; }
-    .msg-nome { font-weight: bold; color: #fff; }
-    .msg-data { font-size: 0.8rem; color: var(--texto-fraco); }
-    .msg-email { color: var(--laranja); font-size: 0.9rem; }
-    .msg-texto { color: #ccc; font-size: 0.95rem; line-height: 1.5; margin-top: 0.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; }
+    /* LISTA DE CONVERSAS */
+    .conversa-card { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; cursor: pointer; transition: 0.2s; }
+    .conversa-card:hover { border-color: var(--laranja); }
+    .conversa-nome { font-weight: bold; color: #fff; font-size: 1.2rem; }
+    .conversa-ultima { color: var(--texto-fraco); font-size: 0.9rem; margin-top: 0.5rem; }
   </style>
 </head>
 <body>
@@ -79,25 +51,32 @@
     <div id="painelDados" style="display: none;">
       <div class="abas">
         <button class="aba ativa" id="aba-usuarios" onclick="mudarAba('usuarios')">👥 Usuários</button>
-        <button class="aba" id="aba-mensagens" onclick="mudarAba('mensagens')">✉️ Mensagens</button>
+        <button class="aba" id="aba-mensagens" onclick="mudarAba('mensagens')">✉️ Suporte</button>
       </div>
 
       <div id="conteudo-usuarios">
-        <div class="metricas">
-          <div class="metrica-card"><span>Total de Usuários</span><strong id="totalUsuarios">0</strong></div>
-          <div class="metrica-card"><span>Saldo em Contas</span><strong id="saldoTotal" style="color: var(--verde);">R$ 0,00</strong></div>
-        </div>
-        <div class="users-grid" id="usersGrid"></div>
+        <div id="usersGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem;"></div>
       </div>
 
       <div id="conteudo-mensagens" style="display: none;">
-        <div class="mensagens-grid" id="msgGrid"></div>
+        <div id="listaConversas"></div>
+        <div class="chat-admin-container" id="chatAdminContainer">
+            <button class="btn-outline" onclick="voltarLista()" style="margin-bottom:1rem; align-self:flex-start;">← Voltar</button>
+            <h3 id="chatAdminNome" style="color:#fff; margin-bottom:1rem;"></h3>
+            <div class="chat-mensagens" id="chatAdminMensagens"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="inpAdminResposta" placeholder="Digite a resposta..." style="flex:1; padding:1rem; border-radius:10px; background:rgba(0,0,0,0.5); border:1px solid var(--borda); color:#fff;" onkeypress="if(event.key==='Enter') enviarRespostaAdmin()" />
+                <button class="btn-primary" onclick="enviarRespostaAdmin()">Enviar</button>
+            </div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
+    let conversasGlobais = [];
+    let usuarioChatAtual = null;
 
     window.onload = () => { if (sessionStorage.getItem('adminToken')) carregarPainel(); }
 
@@ -111,7 +90,7 @@
         } else {
             document.getElementById('conteudo-usuarios').style.display = 'none';
             document.getElementById('conteudo-mensagens').style.display = 'block';
-            carregarMensagens();
+            carregarConversas();
         }
     }
 
@@ -124,44 +103,36 @@
         const data = await response.json();
         if (response.ok) {
           sessionStorage.setItem('adminToken', data.token);
+          document.getElementById('telaLogin').style.display = 'none';
+          document.getElementById('painelDados').style.display = 'block';
+          document.getElementById('btnSair').style.display = 'block';
           carregarPainel();
         } else { alert("❌ " + data.erro); }
       } catch (error) { alert("Erro ao conectar."); }
     }
 
     async function carregarPainel() {
-        document.getElementById('telaLogin').style.display = 'none';
-        document.getElementById('painelDados').style.display = 'block';
-        document.getElementById('btnSair').style.display = 'block';
-        
         const token = sessionStorage.getItem('adminToken');
         try {
-            const response = await fetch(`${API_URL}/api/admin/usuarios`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
-            });
+            const response = await fetch(`${API_URL}/api/admin/usuarios`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
             if (response.ok) { const data = await response.json(); renderizarCards(data.usuarios); }
         } catch (error) { alert("Erro ao carregar dados."); }
     }
 
+    // RENDERIZAR CARDS DE USUÁRIOS (Mantido igual)
     function renderizarCards(usuarios) {
       const grid = document.getElementById('usersGrid');
       grid.innerHTML = '';
-      let saldoTotal = 0;
       usuarios.forEach(user => {
-        saldoTotal += user.saldo;
         const isBanido = user.banido === 1;
-        const btnBanir = isBanido 
-            ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>`
-            : `<button class="btn-acao btn-banir" onclick="alterarBanimento(${user.id}, true)">Banir</button>`;
-        let sessaoHtml = `<span style="color:#6b7280; font-size: 0.85rem;">Nenhuma</span>`;
-        if (user.plano_ativo && user.plano_ativo !== 'Nenhum') {
-            sessaoHtml = `<div><span class="tag-plano">${user.plano_ativo}</span></div><div><span class="tag-tempo">${user.tempo_restante} min</span></div>`;
-        }
+        const btnBanir = isBanido ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>` : `<button class="btn-acao btn-banir" onclick="alterarBanimento(${user.id}, true)">Banir</button>`;
+        let sessaoHtml = (user.plano_ativo && user.plano_ativo !== 'Nenhum') ? `<div><span class="tag-plano">${user.plano_ativo}</span></div><div><span class="tag-tempo">${user.tempo_restante} min</span></div>` : `<span style="color:#6b7280; font-size: 0.85rem;">Nenhuma</span>`;
+        
         const card = document.createElement('div');
         card.className = `user-card`;
         card.innerHTML = `
           <div class="user-header"><div><div class="user-name">${user.nome} ${isBanido ? '<span style="color:red;font-size:0.8rem;">(Banido)</span>' : ''}</div><span class="user-email">${user.email}</span></div><span class="user-code">${user.codigo_conta || 'N/A'}</span></div>
-          <div class="saldo-destaque"><span>Saldo em Conta:</span><strong>R$ ${user.saldo.toFixed(2)}</strong></div>
+          <div class="saldo-destaque"><span>Saldo:</span><strong>R$ ${user.saldo.toFixed(2)}</strong></div>
           <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:0.5rem;"><span style="color:var(--texto-fraco);">IP:</span><strong>${user.ip || 'Desc.'}</strong></div>
           <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:0.5rem;"><span style="color:var(--texto-fraco);">Hardware:</span><strong style="font-size:0.7rem;">${user.visitor_id || 'Desc.'}</strong></div>
           <div class="sessao-box"><span style="color: var(--texto-fraco); font-size: 0.85rem;">Sessão:</span><div style="display: flex; gap: 0.5rem;">${sessaoHtml}</div></div>
@@ -169,50 +140,94 @@
         `;
         grid.appendChild(card);
       });
-      document.getElementById('totalUsuarios').innerText = usuarios.length;
-      document.getElementById('saldoTotal').innerText = `R$ ${saldoTotal.toFixed(2)}`;
     }
 
-    async function carregarMensagens() {
+    // LÓGICA DO CHAT
+    async function carregarConversas() {
         const token = sessionStorage.getItem('adminToken');
         try {
-            const response = await fetch(`${API_URL}/api/admin/mensagens`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
-            if (response.ok) { const data = await response.json(); renderizarMensagens(data.mensagens); }
+            const response = await fetch(`${API_URL}/api/admin/conversas`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
+            if (response.ok) { 
+                const data = await response.json(); 
+                conversasGlobais = data.conversas;
+                renderizarListaConversas();
+            }
         } catch (error) { alert("Erro ao carregar mensagens."); }
     }
 
-    function renderizarMensagens(mensagens) {
-        const grid = document.getElementById('msgGrid');
-        grid.innerHTML = '';
-        if (mensagens.length === 0) { grid.innerHTML = '<p style="color:#888;">Nenhuma mensagem recebida.</p>'; return; }
-        mensagens.forEach(msg => {
-            const dataFormatada = new Date(msg.data_envio).toLocaleString('pt-BR');
+    function renderizarListaConversas() {
+        const lista = document.getElementById('listaConversas');
+        document.getElementById('chatAdminContainer').style.display = 'none';
+        lista.style.display = 'block';
+        lista.innerHTML = '';
+
+        const usuariosUnicos = [...new Set(conversasGlobais.map(c => c.usuario_id))];
+        if (usuariosUnicos.length === 0) { lista.innerHTML = '<p style="color:#888;">Nenhuma conversa.</p>'; return; }
+
+        usuariosUnicos.forEach(id => {
+            const msgs = conversasGlobais.filter(c => c.usuario_id === id);
+            const ultima = msgs[msgs.length - 1];
+            
             const card = document.createElement('div');
-            card.className = 'msg-card';
-            const respostaHtml = msg.resposta 
-                ? `<div style="margin-top: 10px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-left: 3px solid var(--verde); color: var(--verde);"><strong>Admin-Support:</strong><br>${msg.resposta}</div>`
-                : `<button onclick="responderMensagem(${msg.id})" style="margin-top: 10px; background: var(--laranja); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">Responder Mensagem</button>`;
+            card.className = 'conversa-card';
+            card.onclick = () => abrirChat(id, ultima.nome);
             card.innerHTML = `
-                <div class="msg-header"><span class="msg-nome">${msg.nome}</span><span class="msg-data">${dataFormatada}</span></div>
-                <div class="msg-email">${msg.email}</div>
-                <div class="msg-texto">${msg.mensagem}</div>
-                ${respostaHtml}
+                <div class="conversa-nome">${ultima.nome}</div>
+                <div class="conversa-ultima">Última msg: ${ultima.mensagem}</div>
             `;
-            grid.appendChild(card);
+            lista.appendChild(card);
         });
     }
 
-    async function responderMensagem(idMensagem) {
-        let resposta = prompt("Digite sua resposta (como Admin-Support):");
-        if (!resposta) return;
-        const token = sessionStorage.getItem('adminToken');
-        try {
-            const res = await fetch(`${API_URL}/api/admin/responder`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idMensagem, resposta }) });
-            const data = await res.json();
-            if (res.ok) { alert(data.mensagem); carregarMensagens(); } else { alert(data.erro); }
-        } catch (error) { alert("Erro."); }
+    function abrirChat(idUsuario, nome) {
+        usuarioChatAtual = idUsuario;
+        document.getElementById('listaConversas').style.display = 'none';
+        document.getElementById('chatAdminContainer').style.display = 'flex';
+        document.getElementById('chatAdminNome').innerHTML = `Chat com <span style="color:var(--laranja)">${nome}</span>`;
+        renderizarChatAdmin();
     }
 
+    function renderizarChatAdmin() {
+        const chatBox = document.getElementById('chatAdminMensagens');
+        chatBox.innerHTML = '';
+        const msgs = conversasGlobais.filter(c => c.usuario_id === usuarioChatAtual);
+        
+        msgs.forEach(msg => {
+            const isAdmin = msg.remetente === 'admin';
+            chatBox.innerHTML += `
+                <div class="msg ${isAdmin ? 'admin' : 'user'}">
+                    <span class="msg-sender">${isAdmin ? 'Admin-Support' : msg.nome}</span>
+                    ${msg.mensagem}
+                </div>
+            `;
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function enviarRespostaAdmin() {
+        const input = document.getElementById('inpAdminResposta');
+        const texto = input.value;
+        if (!texto || !usuarioChatAtual) return;
+        input.value = "Enviando...";
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            await fetch(`${API_URL}/api/admin/responder`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ idUsuario: usuarioChatAtual, mensagem: texto })
+            });
+            input.value = "";
+            carregarConversas();
+            setTimeout(() => { if (usuarioChatAtual) abrirChat(usuarioChatAtual, 'Jogador'); }, 500);
+        } catch (e) { alert("Erro."); }
+    }
+
+    function voltarLista() {
+        document.getElementById('chatAdminContainer').style.display = 'none';
+        document.getElementById('listaConversas').style.display = 'block';
+        carregarConversas();
+    }
+
+    // ... (MANTENHA AS FUNÇÕES alterarSaldo, adicionarTempo, zerarTempo, alterarBanimento e sairAdmin que você já tem) ...
     async function alterarSaldo(idUsuario) {
       let valor = parseFloat(prompt("Valor para adicionar (ex: 50) ou remover (ex: -10):"));
       if (isNaN(valor)) return;
