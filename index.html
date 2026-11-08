@@ -6,95 +6,55 @@
   <title>BIG-Room — Sua Lan House na Nuvem</title>
   <link rel="stylesheet" href="style.css" />
   
-  <!-- SCRIPT DO FINGERPRINT -->
   <script>
-    const fpPromise = import('https://fpjscdn.net/v4/M9iggYeksMpBeVbRCwPX')
-      .then(Fingerprint => Fingerprint.start());
-
-    async function obterVisitorId() {
-      try {
-        const fp = await fpPromise;
-        const result = await fp.get();
-        return result.visitor_id;
-      } catch (error) { return "Desconhecido"; }
-    }
+    const fpPromise = import('https://fpjscdn.net/v4/M9iggYeksMpBeVbRCwPX').then(Fingerprint => Fingerprint.start());
+    async function obterVisitorId() { try { const fp = await fpPromise; const result = await fp.get(); return result.visitor_id; } catch (error) { return "Desconhecido"; } }
   </script>
-
+  
   <style>
-    .hero { text-align: center; padding: 5rem 2rem 3rem; }
-    .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .hero { text-align: center; padding: 6rem 2rem 4rem; position: relative; z-index: 1; }
+    .hero h1 { font-size: 4rem; margin-bottom: 1rem; line-height: 1.1; color: #fff; font-weight: 900; letter-spacing: -1px; }
     .hero h1 span { color: var(--laranja); }
-    .hero p { color: var(--texto-fraco); margin-bottom: 2rem; font-size: 1.1rem; max-width: 600px; margin-inline: auto; }
-    .video-showcase { max-width: 900px; margin: 0 auto 3rem; border-radius: 16px; overflow: hidden; border: 1px solid var(--borda); box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative; background: #000; }
+    .hero p { color: var(--texto-fraco); margin-bottom: 2rem; font-size: 1.2rem; max-width: 600px; margin-inline: auto; }
+    .cta-container { display: flex; justify-content: center; gap: 1rem; margin-bottom: 4rem; }
+    .btn-cta { padding: 1rem 2.5rem; font-size: 1.2rem; font-weight: bold; border-radius: 12px; background: linear-gradient(135deg, var(--laranja), var(--laranja-esc)); color: #fff; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); }
+    .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(249, 115, 22, 0.5); }
+    .video-showcase { max-width: 1000px; margin: 0 auto 4rem; border-radius: 20px; overflow: hidden; border: 1px solid var(--borda); box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; background: #000; }
     .video-showcase video { width: 100%; display: block; object-fit: cover; }
-    .status-card { padding: 2rem; max-width: 500px; margin: 0 auto; }
-    .status-row { display: flex; align-items: center; gap: .5rem; margin-bottom: 1.5rem; justify-content: center; font-size: 1.1rem; }
-    .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 10px var(--verde); animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
-    .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
-    .status-grid > div { background: rgba(22, 22, 22, 0.7); padding: 1rem; border-radius: 8px; text-align: center; border: 1px solid var(--borda); }
-    .status-grid span { display: block; font-size: .8rem; color: var(--texto-fraco); margin-bottom: .3rem; }
-    .status-grid strong { font-size: 1.2rem; color: #fff; }
-    .status-card .btn-primary { width: 100%; padding: 1rem; font-size: 1.1rem; }
-    .pcs-grid { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
-    .pc-card { padding: 2rem; width: 320px; text-align: left; transition: 0.3s; }
-    .pc-card:hover { border-color: var(--laranja) !important; transform: translateY(-5px); }
-    .pc-card h3 { color: var(--laranja); margin-bottom: 1rem; font-size: 1.3rem; }
-    .pc-card p { font-size: 0.95rem; color: var(--texto-fraco); line-height: 1.6; }
+    .pcs-grid { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; }
+    .pc-card { padding: 2.5rem; width: 320px; text-align: left; transition: 0.3s; background: var(--bg-card); border: 1px solid var(--borda); border-radius: 16px; }
+    .pc-card:hover { border-color: var(--laranja) !important; transform: translateY(-8px); }
+    .pc-card h3 { color: var(--laranja); margin-bottom: 1rem; font-size: 1.4rem; }
+    .pc-card p { font-size: 0.95rem; color: var(--texto-fraco); line-height: 1.7; }
     .pc-card strong { color: #fff; }
-    .image-container { position: relative; max-width: 900px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 1px solid var(--borda); background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .image-container img { width: 100%; display: block; object-fit: cover; }
-    .censor-blur { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backdrop-filter: blur(15px); background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: crosshair; }
-    .censor-blur:hover { backdrop-filter: blur(0px); background: rgba(0,0,0,0); opacity: 0; }
-    .censor-text { background: var(--bg-card); padding: 1rem 2rem; border-radius: 8px; border: 1px solid var(--laranja); font-weight: bold; color: #fff; }
-    .features-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; text-align: left; }
-    .feature-item { padding: 2rem; border-left: 4px solid var(--laranja) !important; transition: 0.3s; }
-    .feature-item:hover { background: rgba(45, 45, 45, 0.9) !important; transform: scale(1.02); }
-    .feature-item h4 { margin-bottom: 0.8rem; color: #fff; font-size: 1.2rem; }
-    .feature-item p { font-size: 0.95rem; color: var(--texto-fraco); line-height: 1.5; }
-    .seguranca-box { background: rgba(239, 68, 68, 0.15) !important; border: 1px solid var(--vermelho) !important; padding: 2.5rem; max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; text-align: left; }
-    .seguranca-box h3 { color: var(--vermelho); margin-bottom: 0.5rem; font-size: 1.4rem; }
-    .seguranca-box p { color: #ddd; font-size: 1rem; line-height: 1.6; }
-    .tela-banido { position: fixed; inset: 0; background: #7f1d1d; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
-    .tela-banido h1 { font-size: 4rem; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 5px; }
-    .tela-banido p { font-size: 1.2rem; color: #fca5a5; max-width: 600px; line-height: 1.6; }
-    .btn-nav-login { background: transparent; border: 1px solid var(--laranja); color: var(--laranja); padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-right: 10px; font-size: 0.95rem; }
-    .btn-nav-login:hover { background: rgba(249, 115, 22, 0.1); }
-    .btn-nav-cadastro { background: var(--laranja); border: 1px solid var(--laranja); color: #fff; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
-    .btn-nav-cadastro:hover { background: #ea580c; }
+    .features-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; text-align: left; }
+    .feature-item { padding: 2rem; border-left: 4px solid var(--laranja) !important; transition: 0.3s; background: var(--bg-card); border-radius: 12px; }
+    .feature-item h4 { margin-bottom: 0.8rem; color: #fff; font-size: 1.3rem; }
+    .feature-item p { font-size: 0.95rem; color: var(--texto-fraco); line-height: 1.6; }
+    .seguranca-box { background: rgba(239, 68, 68, 0.1) !important; border: 1px solid var(--vermelho) !important; padding: 3rem; max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; text-align: left; border-radius: 16px; }
+    .seguranca-box h3 { color: var(--vermelho); margin-bottom: 0.5rem; font-size: 1.5rem; }
+    .seguranca-box p { color: #ddd; font-size: 1rem; line-height: 1.7; }
+    .btn-nav-login { background: transparent; border: 1px solid var(--laranja); color: var(--laranja); padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-right: 10px; font-size: 0.95rem; }
+    .btn-nav-cadastro { background: var(--laranja); border: 1px solid var(--laranja); color: #fff; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
     body { user-select: none; -webkit-user-drag: none; }
-    
-    /* ESTILOS DO TRADUTOR CUSTOMIZADO */
     .tradutor { display: flex; align-items: center; gap: 5px; margin-right: 15px; border: 1px solid var(--borda); border-radius: 8px; padding: 2px; background: rgba(0,0,0,0.3); }
     .btn-idioma { background: transparent; border: none; color: #fff; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 1.1rem; transition: 0.2s; opacity: 0.6; }
-    .btn-idioma:hover { opacity: 1; background: rgba(255,255,255,0.1); }
     .btn-idioma.ativo { opacity: 1; background: rgba(249, 115, 22, 0.2); border: 1px solid var(--laranja); }
   </style>
 </head>
 <body>
-
-  <div class="tela-banido" id="telaBanido">
-      <h1 data-i18n="ban_title">🚫 ACESSO NEGADO</h1>
-      <p data-i18n="ban_desc">Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room.</p>
-      <p style="margin-top: 1rem; font-size: 0.9rem;" data-i18n="ban_ip">Seu endereço IP e Dispositivo foram registrados.</p>
-  </div>
-
-  <div class="bg-animation">
-    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="grid-overlay"></div>
-  </div>
+  <div class="bg-animation"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="grid-overlay"></div></div>
 
   <header class="navbar">
     <a href="index.html" class="logo">🎮 BIG<span>Room</span></a>
     <nav>
       <a href="precos.html" data-i18n="nav_credits">Créditos</a>
       <a href="como-funciona.html" data-i18n="nav_how">Como funciona</a>
-      
       <div class="user-area">
         <div class="tradutor">
-            <button class="btn-idioma ativo" id="btn-pt" onclick="traduzir('pt')" title="Português">🇧🇷</button>
-            <button class="btn-idioma" id="btn-en" onclick="traduzir('en')" title="English">🇺🇸</button>
+            <button class="btn-idioma ativo" id="btn-pt" onclick="traduzir('pt')">🇧🇷</button>
+            <button class="btn-idioma" id="btn-en" onclick="traduzir('en')">🇺🇸</button>
         </div>
-
         <div class="saldo" id="saldoDisplay" style="display: none;"><span data-i18n="nav_balance">Saldo</span>: <strong>R$ 0,00</strong></div>
         <div id="botoesDeslogado" style="display: flex;">
           <button class="btn-nav-login" onclick="abrirModal('login')" data-i18n="nav_login">Entrar</button>
@@ -102,79 +62,37 @@
         </div>
         <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
           <span style="color:var(--laranja); font-weight:bold;" id="nomeUsuario"></span>
-          <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sair()" data-i18n="nav_logout">Sair</button>
+          <button class="btn-outline" onclick="sair()" data-i18n="nav_logout">Sair</button>
         </div>
       </div>
     </nav>
   </header>
 
   <section class="hero">
-    <h1><span data-i18n="hero_title_1">Sua</span> <span>Lan House</span> <span data-i18n="hero_title_2">no Navegador</span></h1>
-    <p data-i18n="hero_sub">Acesso total a um PC Gamer pela internet. Jogue, instale mods, baixe jogos e use a internet com total liberdade.</p>
-    <div class="video-showcase">
-      <video src="games_showcase_final.mp4" autoplay loop muted playsinline></video>
-    </div>
-    <div class="status-card">
-      <div class="status-row"><span class="dot"></span><strong data-i18n="status_online">Servidores ONLINE</strong></div>
-      <div class="status-grid">
-        <div><span data-i18n="status_pc">Status do PC</span><strong data-i18n="status_ready">Pronto</strong></div>
-        <div><span data-i18n="status_ping">Ping estimado</span><strong>~35 ms</strong></div>
-        <div><span data-i18n="status_top">Máquinas Top</span><strong data-i18n="status_avail">Disponíveis</strong></div>
-        <div><span data-i18n="status_anti">Anti-Cheat</span><strong data-i18n="status_active">Ativo</strong></div>
-      </div>
-      <button class="btn-primary" onclick="window.location.href='precos.html'" data-i18n="hero_btn">Comprar Créditos</button>
-    </div>
+    <h1><span data-i18n="hero_title_1">Pare de se preocupar com hardware.</span><br><span data-i18n="hero_title_2">Jogue no nosso PC Gamer.</span></h1>
+    <p data-i18n="hero_sub">Acesso total a um computador potente direto no seu navegador. Instale mods, baixe jogos na Steam e jogue com seus amigos.</p>
+    <div class="cta-container"><a href="precos.html" class="btn-cta" data-i18n="hero_btn">Testar Grátis Agora</a></div>
+    <div class="video-showcase"><video src="games_showcase_final.mp4" autoplay loop muted playsinline></video></div>
   </section>
 
-  <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 20px; margin: 2rem auto; backdrop-filter: blur(5px);">
-    <h2 data-i18n="pcs_title">Máquinas Disponíveis</h2>
-    <p class="sub" data-i18n="pcs_sub">Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.</p>
+  <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 24px; margin: 0 auto 4rem; backdrop-filter: blur(10px); max-width: 1100px; padding: 4rem 2rem;">
+    <h2 data-i18n="pcs_title">Escolha a Máquina Ideal</h2>
+    <p class="sub" data-i18n="pcs_sub">Nós cuidamos do PC, você só se preocupa em jogar.</p>
     <div class="pcs-grid">
-      <div class="pc-card"><h3 data-i18n="pcs_basic">💻 Plano Básico</h3><p data-i18n="pcs_basic_desc">Ideal para: Jogos leves, eSports e Minecraft. Roda muitos jogos com gráficos integrados de ótima qualidade.</p></div>
-      <div class="pc-card"><h3 data-i18n="pcs_mid">🎮 Plano Médio</h3><p data-i18n="pcs_mid_desc">Ideal para: Jogos AAA e Multiplayer. Excelente processamento. Recomendado para jogar em 1080p com boa fluidez.</p></div>
-      <div class="pc-card" style="border-color: var(--laranja);"><h3 data-i18n="pcs_vip">🚀 Plano Top (VIP)</h3><p data-i18n="pcs_vip_desc">Ideal para: Gráficos no máximo e 2K. Nossa máquina mais forte, com tela 2K e processador de última geração para rodar tudo no Ultra.</p></div>
+      <div class="pc-card"><h3 data-i18n="pcs_basic">💻 Modo Casual</h3><p data-i18n="pcs_basic_desc">Perfeito para: Jogar Minecraft com mods, LOL, Valorant. Roda tudo liso em 1080p.</p></div>
+      <div class="pc-card"><h3 data-i18n="pcs_mid">🎮 Modo Gamer</h3><p data-i18n="pcs_mid_desc">Perfeito para: Jogos AAA pesados, GTA V, CS2. Gráficos no alto e fluidez garantida.</p></div>
+      <div class="pc-card" style="border-color: var(--laranja);"><h3 data-i18n="pcs_vip">🚀 Modo Ultra (VIP)</h3><p data-i18n="pcs_vip_desc">Perfeito para: Jogar no máximo, 2K, Ray Tracing. A máquina mais forte para rodar tudo no Ultra.</p></div>
     </div>
   </section>
 
   <section class="section">
-    <h2 data-i18n="lib_title">Uma Biblioteca Infinita</h2>
-    <p class="sub" data-i18n="lib_sub">Passe o mouse sobre a imagem para remover o filtro de privacidade. Seus dados nunca são expostos.</p>
-    <div class="image-container">
-      <img src="steam-jogos.jpg" alt="Biblioteca de Jogos">
-      <div class="censor-blur"><div class="censor-text" data-i18n="lib_censor">🔒 Dados do Usuário Protegidos (Passe o mouse)</div></div>
-    </div>
-  </section>
-
-  <section class="section">
-    <h2 data-i18n="feat_title">Um PC de verdade, sem amarras</h2>
-    <p class="sub" data-i18n="feat_sub">Diferente de consoles, aqui você tem a liberdade de um computador real.</p>
+    <h2 data-i18n="feat_title">Mais que um PC, uma experiência completa</h2>
     <div class="features-list">
-      <div class="feature-item"><h4 data-i18n="feat_steam">🛒 Steam, Epic e Steam Tools</h4><p data-i18n="feat_steam_desc">Baixe seus jogos favoritos, acesse sua conta e jogue tranquilamente. Suporte total a ferramentas para adquirir jogos gratuitamente.</p></div>
-      <div class="feature-item"><h4 data-i18n="feat_mine">⛏️ Minecraft, Mods e Shaders</h4><p data-i18n="feat_mine_desc">Jogue fora das lojas oficiais (TLauncher). Instale mods, shaders pesados e crie seus próprios servidores sem restrições.</p></div>
-      <div class="feature-item"><h4 data-i18n="feat_web">🌐 Navegação Livre</h4><p data-i18n="feat_web_desc">Acesso ao Google, YouTube e navegação web. Com opções de segurança ativadas e permitidas apenas se o Desenvolvedor autorizar.</p></div>
-      <div class="feature-item"><h4 data-i18n="feat_priv">🔒 Privacidade Total</h4><p data-i18n="feat_priv_desc">Não há como mudar senhas, acessar e-mails ou contas bancárias. O sistema é limpo e formata sozinho após cada sessão.</p></div>
+      <div class="feature-item"><h4 data-i18n="feat_steam">🛒 Suas lojas favoritas</h4><p data-i18n="feat_steam_desc">Acesse sua conta da Steam, Epic Games e baixe seus jogos. Ferramentas como Steam Tools são liberadas.</p></div>
+      <div class="feature-item"><h4 data-i18n="feat_mine">⛏️ Mods e Shaders</h4><p data-i18n="feat_mine_desc">Jogue Minecraft no TLauncher, instale shaders pesados e crie servidores. Nada é bloqueado.</p></div>
+      <div class="feature-item"><h4 data-i18n="feat_priv">🔒 Privacidade Total</h4><p data-i18n="feat_priv_desc">Você não tem acesso a senhas ou dados bancários. Cada sessão é formatada e limpa após o término.</p></div>
     </div>
   </section>
-
-  <section class="section">
-    <div class="seguranca-box">
-      <div style="font-size: 4rem;">🛡️</div>
-      <div>
-        <h3 data-i18n="sec_title">Regras de Segurança e Anti-Hack</h3>
-        <p data-i18n="sec_desc">Dentro do jogo é diversão: Você tem total liberdade para usar mods, cheats, trainers ou hacks nos jogos que baixar. Fora do jogo é proibido: Tentar invadir, burlar pagamentos, injetar scripts ou alterar o código do nosso site resultará em banimento imediato, bloqueio de IP e medidas legais.</p>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="footer-grid">
-      <div class="footer-col"><h4 data-i18n="foot_about">Sobre o Projeto</h4><p data-i18n="foot_about_desc">Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.</p></div>
-      <div class="footer-col"><h4 data-i18n="foot_credits">Equipe e Créditos</h4><p><strong>Idealizador:</strong> Luiz</p><p><strong>Criador:</strong> ComandoGame</p><p><strong>Design:</strong> Você</p><p><strong>Colaborador:</strong> Kalleo</p></div>
-      <div class="footer-col"><h4 data-i18n="foot_guide">Diretrizes de Uso</h4><a href="termos.html" data-i18n="foot_terms">Termos de Serviço</a><a href="privacidade.html" data-i18n="foot_privacy">Política de Privacidade</a><a href="regras.html" data-i18n="foot_rules">Regras da Comunidade</a><a href="reembolsos.html" data-i18n="foot_refund">Reembolsos e Cancelamentos</a></div>
-      <div class="footer-col"><h4 data-i18n="foot_support">Suporte</h4><a href="suporte.html" data-i18n="foot_faq">Central de Ajuda / FAQ</a><a href="#" data-i18n="foot_discord">Comunidade no Discord (Em breve)</a><a href="#" data-i18n="foot_dev">Contatar Desenvolvedor (Em breve)</a></div>
-    </div>
-    <div class="footer-bottom" data-i18n="foot_rights">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
-  </footer>
 
   <div class="modal-bg" id="modalBg">
     <div class="modal">
@@ -182,227 +100,78 @@
       <h3 id="modalTitulo" data-i18n="modal_login_title">Entrar</h3>
       <p id="modalSubtitulo" data-i18n="modal_login_sub">Acesse sua conta para continuar.</p>
       <form onsubmit="fazerLogin(event)">
-        <input type="text" id="inpNome" placeholder="Seu nome / Nick" style="display: none;" data-i18n-placeholder="modal_name_ph" />
-        <input type="email" id="inpEmail" placeholder="E-mail (Gmail, Hotmail...)" required data-i18n-placeholder="modal_email_ph" />
-        <input type="password" id="inpSenha" placeholder="Senha" required data-i18n-placeholder="modal_pass_ph" />
-        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 10px;">
-          <span id="btnLoginText" data-i18n="modal_btn_login">Entrar</span>
-        </button>
+        <input type="text" id="inpNome" placeholder="Seu nome" style="display: none;" />
+        <input type="email" id="inpEmail" placeholder="E-mail" required />
+        <input type="password" id="inpSenha" placeholder="Senha" required />
+        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem;"><span id="btnLoginText">Entrar</span></button>
       </form>
     </div>
   </div>
 
   <script>
-    // --- SISTEMA DE TRADUÇÃO (i18n) ---
+    const API_URL = 'https://big-room-servidor.onrender.com';
     const traducoes = {
-        pt: {
-            nav_credits: "Créditos", nav_how: "Como funciona", nav_balance: "Saldo", nav_login: "Entrar", nav_register: "Criar Conta", nav_logout: "Sair",
-            hero_title_1: "Sua", hero_title_2: "no Navegador", hero_sub: "Acesso total a um PC Gamer pela internet. Jogue, instale mods, baixe jogos e use a internet com total liberdade.",
-            hero_btn: "Comprar Créditos", status_online: "Servidores ONLINE", status_pc: "Status do PC", status_ready: "Pronto", status_ping: "Ping estimado", status_top: "Máquinas Top", status_avail: "Disponíveis", status_anti: "Anti-Cheat", status_active: "Ativo",
-            pcs_title: "Máquinas Disponíveis", pcs_sub: "Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.",
-            pcs_basic: "💻 Plano Básico", pcs_basic_desc: "Ideal para: Jogos leves, eSports e Minecraft. Roda muitos jogos com gráficos integrados de ótima qualidade.",
-            pcs_mid: "🎮 Plano Médio", pcs_mid_desc: "Ideal para: Jogos AAA e Multiplayer. Excelente processamento. Recomendado para jogar em 1080p com boa fluidez.",
-            pcs_vip: "🚀 Plano Top (VIP)", pcs_vip_desc: "Ideal para: Gráficos no máximo e 2K. Nossa máquina mais forte, com tela 2K e processador de última geração para rodar tudo no Ultra.",
-            lib_title: "Uma Biblioteca Infinita", lib_sub: "Passe o mouse sobre a imagem para remover o filtro de privacidade. Seus dados nunca são expostos.", lib_censor: "🔒 Dados do Usuário Protegidos (Passe o mouse)",
-            feat_title: "Um PC de verdade, sem amarras", feat_sub: "Diferente de consoles, aqui você tem a liberdade de um computador real.",
-            feat_steam: "🛒 Steam, Epic e Steam Tools", feat_steam_desc: "Baixe seus jogos favoritos, acesse sua conta e jogue tranquilamente. Suporte total a ferramentas para adquirir jogos gratuitamente.",
-            feat_mine: "⛏️ Minecraft, Mods e Shaders", feat_mine_desc: "Jogue fora das lojas oficiais (TLauncher). Instale mods, shaders pesados e crie seus próprios servidores sem restrições.",
-            feat_web: "🌐 Navegação Livre", feat_web_desc: "Acesso ao Google, YouTube e navegação web. Com opções de segurança ativadas e permitidas apenas se o Desenvolvedor autorizar.",
-            feat_priv: "🔒 Privacidade Total", feat_priv_desc: "Não há como mudar senhas, acessar e-mails ou contas bancárias. O sistema é limpo e formata sozinho após cada sessão.",
-            sec_title: "Regras de Segurança e Anti-Hack", sec_desc: "Dentro do jogo é diversão: Você tem total liberdade para usar mods, cheats, trainers ou hacks nos jogos que baixar. Fora do jogo é proibido: Tentar invadir, burlar pagamentos, injetar scripts ou alterar o código do nosso site resultará em banimento imediato, bloqueio de IP e medidas legais.",
-            foot_about: "Sobre o Projeto", foot_about_desc: "Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.",
-            foot_credits: "Equipe e Créditos", foot_guide: "Diretrizes de Uso", foot_terms: "Termos de Serviço", foot_privacy: "Política de Privacidade", foot_rules: "Regras da Comunidade", foot_refund: "Reembolsos e Cancelamentos",
-            foot_support: "Suporte", foot_faq: "Central de Ajuda / FAQ", foot_discord: "Comunidade no Discord (Em breve)", foot_dev: "Contatar Desenvolvedor (Em breve)", foot_rights: "© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.",
-            modal_login_title: "Entrar", modal_login_sub: "Acesse sua conta para continuar.", modal_name_ph: "Seu nome / Nick", modal_email_ph: "E-mail (Gmail, Hotmail...)", modal_pass_ph: "Senha", modal_btn_login: "Entrar",
-            ban_title: "🚫 ACESSO NEGADO", ban_desc: "Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room.", ban_ip: "Seu endereço IP e Dispositivo foram registrados."
-        },
-        en: {
-            nav_credits: "Credits", nav_how: "How it works", nav_balance: "Balance", nav_login: "Login", nav_register: "Sign Up", nav_logout: "Logout",
-            hero_title_1: "Your", hero_title_2: "in Your Browser", hero_sub: "Full access to a gaming PC via the internet. Play games, install mods, download games, and use the internet with complete freedom.",
-            hero_btn: "Buy Credits", status_online: "Servers ONLINE", status_pc: "PC Status", status_ready: "Ready", status_ping: "Estimated ping", status_top: "Top Machines", status_avail: "Available", status_anti: "Anti-Cheat", status_active: "Active",
-            pcs_title: "Available Machines", pcs_sub: "You don't need to understand graphics cards. We deliver the power ready for gaming.",
-            pcs_basic: "💻 Basic Plan", pcs_basic_desc: "Ideal for: Light games, eSports, and Minecraft. Runs many games with great integrated graphics quality.",
-            pcs_mid: "🎮 Mid Plan", pcs_mid_desc: "Ideal for: AAA games and Multiplayer. Excellent processing. Recommended for 1080p with good fluidity.",
-            pcs_vip: "🚀 Top Plan (VIP)", pcs_vip_desc: "Ideal for: Max graphics and 2K. Our strongest machine, with 2K screen and last-gen processor to run everything on Ultra.",
-            lib_title: "An Infinite Library", lib_sub: "Hover over the image to remove the privacy filter. Your data is never exposed.", lib_censor: "🔒 User Data Protected (Hover)",
-            feat_title: "A real PC, without limits", feat_sub: "Unlike consoles, here you have the freedom of a real computer.",
-            feat_steam: "🛒 Steam, Epic, and Steam Tools", feat_steam_desc: "Download your favorite games, access your account, and play smoothly. Full support for tools to acquire games for free.",
-            feat_mine: "⛏️ Minecraft, Mods, and Shaders", feat_mine_desc: "Play outside official stores (TLauncher). Install mods, heavy shaders, and create your own servers without restrictions.",
-            feat_web: "🌐 Free Browsing", feat_web_desc: "Access Google, YouTube, and web browsing. With security options enabled and allowed only if the Developer authorizes.",
-            feat_priv: "🔒 Total Privacy", feat_priv_desc: "There is no way to change passwords, access emails, or bank accounts. The system is clean and formats itself after each session.",
-            sec_title: "Security and Anti-Hack Rules", sec_desc: "In-game is fun: You have total freedom to use mods, cheats, trainers, or hacks in the games you download. Outside the game is forbidden: Trying to invade, bypass payments, inject scripts, or alter our website's code will result in immediate ban, IP block, and legal action.",
-            foot_about: "About the Project", foot_about_desc: "A modern Lan House in the cloud, allowing anyone to play and work on a powerful PC without buying one.",
-            foot_credits: "Team & Credits", foot_guide: "Usage Guidelines", foot_terms: "Terms of Service", foot_privacy: "Privacy Policy", foot_rules: "Community Rules", foot_refund: "Refunds & Cancellations",
-            foot_support: "Support", foot_faq: "Help Center / FAQ", foot_discord: "Discord Community (Coming soon)", foot_dev: "Contact Developer (Coming soon)", foot_rights: "© 2026 BIG-Room — Cloud Gaming. All rights reserved.",
-            modal_login_title: "Login", modal_login_sub: "Access your account to continue.", modal_name_ph: "Your name / Nick", modal_email_ph: "Email (Gmail, Hotmail...)", modal_pass_ph: "Password", modal_btn_login: "Login",
-            ban_title: "🚫 ACCESS DENIED", ban_desc: "Your account has been permanently suspended for violating BIG-Room's Terms of Service.", ban_ip: "Your IP address and Device have been registered."
-        }
+        pt: { nav_credits: "Créditos", nav_how: "Como funciona", nav_balance: "Saldo", nav_login: "Entrar", nav_register: "Criar Conta", nav_logout: "Sair", hero_title_1: "Pare de se preocupar com hardware.", hero_title_2: "Jogue no nosso PC Gamer.", hero_sub: "Acesso total a um computador potente direto no seu navegador.", hero_btn: "Testar Grátis Agora", pcs_title: "Escolha a Máquina Ideal", pcs_sub: "Nós cuidamos do PC.", pcs_basic: "💻 Modo Casual", pcs_basic_desc: "Perfeito para jogos leves.", pcs_mid: "🎮 Modo Gamer", pcs_mid_desc: "Perfeito para jogos AAA.", pcs_vip: "🚀 Modo Ultra (VIP)", pcs_vip_desc: "A máquina mais forte.", feat_title: "Mais que um PC", feat_steam: "Suas lojas", feat_steam_desc: "Steam e Epic.", feat_mine: "Mods e Shaders", feat_mine_desc: "Minecraft.", feat_priv: "Privacidade", feat_priv_desc: "Sessão limpa.", modal_login_title: "Entrar", modal_login_sub: "Acesse sua conta.", ban_title: "ACESSO NEGADO" },
+        en: { nav_credits: "Credits", nav_how: "How it works", nav_balance: "Balance", nav_login: "Login", nav_register: "Sign Up", nav_logout: "Logout", hero_title_1: "Stop worrying about hardware.", hero_title_2: "Play on our Gaming PC.", hero_sub: "Full access to a powerful computer right in your browser.", hero_btn: "Try Free Now", pcs_title: "Choose the Ideal Machine", pcs_sub: "We take care of the PC.", pcs_basic: "💻 Casual Mode", pcs_basic_desc: "Perfect for light games.", pcs_mid: "🎮 Gamer Mode", pcs_mid_desc: "Perfect for AAA games.", pcs_vip: "🚀 Ultra Mode (VIP)", pcs_vip_desc: "The strongest machine.", feat_title: "More than a PC", feat_steam: "Your stores", feat_steam_desc: "Steam and Epic.", feat_mine: "Mods and Shaders", feat_mine_desc: "Minecraft.", feat_priv: "Privacy", feat_priv_desc: "Clean session.", modal_login_title: "Login", modal_login_sub: "Access your account.", ban_title: "ACCESS DENIED" }
     };
 
     function traduzir(idioma) {
-        // Atualiza os textos
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const chave = el.getAttribute('data-i18n');
-            if (traducoes[idioma] && traducoes[idioma][chave]) {
-                el.innerText = traducoes[idioma][chave];
-            }
+            if (traducoes[idioma] && traducoes[idioma][chave]) el.innerText = traducoes[idioma][chave];
         });
-        
-        // Atualiza os placeholders dos inputs
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            const chave = el.getAttribute('data-i18n-placeholder');
-            if (traducoes[idioma] && traducoes[idioma][chave]) {
-                el.placeholder = traducoes[idioma][chave];
-            }
-        });
-
-        // Atualiza os botões ativos
         document.getElementById('btn-pt').classList.remove('ativo');
         document.getElementById('btn-en').classList.remove('ativo');
         document.getElementById('btn-' + idioma).classList.add('ativo');
-        
-        // Salva a preferência
         localStorage.setItem('bigroom_lingua', idioma);
     }
 
-    // --- PROTEÇÃO CONTRA CURIOSOS ---
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    document.onkeydown = function(e) {
-        if(e.keyCode == 123) return false; 
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; 
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; 
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; 
-        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; 
-    };
+    document.addEventListener('contextmenu', e => e.preventDefault());
 
-    const API_URL = 'https://big-room-servidor.onrender.com';
     let modoModal = 'login';
-
-    async function sincronizarSaldo() {
-        const id = localStorage.getItem('bigroom_usuario_id');
-        if (!id) return;
+    
+    // FUNÇÃO QUE SUBSTITUI O LOCALSTORAGE
+    async function sincronizarUsuario() {
         try {
-            const response = await fetch(`${API_URL}/api/saldo/${id}`);
-            if (response.status === 403) {
-                localStorage.clear();
-                document.body.innerHTML = ''; 
-                document.getElementById('telaBanido').style.display = 'flex';
-                return;
+            const res = await fetch(`${API_URL}/api/me`, { credentials: 'include' });
+            if (res.status === 403) return document.body.innerHTML = '<div style="height:100vh; background:#7f1d1d; color:white; display:flex; align-items:center; justify-content:center; font-size:3rem;">ACESSO NEGADO</div>';
+            
+            if (res.ok) {
+                const data = await res.json();
+                document.getElementById('botoesDeslogado').style.display = 'none';
+                document.getElementById('perfilLogado').style.display = 'flex';
+                document.getElementById('saldoDisplay').style.display = 'block';
+                document.getElementById('nomeUsuario').innerText = data.usuario.nome;
+                document.getElementById('saldoDisplay').innerHTML = `<span data-i18n="nav_balance">Saldo</span>: <strong>R$ ${data.usuario.saldo.toFixed(2)}</strong>`;
+                traduzir(localStorage.getItem('bigroom_lingua') || 'pt');
+            } else {
+                document.getElementById('botoesDeslogado').style.display = 'flex';
+                document.getElementById('perfilLogado').style.display = 'none';
+                document.getElementById('saldoDisplay').style.display = 'none';
             }
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('bigroom_saldo', data.saldo);
-                localStorage.setItem('bigroom_tempo_restante', data.tempo_restante);
-                atualizarInterface();
-            }
-        } catch (error) { }
+        } catch (e) {}
     }
 
-    // Inicializa as funções de tela
-    window.onload = () => {
-        // Verifica a língua salva
-        const linguaSalva = localStorage.getItem('bigroom_lingua');
-        if (linguaSalva) { traduzir(linguaSalva); }
-
-        fetch(`${API_URL}/api/saldo/1`).catch(()=>{}); 
-        sincronizarSaldo();
-        setInterval(sincronizarSaldo, 5000);
-    }
-
-    function abrirModal(modo) {
-        modoModal = modo;
-        document.getElementById('modalBg').classList.add('ativo');
-        if (modo === 'cadastro') {
-            document.getElementById('modalTitulo').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Sign Up" : "Criar Conta";
-            document.getElementById('modalSubtitulo').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Fill in your details to get started." : "Preencha seus dados para começar.";
-            document.getElementById('inpNome').style.display = 'block';
-            document.getElementById('inpNome').required = true;
-            document.getElementById('btnLoginText').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Sign Up" : "Cadastrar";
-        } else {
-            document.getElementById('modalTitulo').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Login" : "Entrar";
-            document.getElementById('modalSubtitulo').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Access your account to continue." : "Acesse sua conta para continuar.";
-            document.getElementById('inpNome').style.display = 'none';
-            document.getElementById('inpNome').required = false;
-            document.getElementById('btnLoginText').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Login" : "Entrar";
-        }
-    }
-
+    window.onload = () => { if(localStorage.getItem('bigroom_lingua')) traduzir(localStorage.getItem('bigroom_lingua')); sincronizarUsuario(); setInterval(sincronizarUsuario, 5000); }
+    
+    function abrirModal(m) { modoModal = m; document.getElementById('modalBg').classList.add('ativo'); document.getElementById('inpNome').style.display = m==='cadastro'?'block':'none'; document.getElementById('btnLoginText').innerText = m==='cadastro'?'Cadastrar':'Entrar'; }
     function fecharModal() { document.getElementById('modalBg').classList.remove('ativo'); }
     
     async function fazerLogin(e) {
       e.preventDefault();
-      const btn = document.getElementById('btnSubmitLogin');
-      const btnText = document.getElementById('btnLoginText');
-      btn.disabled = true;
-      btnText.innerText = "Verificando...";
-      
-      const nome = document.getElementById('inpNome').value;
-      const email = document.getElementById('inpEmail').value;
-      const senha = document.getElementById('inpSenha').value;
-      
+      const btn = document.getElementById('btnSubmitLogin'); btn.disabled = true;
       const visitorId = await obterVisitorId();
+      let url = modoModal === 'cadastro' ? '/api/cadastro' : '/api/login';
+      let bodyData = modoModal === 'cadastro' ? { nome: document.getElementById('inpNome').value, email: document.getElementById('inpEmail').value, senha: document.getElementById('inpSenha').value, visitorId } : { email: document.getElementById('inpEmail').value, senha: document.getElementById('inpSenha').value, visitorId };
 
       try {
-        let url = modoModal === 'cadastro' ? '/api/cadastro' : '/api/login';
-        let bodyData = modoModal === 'cadastro' 
-            ? { nome, email, senha, visitorId } 
-            : { email, senha, visitorId };
-
-        let response = await fetch(`${API_URL}${url}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bodyData)
-        });
-
-        let data = await response.json();
-
-        if (response.ok) {
-            alert(data.mensagem + " Bem-vindo(a)!");
-            localStorage.setItem('bigroom_usuario_id', data.usuario.id);
-            localStorage.setItem('bigroom_usuario', data.usuario.nome);
-            localStorage.setItem('bigroom_codigo_conta', data.usuario.codigo_conta || '');
-            localStorage.setItem('bigroom_saldo', data.usuario.saldo);
-            localStorage.setItem('bigroom_tempo_restante', data.usuario.tempo_restante || 0);
-            
-            atualizarInterface(); 
-            fecharModal();
-        } else {
-            alert("Erro: " + data.erro);
-        }
-      } catch (error) {
-        alert("O servidor demorou muito para responder. Recarregue a página.");
-      } finally {
-        btn.disabled = false;
-        btnText.innerText = modoModal === 'cadastro' ? "Cadastrar" : "Entrar";
-      }
+        let res = await fetch(`${API_URL}${url}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(bodyData) });
+        let data = await res.json();
+        if (res.ok) { alert(data.mensagem); fecharModal(); sincronizarUsuario(); } else { alert(data.erro); }
+      } catch (error) { alert("Erro de conexão."); } finally { btn.disabled = false; }
     }
 
-    function sair() {
-      localStorage.clear();
-      atualizarInterface();
-    }
-
-    function atualizarInterface() {
-      const nome = localStorage.getItem('bigroom_usuario');
-      const saldo = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
-      
-      if (nome) {
-        document.getElementById('botoesDeslogado').style.display = 'none';
-        document.getElementById('perfilLogado').style.display = 'flex';
-        document.getElementById('saldoDisplay').style.display = 'block';
-        document.getElementById('nomeUsuario').innerText = nome;
-        document.getElementById('saldoDisplay').innerHTML = `<span data-i18n="nav_balance">Saldo</span>: <strong>R$ ${saldo.toFixed(2)}</strong>`;
-        // Traduz o "Saldo" se necessário
-        const lingua = localStorage.getItem('bigroom_lingua') || 'pt';
-        traduzir(lingua);
-      } else {
-        document.getElementById('botoesDeslogado').style.display = 'flex';
-        document.getElementById('perfilLogado').style.display = 'none';
-        document.getElementById('saldoDisplay').style.display = 'none';
-      }
-    }
-
-    atualizarInterface();
+    async function sair() { await fetch(`${API_URL}/api/logout`, { method: 'POST', credentials: 'include' }); window.location.reload(); }
   </script>
 </body>
 </html>
