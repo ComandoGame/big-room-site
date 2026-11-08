@@ -17,7 +17,7 @@
     .hero h1 span { color: var(--laranja); }
     .hero p { color: var(--texto-fraco); margin-bottom: 2rem; font-size: 1.2rem; max-width: 600px; margin-inline: auto; }
     .cta-container { display: flex; justify-content: center; gap: 1rem; margin-bottom: 4rem; }
-    .btn-cta { padding: 1rem 2.5rem; font-size: 1.2rem; font-weight: bold; border-radius: 12px; background: linear-gradient(135deg, var(--laranja), var(--laranja-esc)); color: #fff; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); }
+    .btn-cta { padding: 1rem 2.5rem; font-size: 1.2rem; font-weight: bold; border-radius: 12px; background: linear-gradient(135deg, var(--laranja), var(--laranja-esc)); color: #fff; text-decoration: none; transition: 0.3s; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); cursor: pointer; border: none; }
     .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(249, 115, 22, 0.5); }
     .video-showcase { max-width: 1000px; margin: 0 auto 4rem; border-radius: 20px; overflow: hidden; border: 1px solid var(--borda); box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; background: #000; }
     .video-showcase video { width: 100%; display: block; object-fit: cover; }
@@ -71,7 +71,8 @@
   <section class="hero">
     <h1><span data-i18n="hero_title_1">Pare de se preocupar com hardware.</span><br><span data-i18n="hero_title_2">Jogue no nosso PC Gamer.</span></h1>
     <p data-i18n="hero_sub">Acesso total a um computador potente direto no seu navegador. Instale mods, baixe jogos na Steam e jogue com seus amigos.</p>
-    <div class="cta-container"><a href="precos.html" class="btn-cta" data-i18n="hero_btn">Testar Grátis Agora</a></div>
+    <!-- BOTÃO ATUALIZADO PARA CHECAR LOGIN -->
+    <div class="cta-container"><button onclick="irParaTeste()" class="btn-cta" data-i18n="hero_btn">Testar Grátis Agora</button></div>
     <div class="video-showcase"><video src="games_showcase_final.mp4" autoplay loop muted playsinline></video></div>
   </section>
 
@@ -137,14 +138,17 @@
     }
 
     document.addEventListener('contextmenu', e => e.preventDefault());
-    document.onkeydown = e => { if(e.keyCode==123 || (e.ctrlKey && e.shiftKey && e.keyCode=='I'.charCodeAt(0))) return false; };
-
+    
     let modoModal = 'login';
+    let usuarioLogado = false;
+
     async function sincronizarUsuario() {
         try {
             const res = await fetch(`${API_URL}/api/me`, { credentials: 'include' });
             if (res.status === 403) return document.body.innerHTML = '<div style="height:100vh; background:#7f1d1d; color:white; display:flex; align-items:center; justify-content:center; font-size:3rem;">ACESSO NEGADO</div>';
+            
             if (res.ok) {
+                usuarioLogado = true;
                 const data = await res.json();
                 document.getElementById('botoesDeslogado').style.display = 'none';
                 document.getElementById('perfilLogado').style.display = 'flex';
@@ -153,6 +157,7 @@
                 document.getElementById('saldoDisplay').innerHTML = `<span data-i18n="nav_balance">Saldo</span>: <strong>R$ ${data.usuario.saldo.toFixed(2)}</strong>`;
                 traduzir(localStorage.getItem('bigroom_lingua') || 'pt');
             } else {
+                usuarioLogado = false;
                 document.getElementById('botoesDeslogado').style.display = 'flex';
                 document.getElementById('perfilLogado').style.display = 'none';
                 document.getElementById('saldoDisplay').style.display = 'none';
@@ -161,8 +166,19 @@
     }
 
     window.onload = () => { if(localStorage.getItem('bigroom_lingua')) traduzir(localStorage.getItem('bigroom_lingua')); sincronizarUsuario(); setInterval(sincronizarUsuario, 5000); }
+    
+    // FUNÇÃO NOVA: VERIFICA SE ESTÁ LOGADO ANTES DE IR PARA PREÇOS
+    function irParaTeste() {
+        if (usuarioLogado) {
+            window.location.href = 'precos.html';
+        } else {
+            abrirModal('login');
+        }
+    }
+
     function abrirModal(m) { modoModal = m; document.getElementById('modalBg').classList.add('ativo'); document.getElementById('inpNome').style.display = m==='cadastro'?'block':'none'; document.getElementById('btnLoginText').innerText = m==='cadastro'?'Cadastrar':'Entrar'; }
     function fecharModal() { document.getElementById('modalBg').classList.remove('ativo'); }
+    
     async function fazerLogin(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitLogin'); btn.disabled = true;
@@ -175,6 +191,7 @@
         if (res.ok) { alert(data.mensagem); fecharModal(); sincronizarUsuario(); } else { alert(data.erro); }
       } catch (error) { alert("Erro de conexão."); } finally { btn.disabled = false; }
     }
+
     async function sair() { await fetch(`${API_URL}/api/logout`, { method: 'POST', credentials: 'include' }); window.location.reload(); }
   </script>
 </body>
