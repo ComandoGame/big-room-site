@@ -29,11 +29,11 @@
     <h1>Suporte ao Jogador</h1>
     <div class="chat-box">
       <div class="chat-mensagens" id="chatMensagens">
-        <p style="color:#888;text-align:center;">Carregando mensagens...</p>
+        <p style="color:#aaa;text-align:center;margin-top:2rem;">Verificando login...</p>
       </div>
       <div class="chat-input-area">
         <input type="text" id="inpMensagem" placeholder="Digite sua dúvida..." onkeypress="if(event.key==='Enter') enviarMensagem()" />
-        <button onclick="enviarMensagem()">Enviar</button>
+        <button onclick="enviarMensagem()" id="btnEnviar">Enviar</button>
       </div>
     </div>
   </div>
@@ -41,24 +41,41 @@
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
     let idUsuarioLogado = null;
+    let tentativas = 0;
 
     async function verificarLogin() {
+        const chat = document.getElementById('chatMensagens');
         try {
+            // O { credentials: 'include' } é OBRIGATÓRIO para o servidor saber quem é você
             const res = await fetch(`${API_URL}/api/me`, { credentials: 'include' });
+            
             if (res.ok) {
                 const data = await res.json();
                 idUsuarioLogado = data.usuario.id;
                 carregarChat();
             } else {
-                document.getElementById('chatMensagens').innerHTML = '<p style="color:red;text-align:center;">Faça login no site para enviar mensagens.</p>';
+                chat.innerHTML = '<p style="color:#ef4444;text-align:center;margin-top:2rem;">Você precisa fazer login no site principal para usar o suporte.</p>';
+                document.getElementById('inpMensagem').disabled = true;
+                document.getElementById('btnEnviar').disabled = true;
             }
-        } catch (e) {}
+        } catch (e) {
+            // Se o servidor estiver dormindo, tenta de novo em 5 segundos
+            if (tentativas < 5) {
+                tentativas++;
+                chat.innerHTML = `<p style="color:#f97316;text-align:center;margin-top:2rem;">Acordando servidor... Tentativa ${tentativas} de 5...</p>`;
+                setTimeout(verificarLogin, 5000);
+            } else {
+                chat.innerHTML = '<p style="color:#ef4444;text-align:center;margin-top:2rem;">Servidor indisponível. Recarregue a página.</p>';
+            }
+        }
     }
 
     async function carregarChat() {
         if (!idUsuarioLogado) return;
         try {
             const res = await fetch(`${API_URL}/api/minhas-mensagens`, { credentials: 'include' });
+            if (!res.ok) return;
+            
             const data = await res.json();
             const chat = document.getElementById('chatMensagens');
             chat.innerHTML = '';
@@ -88,19 +105,30 @@
 
         input.value = "Enviando...";
         try {
-            await fetch(`${API_URL}/api/contato`, {
+            const res = await fetch(`${API_URL}/api/contato`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
+                credentials: 'include', // Envia o cookie de login
                 body: JSON.stringify({ mensagem: texto })
             });
-            input.value = "";
-            carregarChat();
-        } catch (e) { alert("Erro ao enviar."); }
+            
+            if (res.ok) {
+                input.value = "";
+                carregarChat();
+            } else {
+                alert("Erro ao enviar. O servidor está atualizado?");
+                input.value = texto;
+            }
+        } catch (e) { 
+            alert("Erro de conexão. Verifique se o servidor está online.");
+            input.value = texto;
+        }
     }
 
-    setInterval(carregarChat, 5000);
+    // Inicia
     verificarLogin();
+    // Atualiza o chat a cada 5 segundos
+    setInterval(carregarChat, 5000);
   </script>
 </body>
 </html>
