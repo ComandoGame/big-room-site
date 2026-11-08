@@ -12,17 +12,14 @@
     .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(18,18,18,.95); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--borda); }
     .logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--texto); }
     .logo span { color: var(--laranja); }
-    .navbar nav a { color: #ccc; text-decoration: none; font-size: .95rem; }
     
-    .container { max-width: 1000px; margin: 4rem auto; padding: 0 2rem; }
+    .container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
     h1 { margin-bottom: 2rem; color: var(--laranja); font-size: 2.2rem; }
     
     .login-box { background: var(--bg-card); border: 1px solid var(--borda); padding: 3rem; border-radius: 12px; max-width: 400px; margin: 0 auto; text-align: center; }
     .login-box h2 { margin-bottom: 1rem; }
-    .login-box p { color: var(--texto-fraco); margin-bottom: 2rem; font-size: 0.9rem; }
     .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid var(--borda); background: #0a0a0a; color: #fff; font-size: 1rem; }
-    .login-box button { width: 100%; padding: 1rem; border-radius: 8px; background: var(--laranja); color: #fff; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
-    .login-box button:hover { background: #ea580c; }
+    .login-box button { width: 100%; padding: 1rem; border-radius: 8px; background: var(--laranja); color: #fff; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; }
     
     .painel-dados { display: none; }
     .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
@@ -30,19 +27,29 @@
     .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.9rem; margin-bottom: 0.5rem; }
     .metrica-card strong { font-size: 2rem; color: var(--verde); }
     
-    table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; }
     th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--borda); font-size: 0.95rem; }
-    th { background: #161616; color: var(--laranja); font-weight: bold; }
+    th { background: #161616; color: var(--laranja); }
     tr:hover { background: rgba(255, 255, 255, 0.02); }
     
-    .btn-sair { background: transparent; color: var(--vermelho); border: 1px solid var(--vermelho); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 2rem; transition: 0.2s; }
-    .btn-sair:hover { background: var(--vermelho); color: #fff; }
+    /* Botões de Ação */
+    .acoes { display: flex; gap: 0.5rem; align-items: center; }
+    .btn-acao { padding: 0.4rem 0.8rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: 0.2s; color: #fff; }
+    .btn-saldo { background: var(--laranja); }
+    .btn-saldo:hover { background: #ea580c; }
+    .btn-banir { background: transparent; border: 1px solid var(--vermelho); color: var(--vermelho); }
+    .btn-banir:hover { background: var(--vermelho); color: #fff; }
+    .btn-desbanir { background: transparent; border: 1px solid var(--verde); color: var(--verde); }
+    .btn-desbanir:hover { background: var(--verde); color: #fff; }
+    
+    .status-banido { color: var(--vermelho); font-weight: bold; font-size: 0.8rem; margin-left: 5px; }
+    .btn-sair { background: transparent; color: var(--vermelho); border: 1px solid var(--vermelho); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 2rem; }
   </style>
 </head>
 <body>
   <header class="navbar">
     <a href="index.html" class="logo">🎮 BIG<span>Room</span> Admin</a>
-    <nav><a href="index.html">← Voltar ao Site</a></nav>
+    <nav><a href="index.html" style="color:#ccc; text-decoration:none;">← Voltar ao Site</a></nav>
   </header>
 
   <div class="container">
@@ -50,21 +57,14 @@
 
     <div class="login-box" id="telaLogin">
       <h2>Acesso Restrito</h2>
-      <p>Área exclusiva para o desenvolvedor.</p>
-      <input type="password" id="senhaAdmin" placeholder="Digite a chave de acesso" />
+      <input type="password" id="senhaAdmin" placeholder="Chave de acesso" />
       <button onclick="fazerLoginAdmin()">Entrar no Painel</button>
     </div>
 
     <div class="painel-dados" id="painelDados">
       <div class="metricas">
-        <div class="metrica-card">
-          <span>Total de Usuários</span>
-          <strong id="totalUsuarios">0</strong>
-        </div>
-        <div class="metrica-card">
-          <span>Saldo em Contas (R$)</span>
-          <strong id="saldoTotal">0,00</strong>
-        </div>
+        <div class="metrica-card"><span>Total de Usuários</span><strong id="totalUsuarios">0</strong></div>
+        <div class="metrica-card"><span>Saldo em Contas (R$)</span><strong id="saldoTotal">0,00</strong></div>
       </div>
 
       <table>
@@ -73,7 +73,8 @@
             <th>ID</th>
             <th>Nome</th>
             <th>E-mail</th>
-            <th>Saldo (R$)</th>
+            <th>Saldo</th>
+            <th>Ações Rápidas</th>
           </tr>
         </thead>
         <tbody id="tabelaUsuarios"></tbody>
@@ -85,9 +86,11 @@
 
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
+    let senhaSalva = ""; 
 
     async function fazerLoginAdmin() {
       const senha = document.getElementById('senhaAdmin').value;
+      senhaSalva = senha;
       
       try {
         const response = await fetch(`${API_URL}/api/admin/usuarios`, {
@@ -106,7 +109,7 @@
           alert("❌ " + data.erro);
         }
       } catch (error) {
-        alert("Erro ao conectar com o servidor. Ele pode estar acordando. Aguarde 30s e tente de novo.");
+        alert("Erro ao conectar. Aguarde 30s (servidor acordando).");
       }
     }
 
@@ -117,12 +120,25 @@
 
       usuarios.forEach(user => {
         saldoTotal += user.saldo;
+        
+        // Se estiver banido, mostra o aviso
+        const avisoBanido = user.banido === 1 ? '<span class="status-banido">(BANIDO)</span>' : '';
+        const btnBanir = user.banido === 1 
+            ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>`
+            : `<button class="btn-acao btn-banir" onclick="alterarBanimento(${user.id}, true)">Banir</button>`;
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>#${user.id}</td>
-          <td><strong>${user.nome}</strong></td>
+          <td><strong>${user.nome}</strong> ${avisoBanido}</td>
           <td>${user.email}</td>
           <td style="color: var(--verde); font-weight: bold;">R$ ${user.saldo.toFixed(2)}</td>
+          <td>
+            <div class="acoes">
+              <button class="btn-acao btn-saldo" onclick="alterarSaldo(${user.id})">+/- Saldo</button>
+              ${btnBanir}
+            </div>
+          </td>
         `;
         tabela.appendChild(tr);
       });
@@ -131,7 +147,49 @@
       document.getElementById('saldoTotal').innerText = saldoTotal.toFixed(2).replace('.', ',');
     }
 
+    async function alterarSaldo(idUsuario) {
+      let valorString = prompt("Digite o valor para ADICIONAR (ex: 50) ou REMOVER (ex: -10):");
+      if (!valorString) return;
+      
+      let valor = parseFloat(valorString.replace(',', '.'));
+      if (isNaN(valor)) return alert("Valor inválido.");
+
+      try {
+        const response = await fetch(`${API_URL}/api/admin/saldo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ senhaAdmin: senhaSalva, idUsuario, valor })
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+          alert(data.mensagem);
+          fazerLoginAdmin(); // Recarrega a tabela
+        } else { alert(data.erro); }
+      } catch (error) { alert("Erro no servidor."); }
+    }
+
+    async function alterarBanimento(idUsuario, banir) {
+      const acao = banir ? "BANIR" : "DESBANIR";
+      if (!confirm(`Tem certeza que deseja ${acao} este usuário?`)) return;
+
+      try {
+        const response = await fetch(`${API_URL}/api/admin/banir`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ senhaAdmin: senhaSalva, idUsuario, banir })
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+          alert(data.mensagem);
+          fazerLoginAdmin(); // Recarrega a tabela
+        } else { alert(data.erro); }
+      } catch (error) { alert("Erro no servidor."); }
+    }
+
     function sairAdmin() {
+      senhaSalva = "";
       document.getElementById('telaLogin').style.display = 'block';
       document.getElementById('painelDados').style.display = 'none';
       document.getElementById('senhaAdmin').value = '';
