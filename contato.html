@@ -2,20 +2,20 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Suporte — BIG-Room</title>
+  <title>Contato — BIG-Room</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    .container { max-width: 800px; margin: 4rem auto; padding: 0 2rem; position: relative; z-index: 1; }
-    h1 { color: #fff; text-align: center; margin-bottom: 2rem; }
-    .chat-box { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; height: 500px; backdrop-filter: blur(16px); }
-    .chat-mensagens { flex: 1; overflow-y: auto; padding-right: 10px; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 10px; }
-    .msg { max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4; }
-    .msg.user { background: rgba(249, 115, 22, 0.2); border: 1px solid var(--laranja); color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-    .msg.admin { background: rgba(16, 185, 129, 0.2); border: 1px solid var(--verde); color: #fff; align-self: flex-start; border-bottom-left-radius: 2px; }
-    .msg-sender { font-size: 0.7rem; color: #aaa; display: block; margin-bottom: 4px; }
-    .chat-input-area { display: flex; gap: 10px; }
-    .chat-input-area input { flex: 1; padding: 1rem; border-radius: 10px; border: 1px solid var(--borda); background: rgba(0,0,0,0.5); color: #fff; }
-    .chat-input-area button { padding: 1rem 2rem; border-radius: 10px; background: var(--laranja); color: #fff; border: none; font-weight: bold; cursor: pointer; }
+    .container { max-width: 600px; margin: 6rem auto; padding: 0 2rem; text-align: center; position: relative; z-index: 1; }
+    h1 { font-size: 2.8rem; margin-bottom: 0.5rem; color: #fff; }
+    .sub { color: var(--texto-fraco); margin-bottom: 3rem; font-size: 1.1rem; }
+    
+    .form-contato { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); padding: 3rem; border-radius: 16px; text-align: left; }
+    .form-contato label { display: block; color: #fff; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+    .form-contato input, .form-contato textarea { width: 100%; padding: 1rem; margin-bottom: 1.5rem; border-radius: 10px; border: 1px solid var(--borda); background: rgba(0,0,0,0.3); color: #fff; font-size: 1rem; font-family: inherit; }
+    .form-contato input:focus, .form-contato textarea:focus { outline: none; border-color: var(--laranja); }
+    .form-contato textarea { resize: vertical; min-height: 150px; }
+    .btn-enviar { width: 100%; padding: 1rem; border-radius: 10px; background: var(--laranja); color: #fff; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+    .btn-enviar:hover { background: var(--laranja-esc); transform: translateY(-2px); }
   </style>
 </head>
 <body>
@@ -26,109 +26,58 @@
   </header>
 
   <div class="container">
-    <h1>Suporte ao Jogador</h1>
-    <div class="chat-box">
-      <div class="chat-mensagens" id="chatMensagens">
-        <p style="color:#aaa;text-align:center;margin-top:2rem;">Verificando login...</p>
-      </div>
-      <div class="chat-input-area">
-        <input type="text" id="inpMensagem" placeholder="Digite sua dúvida..." onkeypress="if(event.key==='Enter') enviarMensagem()" />
-        <button onclick="enviarMensagem()" id="btnEnviar">Enviar</button>
-      </div>
-    </div>
+    <h1>Fale com o Desenvolvedor</h1>
+    <p class="sub">Responderemos diretamente no seu e-mail.</p>
+    
+    <form class="form-contato" onsubmit="enviarMensagem(event)">
+      <label>Seu Nome</label>
+      <input type="text" id="nomeContato" placeholder="Como devemos te chamar?" required />
+      
+      <label>Seu E-mail (Gmail, etc)</label>
+      <input type="email" id="emailContato" placeholder="Seu melhor e-mail para contato" required />
+      
+      <label>Mensagem</label>
+      <textarea id="mensagemContato" placeholder="Descreva sua dúvida ou problema..." required></textarea>
+      
+      <button type="submit" class="btn-enviar" id="btnEnviar">Enviar Mensagem</button>
+    </form>
   </div>
 
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
-    let idUsuarioLogado = null;
-    let tentativas = 0;
 
-    async function verificarLogin() {
-        const chat = document.getElementById('chatMensagens');
-        try {
-            // O { credentials: 'include' } é OBRIGATÓRIO para o servidor saber quem é você
-            const res = await fetch(`${API_URL}/api/me`, { credentials: 'include' });
-            
-            if (res.ok) {
-                const data = await res.json();
-                idUsuarioLogado = data.usuario.id;
-                carregarChat();
-            } else {
-                chat.innerHTML = '<p style="color:#ef4444;text-align:center;margin-top:2rem;">Você precisa fazer login no site principal para usar o suporte.</p>';
-                document.getElementById('inpMensagem').disabled = true;
-                document.getElementById('btnEnviar').disabled = true;
-            }
-        } catch (e) {
-            // Se o servidor estiver dormindo, tenta de novo em 5 segundos
-            if (tentativas < 5) {
-                tentativas++;
-                chat.innerHTML = `<p style="color:#f97316;text-align:center;margin-top:2rem;">Acordando servidor... Tentativa ${tentativas} de 5...</p>`;
-                setTimeout(verificarLogin, 5000);
-            } else {
-                chat.innerHTML = '<p style="color:#ef4444;text-align:center;margin-top:2rem;">Servidor indisponível. Recarregue a página.</p>';
-            }
+    async function enviarMensagem(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnEnviar');
+      btn.innerText = "Enviando...";
+      btn.disabled = true;
+
+      const nome = document.getElementById('nomeContato').value;
+      const email = document.getElementById('emailContato').value;
+      const mensagem = document.getElementById('mensagemContato').value;
+
+      try {
+        const res = await fetch(`${API_URL}/api/contato`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, email, mensagem })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert(data.mensagem);
+          document.getElementById('nomeContato').value = '';
+          document.getElementById('emailContato').value = '';
+          document.getElementById('mensagemContato').value = '';
+        } else {
+          alert(data.erro);
         }
+      } catch (err) {
+        alert("Erro ao enviar. Verifique sua conexão.");
+      } finally {
+        btn.innerText = "Enviar Mensagem";
+        btn.disabled = false;
+      }
     }
-
-    async function carregarChat() {
-        if (!idUsuarioLogado) return;
-        try {
-            const res = await fetch(`${API_URL}/api/minhas-mensagens`, { credentials: 'include' });
-            if (!res.ok) return;
-            
-            const data = await res.json();
-            const chat = document.getElementById('chatMensagens');
-            chat.innerHTML = '';
-
-            if (data.conversas.length === 0) {
-                chat.innerHTML = '<p style="color:#888;text-align:center;margin-top:2rem;">Nenhuma mensagem. Envie sua dúvida abaixo!</p>';
-                return;
-            }
-
-            data.conversas.forEach(msg => {
-                const isAdmin = msg.remetente === 'admin';
-                chat.innerHTML += `
-                    <div class="msg ${isAdmin ? 'admin' : 'user'}">
-                        <span class="msg-sender">${isAdmin ? 'Admin-Support' : 'Você'}</span>
-                        ${msg.mensagem}
-                    </div>
-                `;
-            });
-            chat.scrollTop = chat.scrollHeight;
-        } catch (e) {}
-    }
-
-    async function enviarMensagem() {
-        const input = document.getElementById('inpMensagem');
-        const texto = input.value;
-        if (!texto || !idUsuarioLogado) return;
-
-        input.value = "Enviando...";
-        try {
-            const res = await fetch(`${API_URL}/api/contato`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include', // Envia o cookie de login
-                body: JSON.stringify({ mensagem: texto })
-            });
-            
-            if (res.ok) {
-                input.value = "";
-                carregarChat();
-            } else {
-                alert("Erro ao enviar. O servidor está atualizado?");
-                input.value = texto;
-            }
-        } catch (e) { 
-            alert("Erro de conexão. Verifique se o servidor está online.");
-            input.value = texto;
-        }
-    }
-
-    // Inicia
-    verificarLogin();
-    // Atualiza o chat a cada 5 segundos
-    setInterval(carregarChat, 5000);
   </script>
 </body>
 </html>
