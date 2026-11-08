@@ -7,36 +7,34 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
     body { background: #000; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     
-    /* Barra superior */
     .barra-jogo { background: #1e1e1e; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; z-index: 10; }
     .logo { font-weight: bold; font-size: 1.2rem; }
     .logo span { color: #f97316; }
     .btn-sair { background: #ef4444; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; }
     .btn-sair:hover { background: #dc2626; }
 
-    /* Área do Jogo (Simulação) */
     .area-transmissao { flex: 1; display: flex; align-items: center; justify-content: center; background: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920&auto=format&fit=crop') center/cover; position: relative; }
     
-    /* POP-UP DO CRONÔMETRO (Ocultável) */
+    /* POP-UP DO CRONÔMETRO */
     .cronometro-flutuante {
       position: absolute; top: 1.5rem; left: 1.5rem; z-index: 50;
-      background: rgba(0, 0, 0, 0.8); border: 1px solid #f97316;
-      border-radius: 50px; padding: 0.5rem 1rem; cursor: pointer;
-      display: flex; align-items: center; gap: 8px; transition: 0.3s; backdrop-filter: blur(5px);
+      background: rgba(0, 0, 0, 0.85); border: 1px solid #f97316;
+      border-radius: 50px; padding: 0.6rem 1.2rem; cursor: pointer;
+      display: flex; align-items: center; gap: 10px; transition: 0.3s; backdrop-filter: blur(5px);
     }
     .cronometro-flutuante:hover { background: rgba(0, 0, 0, 0.95); transform: scale(1.05); }
-    .cronometro-flutuante.oculto { padding: 0.5rem; border-radius: 50%; }
+    .cronometro-flutuante.oculto { padding: 0.6rem; border-radius: 50%; }
     .cronometro-flutuante.oculto .texto-tempo { display: none; }
     
-    .icone-relogio { font-size: 1.2rem; }
-    .texto-tempo { font-weight: bold; color: #10b981; font-size: 1.1rem; }
+    .icone-relogio { font-size: 1.3rem; }
+    .texto-tempo { font-weight: bold; color: #10b981; font-size: 1.2rem; }
     .texto-tempo.alerta { color: #ef4444; animation: pulse 1s infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-    /* Tela de fim de jogo */
-    .tela-fim { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+    .tela-fim { display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     .tela-fim h2 { color: #ef4444; font-size: 3rem; margin-bottom: 1rem; }
-    .tela-fim p { color: #ccc; margin-bottom: 2rem; }
+    .btn-recarregar { background: #f97316; color: #fff; border: none; padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.2s; margin-top: 1rem; }
+    .btn-recarregar:hover { background: #ea580c; }
   </style>
 </head>
 <body>
@@ -47,7 +45,6 @@
   </div>
 
   <div class="area-transmissao">
-    <!-- CRONÔMETRO OCULTÁVEL -->
     <div class="cronometro-flutuante" id="cronometro" onclick="toggleCronometro()" title="Clique para ocultar/mostrar">
       <span class="icone-relogio">⏱️</span>
       <span class="texto-tempo" id="tempoRestante">Carregando...</span>
@@ -56,31 +53,32 @@
 
   <div class="tela-fim" id="telaFim">
     <h2>⏳ Tempo Esgotado!</h2>
-    <p>Sua sessão terminou. Esperamos que tenha se divertido!</p>
-    <button class="btn-sair" onclick="window.location.href='index.html'">Voltar ao Início</button>
+    <p>Sua sessão terminou. Recarregue para continuar jogando.</p>
+    <button class="btn-recarregar" onclick="window.location.href='precos.html'">Recarregar Tempo</button>
+    <button style="margin-top: 1rem; background: none; border: none; color: #888; cursor: pointer;" onclick="window.location.href='index.html'">Voltar ao Início</button>
   </div>
 
   <script>
+    const API_URL = 'https://big-room-servidor.onrender.com';
     let segundosRestantes = 0;
     let intervalo;
 
-    // Pega o tempo salvo no navegador (que veio do servidor)
-    const tempoSalvoMinutos = parseInt(localStorage.getItem('bigroom_tempo_restante') || '0');
-    segundosRestantes = tempoSalvoMinutos * 60;
-
-    if (segundosRestantes <= 0) {
-      // Se não tiver tempo, expulsa
-      document.getElementById('telaFim').style.display = 'flex';
-    } else {
-      atualizarRelogio();
-      intervalo = setInterval(atualizarRelogio, 1000);
+    async function buscarTempo() {
+        try {
+            const res = await fetch(`${API_URL}/api/me`, { credentials: 'include' });
+            if (res.ok) {
+                const data = await res.json();
+                // O servidor manda o tempo em minutos, convertemos para segundos
+                segundosRestantes = data.usuario.tempo_restante * 60; 
+                atualizarRelogio();
+            }
+        } catch (e) {}
     }
 
     function atualizarRelogio() {
       if (segundosRestantes <= 0) {
         clearInterval(intervalo);
         document.getElementById('telaFim').style.display = 'flex';
-        localStorage.removeItem('bigroom_tempo_restante');
         return;
       }
 
@@ -97,23 +95,23 @@
       const display = document.getElementById('tempoRestante');
       display.innerText = texto;
 
-      // Se faltar menos de 5 min, fica vermelho piscando
-      if (segundosRestantes < 300) {
-        display.classList.add('alerta');
-      }
+      if (segundosRestantes < 300) display.classList.add('alerta');
     }
 
-    function toggleCronometro() {
-      document.getElementById('cronometro').classList.toggle('oculto');
-    }
-
+    function toggleCronometro() { document.getElementById('cronometro').classList.toggle('oculto'); }
     function sairDoJogo() {
-      if(confirm("Tem certeza que deseja encerrar sua sessão?")) {
+      if(confirm("Tem certeza que deseja encerrar sua sessão? O tempo restante não será reembolsado.")) {
         clearInterval(intervalo);
-        localStorage.removeItem('bigroom_tempo_restante');
         window.location.href = 'index.html';
       }
     }
+
+    // Inicializa buscando o tempo real do servidor
+    buscarTempo();
+    intervalo = setInterval(atualizarRelogio, 1000);
+    
+    // A cada 1 minuto, ele checa no servidor se o tempo mudou (ex: se você deu +tempo no Admin)
+    setInterval(buscarTempo, 60000);
   </script>
 </body>
 </html>
