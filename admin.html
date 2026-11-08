@@ -4,87 +4,89 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Painel do Host — BIG-Room</title>
+  <link rel="stylesheet" href="style.css" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
-    :root { --laranja: #f97316; --bg: #121212; --bg-card: #1e1e1e; --borda: #333333; --texto: #f3f4f6; --texto-fraco: #9ca3af; --verde: #10b981; --vermelho: #ef4444; }
-    body { background: var(--bg); color: var(--texto); user-select: none; -webkit-user-drag: none; }
+    .admin-container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; position: relative; z-index: 1; }
+    .header-admin { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .header-admin h1 { color: #fff; font-size: 2rem; font-weight: 800; }
     
-    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(18,18,18,.95); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--borda); }
-    .logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--texto); }
-    .logo span { color: var(--laranja); }
+    /* LOGIN BOX */
+    .login-box { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); padding: 3rem; border-radius: 16px; max-width: 400px; margin: 0 auto; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .login-box h2 { margin-bottom: 1.5rem; color: #fff; }
+    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 10px; border: 1px solid var(--borda); background: rgba(0,0,0,0.5); color: #fff; font-size: 1rem; }
+    .login-box button { width: 100%; padding: 1rem; border-radius: 10px; background: linear-gradient(135deg, var(--laranja), var(--laranja-esc)); color: #fff; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; }
     
-    .container { max-width: 1400px; margin: 4rem auto; padding: 0 2rem; }
-    h1 { margin-bottom: 2rem; color: var(--laranja); font-size: 2.2rem; }
+    /* MÉTRICAS */
+    .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .metrica-card { padding: 2rem; text-align: center; border-top: 4px solid var(--laranja); }
+    .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.95rem; margin-bottom: 0.5rem; font-weight: 500; }
+    .metrica-card strong { font-size: 2.5rem; color: #fff; font-weight: 800; }
+
+    /* GRID DE USUÁRIOS */
+    .users-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+    .user-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); border-radius: 16px; padding: 1.5rem; transition: 0.3s; position: relative; }
+    .user-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-3px); }
+    .user-card.banido { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); }
     
-    .login-box { background: var(--bg-card); border: 1px solid var(--borda); padding: 3rem; border-radius: 12px; max-width: 400px; margin: 0 auto; text-align: center; }
-    .login-box h2 { margin-bottom: 1rem; }
-    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid var(--borda); background: #0a0a0a; color: #fff; font-size: 1rem; }
-    .login-box button { width: 100%; padding: 1rem; border-radius: 8px; background: var(--laranja); color: #fff; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; }
+    .user-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 1rem; }
+    .user-name { font-size: 1.2rem; font-weight: bold; color: #fff; }
+    .user-code { font-family: monospace; font-size: 0.8rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 2px 6px; border-radius: 4px; }
+    .user-email { color: var(--texto-fraco); font-size: 0.9rem; display: block; margin-top: 0.2rem; }
     
-    .painel-dados { display: none; }
-    .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-    .metrica-card { background: var(--bg-card); border: 1px solid var(--borda); padding: 1.5rem; border-radius: 12px; text-align: center; }
-    .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.9rem; margin-bottom: 0.5rem; }
-    .metrica-card strong { font-size: 2rem; color: var(--verde); }
+    .user-info-row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; font-size: 0.9rem; }
+    .user-info-row span { color: var(--texto-fraco); }
+    .user-info-row strong { color: #fff; }
+    .user-info-row strong.saldo { color: var(--verde); }
+    .user-info-row strong.ip { font-family: monospace; color: #9ca3af; }
     
-    table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; font-size: 0.85rem; }
-    th, td { padding: 0.8rem; text-align: left; border-bottom: 1px solid var(--borda); }
-    th { background: #161616; color: var(--laranja); }
-    tr:hover { background: rgba(255, 255, 255, 0.02); }
+    .sessao-box { background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+    .tag-plano { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+    .tag-tempo { background: rgba(16, 185, 129, 0.2); color: var(--verde); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
+    .tag-banido { color: var(--vermelho); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
     
-    .acoes { display: flex; gap: 0.3rem; flex-wrap: wrap; }
-    .btn-acao { padding: 0.3rem 0.6rem; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; font-size: 0.75rem; color: #fff; }
-    .btn-saldo { background: var(--laranja); }
-    .btn-tempo { background: #3b82f6; }
-    .btn-zerar { background: #6b7280; }
-    .btn-banir { background: transparent; border: 1px solid var(--vermelho); color: var(--vermelho); }
-    .btn-desbanir { background: transparent; border: 1px solid var(--verde); color: var(--verde); }
-    
-    .tag-plano { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .tag-tempo { background: rgba(16, 185, 129, 0.2); color: var(--verde); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-    .tag-banido { color: var(--vermelho); font-weight: bold; font-size: 0.75rem; }
-    .btn-sair { background: transparent; color: var(--vermelho); border: 1px solid var(--vermelho); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 2rem; }
+    .acoes { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+    .btn-acao { flex: 1; padding: 0.6rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.8rem; color: #fff; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .btn-saldo { background: rgba(249, 115, 22, 0.2); color: var(--laranja); border: 1px solid var(--laranja); }
+    .btn-saldo:hover { background: var(--laranja); color: #fff; }
+    .btn-tempo { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
+    .btn-tempo:hover { background: #3b82f6; color: #fff; }
+    .btn-zerar { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid #6b7280; }
+    .btn-zerar:hover { background: #6b7280; color: #fff; }
+    .btn-banir { background: rgba(239, 68, 68, 0.2); color: var(--vermelho); border: 1px solid var(--vermelho); }
+    .btn-banir:hover { background: var(--vermelho); color: #fff; }
+    .btn-desbanir { background: rgba(16, 185, 129, 0.2); color: var(--verde); border: 1px solid var(--verde); }
+    .btn-desbanir:hover { background: var(--verde); color: #fff; }
   </style>
 </head>
 <body>
+
+  <div class="bg-animation">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="grid-overlay"></div>
+  </div>
+
   <header class="navbar">
     <a href="index.html" class="logo">🎮 BIG<span>Room</span> Admin</a>
-    <nav><a href="index.html" style="color: #ccc; text-decoration: none;">← Voltar ao Site</a></nav>
+    <nav><a href="index.html">← Voltar ao Site</a></nav>
   </header>
 
-  <div class="container">
-    <h1>🖥️ Painel do Host</h1>
+  <div class="admin-container">
+    <div class="header-admin">
+      <h1>🖥️ Controle de Usuários</h1>
+      <button class="btn-outline" onclick="sairAdmin()" id="btnSair" style="display:none;">Sair do Painel</button>
+    </div>
 
     <div class="login-box" id="telaLogin">
       <h2>Acesso Restrito</h2>
-      <input type="password" id="senhaAdmin" placeholder="Chave de acesso" />
+      <input type="password" id="senhaAdmin" placeholder="Digite a chave de acesso" />
       <button onclick="fazerLoginAdmin()">Entrar no Painel</button>
     </div>
 
-    <div class="painel-dados" id="painelDados">
+    <div id="painelDados" style="display: none;">
       <div class="metricas">
         <div class="metrica-card"><span>Total de Usuários</span><strong id="totalUsuarios">0</strong></div>
-        <div class="metrica-card"><span>Saldo em Contas (R$)</span><strong id="saldoTotal">0,00</strong></div>
+        <div class="metrica-card"><span>Saldo em Contas</span><strong id="saldoTotal" style="color: var(--verde);">R$ 0,00</strong></div>
       </div>
-
-      <div style="overflow-x: auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nome</th>
-              <th>E-mail</th>
-              <th>IP</th>
-              <th>Saldo</th>
-              <th>Sessão Atual</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaUsuarios"></tbody>
-        </table>
-      </div>
-
-      <button class="btn-sair" onclick="sairAdmin()">Encerrar Sessão de Admin</button>
+      <div class="users-grid" id="usersGrid"></div>
     </div>
   </div>
 
@@ -118,7 +120,7 @@
           sessionStorage.setItem('adminToken', data.token);
           carregarPainel();
         } else { alert("❌ " + data.erro); }
-      } catch (error) { alert("Erro ao conectar."); }
+      } catch (error) { alert("Erro ao conectar. Aguarde 30 segundos e tente novamente."); }
     }
 
     async function carregarPainel() {
@@ -132,55 +134,76 @@
                 const data = await response.json();
                 document.getElementById('telaLogin').style.display = 'none';
                 document.getElementById('painelDados').style.display = 'block';
-                renderizarTabela(data.usuarios);
+                document.getElementById('btnSair').style.display = 'block';
+                renderizarCards(data.usuarios);
             } else { sairAdmin(); }
         } catch (error) { alert("Erro ao carregar dados."); }
     }
 
-    function renderizarTabela(usuarios) {
-      const tabela = document.getElementById('tabelaUsuarios');
-      tabela.innerHTML = '';
+    function renderizarCards(usuarios) {
+      const grid = document.getElementById('usersGrid');
+      grid.innerHTML = '';
       let saldoTotal = 0;
 
       usuarios.forEach(user => {
         saldoTotal += user.saldo;
         
-        const avisoBanido = user.banido === 1 ? '<br><span class="tag-banido">BANIDO</span>' : '';
+        const isBanido = user.banido === 1;
+        const statusClass = isBanido ? 'banido' : '';
         
-        const btnBanir = user.banido === 1 
+        const btnBanir = isBanido 
             ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>`
             : `<button class="btn-acao btn-banir" onclick="alterarBanimento(${user.id}, true)">Banir</button>`;
 
-        let sessaoHtml = '<span style="color:#6b7280;">Nenhuma</span>';
+        let sessaoHtml = `<span style="color:#6b7280; font-size: 0.85rem;">Nenhuma sessão ativa</span>`;
         if (user.plano_ativo && user.plano_ativo !== 'Nenhum') {
             sessaoHtml = `
                 <div><span class="tag-plano">${user.plano_ativo}</span></div>
-                <div style="margin-top: 4px;"><span class="tag-tempo">${user.tempo_restante} min</span></div>
+                <div><span class="tag-tempo">${user.tempo_restante} min</span></div>
             `;
         }
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="color:#fbbf24; font-family:monospace;">${user.codigo_conta || 'N/A'}</td>
-          <td><strong>${user.nome}</strong> ${avisoBanido}</td>
-          <td>${user.email}</td>
-          <td style="font-family:monospace; color:#9ca3af;">${user.ip || 'N/A'}</td>
-          <td style="color: var(--verde); font-weight: bold;">R$ ${user.saldo.toFixed(2)}</td>
-          <td>${sessaoHtml}</td>
-          <td>
-            <div class="acoes">
-              <button class="btn-acao btn-saldo" onclick="alterarSaldo(${user.id})">+/- Saldo</button>
-              <button class="btn-acao btn-tempo" onclick="adicionarTempo(${user.id})">+ Tempo</button>
-              <button class="btn-acao btn-zerar" onclick="zerarTempo(${user.id})">Zerar</button>
-              ${btnBanir}
+        const card = document.createElement('div');
+        card.className = `user-card ${statusClass}`;
+        card.innerHTML = `
+          <div class="user-header">
+            <div>
+              <div class="user-name">${user.nome} ${isBanido ? '<span class="tag-banido">(Banido)</span>' : ''}</div>
+              <span class="user-email">${user.email}</span>
             </div>
-          </td>
+            <span class="user-code">${user.codigo_conta || 'N/A'}</span>
+          </div>
+          
+          <div class="user-info-row">
+            <span>Saldo em Conta:</span>
+            <strong class="saldo">R$ ${user.saldo.toFixed(2)}</strong>
+          </div>
+          <div class="user-info-row">
+            <span>Endereço IP:</span>
+            <strong class="ip">${user.ip || 'Desconhecido'}</strong>
+          </div>
+          <div class="user-info-row">
+            <span>Hardware (Fingerprint):</span>
+            <strong class="ip" style="font-size:0.7rem;">${user.visitor_id || 'Desconhecido'}</strong>
+          </div>
+          
+          <div class="sessao-box">
+            <span style="color: var(--texto-fraco); font-size: 0.85rem;">Sessão Atual:</span>
+            <div style="display: flex; gap: 0.5rem;">${sessaoHtml}</div>
+          </div>
+
+          <div class="acoes">
+            <button class="btn-acao btn-saldo" onclick="alterarSaldo(${user.id})">+/- Saldo</button>
+            <button class="btn-acao btn-tempo" onclick="adicionarTempo(${user.id})">+ Tempo</button>
+            <button class="btn-acao btn-zerar" onclick="zerarTempo(${user.id})">Zerar</button>
+            ${btnBanir}
+          </div>
         `;
-        tabela.appendChild(tr);
+        grid.appendChild(card);
       });
 
       document.getElementById('totalUsuarios').innerText = usuarios.length;
-      document.getElementById('saldoTotal').innerText = saldoTotal.toFixed(2).replace('.', ',');
+      document.getElementById('saldoTotal').innerText = `R$ ${saldoTotal.toFixed(2)}`;
     }
 
     async function alterarSaldo(idUsuario) {
@@ -237,7 +260,7 @@
 
     async function alterarBanimento(idUsuario, banir) {
       const acao = banir ? "BANIR" : "DESBANIR";
-      if (!confirm(`Tem certeza que deseja ${acao}?`)) return;
+      if (!confirm(`Tem certeza que deseja ${acao}? O dispositivo e o IP serão bloqueados.`)) return;
       const token = sessionStorage.getItem('adminToken');
       try {
         const response = await fetch(`${API_URL}/api/admin/banir`, {
@@ -254,6 +277,7 @@
       sessionStorage.removeItem('adminToken');
       document.getElementById('telaLogin').style.display = 'block';
       document.getElementById('painelDados').style.display = 'none';
+      document.getElementById('btnSair').style.display = 'none';
       document.getElementById('senhaAdmin').value = '';
     }
   </script>
