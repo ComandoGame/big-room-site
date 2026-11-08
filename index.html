@@ -6,7 +6,6 @@
   <title>BIG-Room — Sua Lan House na Nuvem</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Estilos da Página */
     .hero { text-align: center; padding: 5rem 2rem 3rem; }
     .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero h1 span { color: var(--laranja); }
@@ -42,10 +41,11 @@
     .seguranca-box h3 { color: var(--vermelho); margin-bottom: 0.5rem; font-size: 1.4rem; }
     .seguranca-box p { color: #ddd; font-size: 1rem; line-height: 1.6; }
 
-    /* ESTILOS EXTRAS PARA O LOGIN */
+    /* TELA DE BANIMENTO */
     .tela-banido { position: fixed; inset: 0; background: #7f1d1d; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
     .tela-banido h1 { font-size: 4rem; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 5px; }
     .tela-banido p { font-size: 1.2rem; color: #fca5a5; max-width: 600px; line-height: 1.6; }
+    
     .btn-nav-login { background: transparent; border: 1px solid var(--laranja); color: var(--laranja); padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-right: 10px; font-size: 0.95rem; }
     .btn-nav-login:hover { background: rgba(249, 115, 22, 0.1); }
     .btn-nav-cadastro { background: var(--laranja); border: 1px solid var(--laranja); color: #fff; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
@@ -54,7 +54,6 @@
 </head>
 <body>
 
-  <!-- TELA DE BANIMENTO -->
   <div class="tela-banido" id="telaBanido">
       <h1>🚫 ACESSO NEGADO</h1>
       <p>Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room.</p>
@@ -71,22 +70,17 @@
       <a href="precos.html">Preços</a>
       <a href="como-funciona.html">Como funciona</a>
       
-      <!-- ÁREA DO USUÁRIO -->
       <div class="user-area">
         <div class="saldo" id="saldoDisplay" style="display: none;">Saldo: <strong>R$ 0,00</strong></div>
         
-        <!-- BOTÕES SEPARADOS (Visíveis se não estiver logado) -->
         <div id="botoesDeslogado" style="display: flex;">
           <button class="btn-nav-login" onclick="abrirModal('login')">Entrar</button>
           <button class="btn-nav-cadastro" onclick="abrirModal('cadastro')">Criar Conta</button>
         </div>
         
-        <!-- PERFIL LOGADO (Visível se estiver logado) -->
+        <!-- PERFIL LOGADO (Sem mostrar código) -->
         <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
-          <div style="text-align: right; line-height: 1.2;">
-            <span style="color:var(--laranja); font-weight:bold; display: block;" id="nomeUsuario"></span>
-            <span style="color:#9ca3af; font-size:0.75rem; display: block;" id="codigoUsuario"></span>
-          </div>
+          <span style="color:var(--laranja); font-weight:bold;" id="nomeUsuario"></span>
           <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sair()">Sair</button>
         </div>
       </div>
@@ -111,29 +105,6 @@
     </div>
   </section>
 
-  <!-- MODAL DE LOGIN / CADASTRO -->
-  <div class="modal-bg" id="modalBg">
-    <div class="modal">
-      <button class="fechar" onclick="fecharModal()">✕</button>
-      <h3 id="modalTitulo">Entrar</h3>
-      <p id="modalSubtitulo">Acesse sua conta para continuar.</p>
-      <form onsubmit="fazerLogin(event)">
-        
-        <!-- Campo Nome (Só aparece no Cadastro) -->
-        <input type="text" id="inpNome" placeholder="Seu nome / Nick" style="display: none;" />
-        
-        <input type="email" id="inpEmail" placeholder="E-mail (Gmail, Hotmail...)" required />
-        <input type="password" id="inpSenha" placeholder="Senha" required />
-        
-        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 10px;">
-          <span id="btnLoginText">Entrar</span>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- (Restante das seções: Máquinas, Biblioteca, Features, Segurança, Footer, etc) -->
-  <!-- Cole aqui as seções da sua página que já estavam funcionando -->
   <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 20px; margin: 2rem auto; backdrop-filter: blur(5px);">
     <h2>Máquinas Disponíveis</h2>
     <p class="sub">Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.</p>
@@ -184,28 +155,42 @@
     <div class="footer-bottom">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
   </footer>
 
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <button class="fechar" onclick="fecharModal()">✕</button>
+      <h3 id="modalTitulo">Entrar</h3>
+      <p id="modalSubtitulo">Acesse sua conta para continuar.</p>
+      <form onsubmit="fazerLogin(event)">
+        <input type="text" id="inpNome" placeholder="Seu nome / Nick" style="display: none;" />
+        <input type="email" id="inpEmail" placeholder="E-mail (Gmail, Hotmail...)" required />
+        <input type="password" id="inpSenha" placeholder="Senha" required />
+        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 10px;">
+          <span id="btnLoginText">Entrar</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
-    let modoModal = 'login'; // 'login' ou 'cadastro'
+    let modoModal = 'login';
 
-    // Sincroniza o saldo e CHECA SE FOI BANIDO
     async function sincronizarSaldo() {
         const id = localStorage.getItem('bigroom_usuario_id');
         if (!id) return;
 
         try {
             const response = await fetch(`${API_URL}/api/saldo/${id}`);
-            
-            if (response.status === 403) { // Banido
+            if (response.status === 403) {
                 localStorage.clear();
                 document.body.innerHTML = ''; 
                 document.getElementById('telaBanido').style.display = 'flex';
                 return;
             }
-
             if (response.ok) {
                 const data = await response.json();
                 localStorage.setItem('bigroom_saldo', data.saldo);
+                localStorage.setItem('bigroom_tempo_restante', data.tempo_restante);
                 atualizarInterface();
             }
         } catch (error) { }
@@ -217,7 +202,6 @@
         setInterval(sincronizarSaldo, 5000);
     }
 
-    // Abre o Modal com o modo correto (login ou cadastro)
     function abrirModal(modo) {
         modoModal = modo;
         document.getElementById('modalBg').classList.add('ativo');
@@ -253,10 +237,7 @@
 
       try {
         let url = modoModal === 'cadastro' ? '/api/cadastro' : '/api/login';
-        
-        let bodyData = modoModal === 'cadastro' 
-            ? { nome, email, senha } 
-            : { email, senha };
+        let bodyData = modoModal === 'cadastro' ? { nome, email, senha } : { email, senha };
 
         let response = await fetch(`${API_URL}${url}`, {
             method: 'POST',
@@ -272,6 +253,7 @@
             localStorage.setItem('bigroom_usuario', data.usuario.nome);
             localStorage.setItem('bigroom_codigo_conta', data.usuario.codigo_conta || '');
             localStorage.setItem('bigroom_saldo', data.usuario.saldo);
+            localStorage.setItem('bigroom_tempo_restante', data.usuario.tempo_restante || 0);
             
             atualizarInterface(); 
             fecharModal();
@@ -293,7 +275,6 @@
 
     function atualizarInterface() {
       const nome = localStorage.getItem('bigroom_usuario');
-      const codigo = localStorage.getItem('bigroom_codigo_conta');
       const saldo = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
       
       if (nome) {
@@ -302,7 +283,6 @@
         document.getElementById('saldoDisplay').style.display = 'block';
         
         document.getElementById('nomeUsuario').innerText = nome;
-        document.getElementById('codigoUsuario').innerText = codigo;
         document.getElementById('saldoDisplay').innerHTML = `Saldo: <strong>R$ ${saldo.toFixed(2)}</strong>`;
       } else {
         document.getElementById('botoesDeslogado').style.display = 'flex';
