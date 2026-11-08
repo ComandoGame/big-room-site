@@ -46,49 +46,29 @@
     <h1>Comprar Créditos de Jogo</h1>
     <p class="sub">Pague apenas pelo tempo que for jogar. Sem mensalidades escondidas.</p>
     <div class="cards">
-      
-      <div class="card">
-        <h3>Teste Grátis</h3>
-        <p class="preco">R$ 0</p>
-        <p class="detalhe">15 min (1x por semana)</p>
-        <ul><li>720p / 30 FPS</li><li>1 vez a cada 7 dias</li><li class="no">Save em nuvem</li></ul>
-        <button class="btn-card escuro" onclick="iniciarTeste()">Iniciar Teste</button>
-      </div>
-
-      <div class="card">
-        <h3>Meia hora</h3>
-        <p class="preco">R$ 3</p>
-        <p class="detalhe">Crédito de 30 min</p>
-        <ul><li>1080p / 60 FPS</li><li>Save local</li><li>Fila normal</li></ul>
-        <button class="btn-card escuro" onclick="iniciarPlano('30min', 3, 30)">Comprar 30 min</button>
-      </div>
-
-      <div class="card destaque">
-        <span class="tag">Mais Popular</span>
-        <h3>Hora Cheia</h3>
-        <p class="preco">R$ 5</p>
-        <p class="detalhe">Crédito de 60 min</p>
-        <ul><li>1080p / 60 FPS</li><li>Save em nuvem</li><li>Fila prioritária</li></ul>
-        <button class="btn-card laranja" onclick="iniciarPlano('1h', 5, 60)">Comprar 1 Hora</button>
-      </div>
-
-      <div class="card">
-        <h3>Combo 5 Horas</h3>
-        <p class="preco">R$ 20</p>
-        <p class="detalhe">5 horas acumuláveis</p>
-        <ul><li>2K / 120+ FPS</li><li>Gráficos customizáveis</li><li>Save em nuvem</li><li>Fila VIP</li></ul>
-        <button class="btn-card escuro" onclick="iniciarPlano('5h', 20, 300)">Comprar 5 Horas</button>
-      </div>
+      <div class="card"><h3>Teste Grátis</h3><p class="preco">R$ 0</p><p class="detalhe">15 min (1x por semana)</p><ul><li>720p / 30 FPS</li><li>1 vez a cada 7 dias</li><li class="no">Save em nuvem</li></ul><button class="btn-card escuro" onclick="iniciarTeste()">Iniciar Teste</button></div>
+      <div class="card"><h3>Meia hora</h3><p class="preco">R$ 3</p><p class="detalhe">Crédito de 30 min</p><ul><li>1080p / 60 FPS</li><li>Save local</li><li>Fila normal</li></ul><button class="btn-card escuro" onclick="iniciarPlano('30min', 3, 30)">Comprar 30 min</button></div>
+      <div class="card destaque"><span class="tag">Mais Popular</span><h3>Hora Cheia</h3><p class="preco">R$ 5</p><p class="detalhe">Crédito de 60 min</p><ul><li>1080p / 60 FPS</li><li>Save em nuvem</li><li>Fila prioritária</li></ul><button class="btn-card laranja" onclick="iniciarPlano('1h', 5, 60)">Comprar 1 Hora</button></div>
+      <div class="card"><h3>Combo 5 Horas</h3><p class="preco">R$ 20</p><p class="detalhe">5 horas acumuláveis</p><ul><li>2K / 120+ FPS</li><li>Gráficos customizáveis</li><li>Save em nuvem</li><li>Fila VIP</li></ul><button class="btn-card escuro" onclick="iniciarPlano('5h', 20, 300)">Comprar 5 Horas</button></div>
     </div>
   </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col"><h4>Sobre o Projeto</h4><p>Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.</p></div>
+      <div class="footer-col"><h4>Equipe e Créditos</h4><p><strong>Idealizador:</strong> Luiz</p><p><strong>Criador:</strong> ComandoGame</p><p><strong>Design:</strong> Mikael</p><p><strong>Colaborador:</strong> Kalleo</p></div>
+      <div class="footer-col"><h4>Diretrizes de Uso</h4><a href="termos.html">Termos de Serviço</a><a href="privacidade.html">Política de Privacidade</a><a href="regras.html">Regras da Comunidade</a><a href="reembolsos.html">Reembolsos e Cancelamentos</a></div>
+      <div class="footer-col"><h4>Suporte</h4><a href="suporte.html">Central de Ajuda / FAQ</a><a href="#">Comunidade no Discord (Em breve)</a><a href="contato.html">Contatar Desenvolvedor</a></div>
+    </div>
+    <div class="footer-bottom">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
+  </footer>
+
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
-
     async function sincronizarUsuario() {
         try {
             const res = await fetch(`${API_URL}/api/me`, { credentials: 'include' });
             if (res.status === 403) return document.body.innerHTML = '<h1 style="color:red;text-align:center;margin-top:20vh;">ACESSO NEGADO</h1>';
-            
             if (res.ok) {
                 const data = await res.json();
                 document.getElementById('btnLogin').style.display = 'none';
@@ -103,37 +83,21 @@
             }
         } catch (e) {}
     }
-
     window.onload = () => { sincronizarUsuario(); setInterval(sincronizarUsuario, 5000); }
-
     async function iniciarTeste() {
       try {
         const response = await fetch(`${API_URL}/api/teste-gratis`, { method: 'POST', credentials: 'include' });
         const data = await response.json();
-        if (response.ok) {
-            alert("Teste Grátis liberado! Iniciando...");
-            window.location.href = 'carregando-jogos.html';
-        } else { alert(data.erro); }
+        if (response.ok) { alert("Teste Grátis liberado! Iniciando..."); window.location.href = 'carregando-jogos.html'; } else { alert(data.erro); }
       } catch (error) { alert("Erro de conexão."); }
     }
-
     async function iniciarPlano(nomePlano, preco, minutos) {
       try {
-        const response = await fetch(`${API_URL}/api/descontar`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ valor: preco, minutos: minutos, plano: nomePlano })
-        });
+        const response = await fetch(`${API_URL}/api/descontar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify({ valor: preco, minutos: minutos, plano: nomePlano }) });
         const data = await response.json();
-
-        if (response.ok) {
-            alert(`Pagamento aprovado! Iniciando PC...`);
-            window.location.href = 'carregando-jogos.html';
-        } else { alert("Erro: " + data.erro); }
+        if (response.ok) { alert(`Pagamento aprovado! Iniciando PC...`); window.location.href = 'carregando-jogos.html'; } else { alert("Erro: " + data.erro); }
       } catch (error) { alert("Erro ao conectar com o servidor."); }
     }
-
     async function sair() { await fetch(`${API_URL}/api/logout`, { method: 'POST', credentials: 'include' }); window.location.reload(); }
   </script>
 </body>
