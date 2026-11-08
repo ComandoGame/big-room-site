@@ -42,23 +42,23 @@
     .seguranca-box h3 { color: var(--vermelho); margin-bottom: 0.5rem; font-size: 1.4rem; }
     .seguranca-box p { color: #ddd; font-size: 1rem; line-height: 1.6; }
 
-    /* NOVO: Tela de Banimento */
+    /* ESTILOS EXTRAS PARA O LOGIN */
     .tela-banido { position: fixed; inset: 0; background: #7f1d1d; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
     .tela-banido h1 { font-size: 4rem; color: #fff; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 5px; }
     .tela-banido p { font-size: 1.2rem; color: #fca5a5; max-width: 600px; line-height: 1.6; }
-    
-    /* Spinner de carregamento no botão de login */
-    .spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn-nav-login { background: transparent; border: 1px solid var(--laranja); color: var(--laranja); padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-right: 10px; font-size: 0.95rem; }
+    .btn-nav-login:hover { background: rgba(249, 115, 22, 0.1); }
+    .btn-nav-cadastro { background: var(--laranja); border: 1px solid var(--laranja); color: #fff; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
+    .btn-nav-cadastro:hover { background: #ea580c; }
   </style>
 </head>
 <body>
 
-  <!-- TELA DE BANIMENTO (Aparece se for banido) -->
+  <!-- TELA DE BANIMENTO -->
   <div class="tela-banido" id="telaBanido">
       <h1>🚫 ACESSO NEGADO</h1>
-      <p>Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room (Tentativa de fraude, injeção de scripts ou burlar pagamentos).</p>
-      <p style="margin-top: 1rem; font-size: 0.9rem;">Seu endereço IP foi registrado. Se você acha que isso é um erro, contate o suporte.</p>
+      <p>Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room.</p>
+      <p style="margin-top: 1rem; font-size: 0.9rem;">Seu endereço IP foi registrado.</p>
   </div>
 
   <div class="bg-animation">
@@ -71,14 +71,17 @@
       <a href="precos.html">Preços</a>
       <a href="como-funciona.html">Como funciona</a>
       
-      <!-- ÁREA DO USUÁRIO (LOGIN E SALDO) -->
+      <!-- ÁREA DO USUÁRIO -->
       <div class="user-area">
         <div class="saldo" id="saldoDisplay" style="display: none;">Saldo: <strong>R$ 0,00</strong></div>
         
-        <!-- Botão que abre o Modal (Visível se não estiver logado) -->
-        <button class="btn-primary" id="btnLogin" onclick="abrirModal()">Entrar / Criar Conta</button>
+        <!-- BOTÕES SEPARADOS (Visíveis se não estiver logado) -->
+        <div id="botoesDeslogado" style="display: flex;">
+          <button class="btn-nav-login" onclick="abrirModal('login')">Entrar</button>
+          <button class="btn-nav-cadastro" onclick="abrirModal('cadastro')">Criar Conta</button>
+        </div>
         
-        <!-- Perfil Logado (Visível se estiver logado) -->
+        <!-- PERFIL LOGADO (Visível se estiver logado) -->
         <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
           <div style="text-align: right; line-height: 1.2;">
             <span style="color:var(--laranja); font-weight:bold; display: block;" id="nomeUsuario"></span>
@@ -108,7 +111,29 @@
     </div>
   </section>
 
-  <!-- (O resto das seções: Máquinas, Imagem, Features, Segurança e Footer continuam iguais, pode manter o seu) -->
+  <!-- MODAL DE LOGIN / CADASTRO -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <button class="fechar" onclick="fecharModal()">✕</button>
+      <h3 id="modalTitulo">Entrar</h3>
+      <p id="modalSubtitulo">Acesse sua conta para continuar.</p>
+      <form onsubmit="fazerLogin(event)">
+        
+        <!-- Campo Nome (Só aparece no Cadastro) -->
+        <input type="text" id="inpNome" placeholder="Seu nome / Nick" style="display: none;" />
+        
+        <input type="email" id="inpEmail" placeholder="E-mail (Gmail, Hotmail...)" required />
+        <input type="password" id="inpSenha" placeholder="Senha" required />
+        
+        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 10px;">
+          <span id="btnLoginText">Entrar</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- (Restante das seções: Máquinas, Biblioteca, Features, Segurança, Footer, etc) -->
+  <!-- Cole aqui as seções da sua página que já estavam funcionando -->
   <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 20px; margin: 2rem auto; backdrop-filter: blur(5px);">
     <h2>Máquinas Disponíveis</h2>
     <p class="sub">Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.</p>
@@ -159,26 +184,9 @@
     <div class="footer-bottom">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
   </footer>
 
-  <!-- MODAL DE LOGIN / CADASTRO -->
-  <div class="modal-bg" id="modalBg">
-    <div class="modal">
-      <button class="fechar" onclick="fecharModal()">✕</button>
-      <h3>Bem-vindo à BIG-Room</h3>
-      <p>Faça login para liberar seus 15 minutos de teste grátis.</p>
-      <form onsubmit="fazerLogin(event)">
-        <input type="text" id="inpNome" placeholder="Seu nome / Nick" required />
-        <input type="email" id="inpEmail" placeholder="E-mail (Gmail, Hotmail...)" required />
-        <input type="password" id="inpSenha" placeholder="Senha" required />
-        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 10px;">
-          <span id="btnLoginText">Entrar / Cadastrar</span>
-          <div class="spinner" id="loginSpinner"></div>
-        </button>
-      </form>
-    </div>
-  </div>
-
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
+    let modoModal = 'login'; // 'login' ou 'cadastro'
 
     // Sincroniza o saldo e CHECA SE FOI BANIDO
     async function sincronizarSaldo() {
@@ -188,11 +196,10 @@
         try {
             const response = await fetch(`${API_URL}/api/saldo/${id}`);
             
-            // SE A CONTA FOI BANIDA (Status 403)
-            if (response.status === 403) {
+            if (response.status === 403) { // Banido
                 localStorage.clear();
-                document.body.innerHTML = ''; // Apaga a tela
-                document.getElementById('telaBanido').style.display = 'flex'; // Mostra tela vermelha
+                document.body.innerHTML = ''; 
+                document.getElementById('telaBanido').style.display = 'flex';
                 return;
             }
 
@@ -207,45 +214,57 @@
     window.onload = () => {
         fetch(`${API_URL}/api/saldo/1`).catch(()=>{}); 
         sincronizarSaldo();
-        setInterval(sincronizarSaldo, 5000); // Checa banimento a cada 5s
+        setInterval(sincronizarSaldo, 5000);
     }
 
-    function abrirModal() { document.getElementById('modalBg').classList.add('ativo'); }
+    // Abre o Modal com o modo correto (login ou cadastro)
+    function abrirModal(modo) {
+        modoModal = modo;
+        document.getElementById('modalBg').classList.add('ativo');
+        
+        if (modo === 'cadastro') {
+            document.getElementById('modalTitulo').innerText = "Criar Conta";
+            document.getElementById('modalSubtitulo').innerText = "Preencha seus dados para começar.";
+            document.getElementById('inpNome').style.display = 'block';
+            document.getElementById('inpNome').required = true;
+            document.getElementById('btnLoginText').innerText = "Cadastrar";
+        } else {
+            document.getElementById('modalTitulo').innerText = "Entrar";
+            document.getElementById('modalSubtitulo').innerText = "Acesse sua conta para continuar.";
+            document.getElementById('inpNome').style.display = 'none';
+            document.getElementById('inpNome').required = false;
+            document.getElementById('btnLoginText').innerText = "Entrar";
+        }
+    }
+
     function fecharModal() { document.getElementById('modalBg').classList.remove('ativo'); }
     
     async function fazerLogin(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitLogin');
       const btnText = document.getElementById('btnLoginText');
-      const spinner = document.getElementById('loginSpinner');
       
       btn.disabled = true;
       btnText.innerText = "Conectando...";
-      spinner.style.display = 'block';
 
       const nome = document.getElementById('inpNome').value;
       const email = document.getElementById('inpEmail').value;
       const senha = document.getElementById('inpSenha').value;
 
       try {
-        // Tenta cadastrar
-        let response = await fetch(`${API_URL}/api/cadastro`, {
+        let url = modoModal === 'cadastro' ? '/api/cadastro' : '/api/login';
+        
+        let bodyData = modoModal === 'cadastro' 
+            ? { nome, email, senha } 
+            : { email, senha };
+
+        let response = await fetch(`${API_URL}${url}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nome, email, senha })
+            body: JSON.stringify(bodyData)
         });
 
         let data = await response.json();
-
-        // Se já existe, tenta logar
-        if (!response.ok && data.erro === "Este e-mail já está cadastrado.") {
-            response = await fetch(`${API_URL}/api/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, senha })
-            });
-            data = await response.json();
-        }
 
         if (response.ok) {
             alert(data.mensagem + " Bem-vindo(a)!");
@@ -263,8 +282,7 @@
         alert("O servidor demorou muito para responder. Recarregue a página.");
       } finally {
         btn.disabled = false;
-        btnText.innerText = "Entrar / Cadastrar";
-        spinner.style.display = 'none';
+        btnText.innerText = modoModal === 'cadastro' ? "Cadastrar" : "Entrar";
       }
     }
 
@@ -279,7 +297,7 @@
       const saldo = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
       
       if (nome) {
-        document.getElementById('btnLogin').style.display = 'none';
+        document.getElementById('botoesDeslogado').style.display = 'none';
         document.getElementById('perfilLogado').style.display = 'flex';
         document.getElementById('saldoDisplay').style.display = 'block';
         
@@ -287,7 +305,7 @@
         document.getElementById('codigoUsuario').innerText = codigo;
         document.getElementById('saldoDisplay').innerHTML = `Saldo: <strong>R$ ${saldo.toFixed(2)}</strong>`;
       } else {
-        document.getElementById('btnLogin').style.display = 'block';
+        document.getElementById('botoesDeslogado').style.display = 'flex';
         document.getElementById('perfilLogado').style.display = 'none';
         document.getElementById('saldoDisplay').style.display = 'none';
       }
