@@ -6,6 +6,7 @@
   <title>BIG-Room — Sua Lan House na Nuvem</title>
   <link rel="stylesheet" href="style.css" />
   <style>
+    /* (Mantenha os estilos que já estavam aqui) */
     .hero { text-align: center; padding: 5rem 2rem 3rem; }
     .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero h1 span { color: var(--laranja); }
@@ -140,12 +141,37 @@
         <input type="text" id="inpNome" placeholder="Seu nome / Nick" required />
         <input type="email" id="inpEmail" placeholder="Email" required />
         <input type="password" id="inpSenha" placeholder="Senha" required />
-        <button type="submit" class="btn-primary" style="width:100%; margin-top: 1rem;">Entrar / Cadastrar</button>
+        <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem;">Entrar / Cadastrar</button>
       </form>
     </div>
   </div>
 
   <script>
+    const API_URL = 'https://big-room-servidor.onrender.com';
+
+    // Sincroniza o saldo com o servidor (não confia no localStorage)
+    async function sincronizarSaldo() {
+        const id = localStorage.getItem('bigroom_usuario_id');
+        if (!id) return;
+
+        try {
+            const response = await fetch(`${API_URL}/api/saldo/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('bigroom_saldo', data.saldo); // Salva apenas para visualização rápida
+                atualizarInterface();
+            }
+        } catch (error) {
+            console.log("Aguardando servidor acordar...");
+        }
+    }
+
+    // Acorda o servidor ao carregar a página
+    window.onload = () => {
+        fetch(`${API_URL}/api/saldo/1`).catch(()=>{}); 
+        sincronizarSaldo();
+    }
+
     function abrirModal() { document.getElementById('modalBg').classList.add('ativo'); }
     function fecharModal() { document.getElementById('modalBg').classList.remove('ativo'); }
     
@@ -156,8 +182,7 @@
       const senha = document.getElementById('inpSenha').value;
 
       try {
-        // CONECTANDO AO SERVIDOR NA NUVEM
-        let response = await fetch('https://big-room-servidor.onrender.com/api/cadastro', {
+        let response = await fetch(`${API_URL}/api/cadastro`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nome, email, senha })
@@ -165,9 +190,8 @@
 
         let data = await response.json();
 
-        // Se o e-mail já existe, tenta logar
         if (!response.ok && data.erro === "E-mail já cadastrado.") {
-            response = await fetch('https://big-room-servidor.onrender.com/api/login', {
+            response = await fetch(`${API_URL}/api/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, senha })
@@ -187,7 +211,7 @@
             alert("Erro: " + data.erro);
         }
       } catch (error) {
-        alert("Erro ao conectar com o servidor. O Render pode estar acordando. Aguarde 30 segundos e tente novamente.");
+        alert("O servidor demorou muito para responder. Recarregue a página.");
       }
     }
 
@@ -215,7 +239,8 @@
       }
     }
 
-    atualizarInterface();
+    // Fica puxando o saldo do servidor a cada 15 segundos para ver se o Admin mudou
+    setInterval(sincronizarSaldo, 15000);
   </script>
 </body>
 </html>
