@@ -7,7 +7,7 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
     :root { --laranja: #f97316; --bg: #121212; --bg-card: #1e1e1e; --borda: #333333; --texto: #f3f4f6; --texto-fraco: #9ca3af; --verde: #10b981; --vermelho: #ef4444; }
-    body { background: var(--bg); color: var(--texto); }
+    body { background: var(--bg); color: var(--texto); user-select: none; -webkit-user-drag: none; }
     
     .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(18,18,18,.95); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--borda); }
     .logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--texto); }
@@ -89,6 +89,16 @@
   </div>
 
   <script>
+    // --- PROTEÇÃO CONTRA CURIOSOS ---
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.onkeydown = function(e) {
+        if(e.keyCode == 123) return false; 
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; 
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; 
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; 
+        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; 
+    };
+
     const API_URL = 'https://big-room-servidor.onrender.com';
 
     window.onload = () => {
