@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Preparando PC — BIG-Room</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
@@ -32,7 +33,7 @@
     }
     .tela-jogo h2 { color: #10b981; font-size: 3rem; }
     
-    /* Animação de carregamento (Spinner) */
+    /* Animação de carregamento */
     .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: #f97316; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 1rem auto; display: none; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
@@ -55,10 +56,11 @@
     <button style="margin-top: 1rem; background: none; border: none; color: #888; cursor: pointer;" onclick="window.location.href='index.html'">Sair de vez (Perder tempo)</button>
   </div>
 
+  <!-- TELA DE SUCESSO (Sem IP e Sem Porta) -->
   <div class="tela-jogo" id="telaJogo">
     <h2>✅ Conectado!</h2>
-    <p style="margin-top: 1rem; color: #ccc;">Máquina alocada com sucesso. Iniciando o jogo...</p>
-    <p style="margin-top: 0.5rem; color: #f97316;" id="infoConexao"></p>
+    <p style="margin-top: 1rem; color: #ccc;">Sua máquina foi alocada com sucesso.</p>
+    <p style="margin-top: 0.5rem; color: #f97316;">Iniciando o jogo...</p>
   </div>
 
   <script>
@@ -81,52 +83,33 @@
       document.getElementById('btnPausar').style.display = 'block';
 
       try {
-        // CONECTANDO AO SERVIDOR NA NUVEM
         socket = io('https://big-room-servidor.onrender.com', {
-            transports: ['websocket'] // Força WebSocket (mais rápido na nuvem)
+            transports: ['websocket']
         });
         
         socket.on('connect', () => {
-          console.log("Conectado ao servidor na nuvem.");
           socket.emit('iniciar_maquina');
         });
 
         socket.on('maquina_pronta', (dados) => {
           document.getElementById('telaCarregando').style.display = 'none';
           document.getElementById('telaJogo').style.display = 'flex';
-          document.getElementById('infoConexao').innerText = `IP: ${dados.ip} | Porta: ${dados.porta}`;
+          
+          // NÃO MOSTRAMOS MAIS O IP E A PORTA AQUI
           
           setTimeout(() => {
             window.location.href = 'tela-jogo.html';
-          }, 2000);
+          }, 2500); // 2.5 segundos para o jogador ler "Conectado"
         });
 
         socket.on('connect_error', (err) => {
-          console.error("Erro de conexão:", err);
-          // Se o servidor na nuvem estiver dormindo, mostra a simulação
-          document.getElementById('telaCarregando').style.display = 'none';
-          document.getElementById('telaJogo').style.display = 'flex';
-          document.getElementById('infoConexao').innerText = "Simulação (Servidor acordando...)";
-          setTimeout(() => {
-            window.location.href = 'tela-jogo.html';
-          }, 3000);
+          // Se o servidor estiver dormindo, avisa e tenta de novo silenciosamente
+          console.log("Tentando conectar ao servidor...");
         });
 
       } catch (e) {
         console.error("Erro no Socket:", e);
       }
-
-      // Rede de segurança extra (6 segundos)
-      setTimeout(() => {
-        if(document.getElementById('telaJogo').style.display !== 'flex'){
-          document.getElementById('telaCarregando').style.display = 'none';
-          document.getElementById('telaJogo').style.display = 'flex';
-          document.getElementById('infoConexao').innerText = "Conectando (Modo Offline)...";
-          setTimeout(() => {
-            window.location.href = 'tela-jogo.html';
-          }, 2000);
-        }
-      }, 6000);
     }
 
     function pausarSessao() {
