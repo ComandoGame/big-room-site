@@ -47,9 +47,24 @@
     <h1>Escolha seu Plano</h1>
     <p class="sub">Pague apenas pelo tempo que for jogar.</p>
     <div class="cards">
-      <div class="card"><h3>Teste Grátis</h3><p class="preco">R$ 0</p><p class="detalhe">15 min (1x por semana)</p><ul><li>720p / 30 FPS</li><li>Apenas 1 vez por semana</li><li class="no">Save em nuvem</li></ul><button class="btn-card escuro" onclick="iniciarTeste()">Iniciar Teste</button></div>
+      
+      <!-- TESTE GRÁTIS COM O AVISO CORRETO -->
+      <div class="card">
+        <h3>Teste Grátis</h3>
+        <p class="preco">R$ 0</p>
+        <p class="detalhe">15 min por semana</p>
+        <ul>
+          <li>720p / 30 FPS</li>
+          <li>1 vez a cada 7 dias</li>
+          <li class="no">Save em nuvem</li>
+        </ul>
+        <button class="btn-card escuro" onclick="iniciarTeste()">Iniciar Teste</button>
+      </div>
+
       <div class="card"><h3>Meia hora</h3><p class="preco">R$ 3</p><p class="detalhe">Sessão de 30 min</p><ul><li>1080p / 60 FPS</li><li>Save local</li><li>Fila normal</li></ul><button class="btn-card escuro" onclick="iniciarPlano('30min', 3, 30)">Iniciar Plano</button></div>
+      
       <div class="card destaque"><span class="tag">Mais Popular</span><h3>Hora Cheia</h3><p class="preco">R$ 5</p><p class="detalhe">Sessão de 60 min</p><ul><li>1080p / 60 FPS</li><li>Save em nuvem</li><li>Fila prioritária</li></ul><button class="btn-card laranja" onclick="iniciarPlano('1h', 5, 60)">Iniciar Plano</button></div>
+      
       <div class="card"><h3>Combo Premium</h3><p class="preco">R$ 20</p><p class="detalhe">5 horas acumuláveis</p><ul><li>2K / 120+ FPS</li><li>Gráficos customizáveis</li><li>Save em nuvem</li><li>Fila VIP</li></ul><button class="btn-card escuro" onclick="iniciarPlano('5h', 20, 300)">Iniciar Plano</button></div>
     </div>
   </div>
@@ -75,7 +90,7 @@
 
     async function iniciarTeste() {
       const id = localStorage.getItem('bigroom_usuario_id');
-      if (!id) { alert("Faça login primeiro!"); return; }
+      if (!id) { alert("Faça login primeiro!"); window.location.href = 'index.html'; return; }
       
       try {
         const response = await fetch(`${API_URL}/api/teste-gratis`, {
