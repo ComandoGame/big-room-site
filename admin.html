@@ -49,9 +49,9 @@
     .btn-banir { background: rgba(239, 68, 68, 0.2); color: var(--vermelho); border: 1px solid var(--vermelho); }
     .btn-desbanir { background: rgba(16, 185, 129, 0.2); color: var(--verde); border: 1px solid var(--verde); }
 
+    /* ESTILOS DAS MENSAGENS (TICKETS) */
     .mensagens-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
     .msg-card { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; transition: 0.3s; }
-    .msg-card.respondida { opacity: 0.7; border-color: rgba(16, 185, 129, 0.3); }
     
     .msg-header { display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 0.5rem; }
     .msg-nome { font-weight: bold; color: #fff; }
@@ -64,7 +64,6 @@
     
     .btn-marcar { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid #6b7280; padding: 0.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem; width: 100%; transition: 0.2s; }
     .btn-marcar:hover { background: var(--verde); color: #fff; border-color: var(--verde); }
-    .tag-respondida { color: var(--verde); font-weight: bold; font-size: 0.8rem; margin-top: 1rem; text-align: center; }
   </style>
 </head>
 <body>
@@ -110,7 +109,6 @@
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
 
-    // AQUI ESTÁ A MUDANÇA: Usar localStorage em vez de sessionStorage
     window.onload = () => { if (localStorage.getItem('adminToken')) carregarPainel(); }
 
     function mudarAba(aba) {
@@ -136,9 +134,7 @@
         });
         const data = await response.json();
         if (response.ok) {
-          // AQUI ESTÁ A MUDANÇA: Salva no localStorage
           localStorage.setItem('adminToken', data.token);
-          
           document.getElementById('telaLogin').style.display = 'none';
           document.getElementById('painelDados').style.display = 'block';
           document.getElementById('btnSair').style.display = 'block';
@@ -148,16 +144,10 @@
     }
 
     async function carregarPainel() {
-        const token = localStorage.getItem('adminToken'); // MUDANÇA AQUI
+        const token = localStorage.getItem('adminToken');
         try {
             const response = await fetch(`${API_URL}/api/admin/usuarios`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
-            
-            // Se o token expirou (afinal, dura apenas 2h), precisamos forçar o logout
-            if (response.status === 401 || response.status === 403) {
-                sairAdmin();
-                return;
-            }
-
+            if (response.status === 401 || response.status === 403) { sairAdmin(); return; }
             if (response.ok) { const data = await response.json(); renderizarCards(data.usuarios); }
         } catch (error) { console.log("Erro ao carregar dados."); }
     }
@@ -207,7 +197,7 @@
     }
 
     async function carregarMensagens() {
-        const token = localStorage.getItem('adminToken'); // MUDANÇA AQUI
+        const token = localStorage.getItem('adminToken');
         try {
             const response = await fetch(`${API_URL}/api/admin/mensagens`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` } });
             if (response.ok) { 
@@ -221,88 +211,87 @@
         const grid = document.getElementById('msgGrid');
         grid.innerHTML = '';
         
-        if (mensagens.length === 0) {
-            grid.innerHTML = '<p style="color:#888;">Nenhuma mensagem recebida ainda.</p>';
+        // FILTRA: Apenas mensagens que NÃO foram respondidas aparecem na lista
+        const mensagensPendentes = mensagens.filter(msg => msg.respondida !== 1);
+        
+        if (mensagensPendentes.length === 0) {
+            grid.innerHTML = '<p style="color:#888;">Nenhuma mensagem pendente. Tudo em ordem!</p>';
             return;
         }
 
-        mensagens.forEach(msg => {
+        mensagensPendentes.forEach(msg => {
             const dataFormatada = new Date(msg.data_envio).toLocaleString('pt-BR');
-            const isRespondida = msg.respondida === 1;
             
             const assunto = encodeURIComponent(`Resposta BIG-Room - Suporte`);
             const corpo = encodeURIComponent(`Olá ${msg.nome},\n\nEstamos respondendo à sua mensagem:\n"${msg.mensagem}"\n\n---\nAtenciosamente,\nEquipe BIG-Room.`);
             const linkGmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${msg.email}&su=${assunto}&body=${corpo}`;
 
-            const footerAcao = isRespondida 
-                ? `<div class="tag-respondida">✅ Respondida</div>`
-                : `<button class="btn-marcar" onclick="marcarRespondida(${msg.id})">Marcar como Respondido</button>`;
-
             const card = document.createElement('div');
-            card.className = `msg-card ${isRespondida ? 'respondida' : ''}`;
+            card.className = `msg-card`;
             card.innerHTML = `
                 <div class="msg-header">
-                    <span class="msg-nome">${msg.nome} ${isRespondida ? '✅' : ''}</span>
+                    <span class="msg-nome">${msg.nome}</span>
                     <span class="msg-data">${dataFormatada}</span>
                 </div>
                 <div class="msg-email">${msg.email}</div>
                 <div class="msg-texto">${msg.mensagem}</div>
-                ${!isRespondida ? `<a href="${linkGmail}" target="_blank" class="btn-gmail">✉️ Responder no Gmail</a>` : ''}
-                ${footerAcao}
+                <a href="${linkGmail}" target="_blank" class="btn-gmail">✉️ Responder no Gmail</a>
+                <button class="btn-marcar" onclick="marcarRespondida(${msg.id})">✅ Concluir e Ocultar</button>
             `;
             grid.appendChild(card);
         });
     }
 
     async function marcarRespondida(idMensagem) {
-        const token = localStorage.getItem('adminToken'); // MUDANÇA AQUI
+        const token = localStorage.getItem('adminToken');
         try {
-            await fetch(`${API_URL}/api/admin/marcar-respondida`, {
+            const res = await fetch(`${API_URL}/api/admin/marcar-respondida`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                 body: JSON.stringify({ idMensagem })
             });
-            carregarMensagens(); 
-        } catch (e) { alert("Erro."); }
+            
+            if (res.ok) {
+                // A mensagem some da tela imediatamente
+                carregarMensagens(); 
+            } else {
+                alert("Erro ao marcar. O servidor está atualizado?");
+            }
+        } catch (e) { alert("Erro de conexão."); }
     }
 
     async function alterarSaldo(idUsuario) {
       let valor = parseFloat(prompt("Valor para adicionar (ex: 50) ou remover (ex: -10):"));
       if (isNaN(valor)) return;
-      const token = localStorage.getItem('adminToken'); // MUDANÇA AQUI
+      const token = localStorage.getItem('adminToken');
       await fetch(`${API_URL}/api/admin/saldo`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idUsuario, valor }) });
       carregarPainel();
     }
-    
     async function adicionarTempo(idUsuario) {
       let minutos = parseInt(prompt("Minutos para adicionar:"));
       let plano = prompt("Nome do plano:") || "Manual";
       if (isNaN(minutos)) return;
-      const token = localStorage.getItem('adminToken'); // MUDANÇA AQUI
+      const token = localStorage.getItem('adminToken');
       await fetch(`${API_URL}/api/admin/tempo`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idUsuario, minutos, plano }) });
       carregarPainel();
     }
-    
     async function zerarTempo(idUsuario) {
       if (!confirm("Zerar tempo?")) return;
-      const token = localStorage.getItem('adminToken'); // MUDANÇA AQUI
+      const token = localStorage.getItem('adminToken');
       await fetch(`${API_URL}/api/admin/tempo`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idUsuario, minutos: 0, plano: 'Nenhum' }) });
       carregarPainel();
     }
-    
     async function alterarBanimento(idUsuario, banir) {
       if (!confirm(`Tem certeza?`)) return;
-      const token = localStorage.getItem('adminToken'); // MUDANÇA AQUI
+      const token = localStorage.getItem('adminToken');
       await fetch(`${API_URL}/api/admin/banir`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idUsuario, banir }) });
       carregarPainel();
     }
-    
     function sairAdmin() {
-      localStorage.removeItem('adminToken'); // MUDANÇA AQUI
+      localStorage.removeItem('adminToken');
       document.getElementById('telaLogin').style.display = 'block';
       document.getElementById('painelDados').style.display = 'none';
       document.getElementById('btnSair').style.display = 'none';
-      document.getElementById('senhaAdmin').value = '';
     }
   </script>
 </body>
