@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel do Host — BIG-Room</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+    :root { --laranja: #f97316; --bg: #121212; --bg-card: #1e1e1e; --borda: #333333; --texto: #f3f4f6; --texto-fraco: #9ca3af; --verde: #10b981; --vermelho: #ef4444; }
+    body { background: var(--bg); color: var(--texto); }
+    
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(18,18,18,.95); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--borda); }
+    .logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--texto); }
+    .logo span { color: var(--laranja); }
+    .navbar nav a { color: #ccc; text-decoration: none; font-size: .95rem; }
+    
+    .container { max-width: 1000px; margin: 4rem auto; padding: 0 2rem; }
+    h1 { margin-bottom: 2rem; color: var(--laranja); font-size: 2.2rem; }
+    
+    .login-box { background: var(--bg-card); border: 1px solid var(--borda); padding: 3rem; border-radius: 12px; max-width: 400px; margin: 0 auto; text-align: center; }
+    .login-box h2 { margin-bottom: 1rem; }
+    .login-box p { color: var(--texto-fraco); margin-bottom: 2rem; font-size: 0.9rem; }
+    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; border: 1px solid var(--borda); background: #0a0a0a; color: #fff; font-size: 1rem; }
+    .login-box button { width: 100%; padding: 1rem; border-radius: 8px; background: var(--laranja); color: #fff; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+    .login-box button:hover { background: #ea580c; }
+    
+    .painel-dados { display: none; }
+    .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .metrica-card { background: var(--bg-card); border: 1px solid var(--borda); padding: 1.5rem; border-radius: 12px; text-align: center; }
+    .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .metrica-card strong { font-size: 2rem; color: var(--verde); }
+    
+    table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--borda); font-size: 0.95rem; }
+    th { background: #161616; color: var(--laranja); font-weight: bold; }
+    tr:hover { background: rgba(255, 255, 255, 0.02); }
+    
+    .btn-sair { background: transparent; color: var(--vermelho); border: 1px solid var(--vermelho); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 2rem; transition: 0.2s; }
+    .btn-sair:hover { background: var(--vermelho); color: #fff; }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a href="index.html" class="logo">🎮 BIG<span>Room</span> Admin</a>
+    <nav><a href="index.html">← Voltar ao Site</a></nav>
+  </header>
+
+  <div class="container">
+    <h1>🖥️ Painel do Host</h1>
+
+    <div class="login-box" id="telaLogin">
+      <h2>Acesso Restrito</h2>
+      <p>Área exclusiva para o desenvolvedor.</p>
+      <input type="password" id="senhaAdmin" placeholder="Digite a chave de acesso" />
+      <button onclick="fazerLoginAdmin()">Entrar no Painel</button>
+    </div>
+
+    <div class="painel-dados" id="painelDados">
+      <div class="metricas">
+        <div class="metrica-card">
+          <span>Total de Usuários</span>
+          <strong id="totalUsuarios">0</strong>
+        </div>
+        <div class="metrica-card">
+          <span>Saldo em Contas (R$)</span>
+          <strong id="saldoTotal">0,00</strong>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Saldo (R$)</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaUsuarios"></tbody>
+      </table>
+
+      <button class="btn-sair" onclick="sairAdmin()">Encerrar Sessão de Admin</button>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://big-room-servidor.onrender.com';
+
+    async function fazerLoginAdmin() {
+      const senha = document.getElementById('senhaAdmin').value;
+      
+      try {
+        const response = await fetch(`${API_URL}/api/admin/usuarios`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ senhaAdmin: senha })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById('telaLogin').style.display = 'none';
+          document.getElementById('painelDados').style.display = 'block';
+          renderizarTabela(data.usuarios);
+        } else {
+          alert("❌ " + data.erro);
+        }
+      } catch (error) {
+        alert("Erro ao conectar com o servidor. Ele pode estar acordando. Aguarde 30s e tente de novo.");
+      }
+    }
+
+    function renderizarTabela(usuarios) {
+      const tabela = document.getElementById('tabelaUsuarios');
+      tabela.innerHTML = '';
+      let saldoTotal = 0;
+
+      usuarios.forEach(user => {
+        saldoTotal += user.saldo;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>#${user.id}</td>
+          <td><strong>${user.nome}</strong></td>
+          <td>${user.email}</td>
+          <td style="color: var(--verde); font-weight: bold;">R$ ${user.saldo.toFixed(2)}</td>
+        `;
+        tabela.appendChild(tr);
+      });
+
+      document.getElementById('totalUsuarios').innerText = usuarios.length;
+      document.getElementById('saldoTotal').innerText = saldoTotal.toFixed(2).replace('.', ',');
+    }
+
+    function sairAdmin() {
+      document.getElementById('telaLogin').style.display = 'block';
+      document.getElementById('painelDados').style.display = 'none';
+      document.getElementById('senhaAdmin').value = '';
+    }
+  </script>
+</body>
+</html>
