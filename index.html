@@ -16,58 +16,11 @@
         const fp = await fpPromise;
         const result = await fp.get();
         return result.visitor_id;
-      } catch (error) {
-        return "Desconhecido";
-      }
+      } catch (error) { return "Desconhecido"; }
     }
   </script>
 
-  <!-- SCRIPT DO TRADUTOR DO GOOGLE (INVISÍVEL) -->
-  <div id="google_translate_element" style="display:none;"></div>
-  <script type="text/javascript">
-    function googleTranslateElementInit() {
-      new google.translate.TranslateElement({
-        pageLanguage: 'pt',
-        includedLanguages: 'en',
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
-
-    function mudarIdioma(idioma) {
-      const select = document.querySelector('.goog-te-combo');
-      if (select) {
-        select.value = idioma;
-        select.dispatchEvent(new Event('change'));
-        localStorage.setItem('bigroom_lingua', idioma);
-        
-        // Atualiza o visual dos botões
-        document.getElementById('btn-pt').classList.remove('ativo');
-        document.getElementById('btn-en').classList.remove('ativo');
-        document.getElementById('btn-' + idioma).classList.add('ativo');
-      }
-    }
-
-    // Verifica se o usuário já tinha escolhido inglês antes de recarregar
-    window.onload = function() {
-      const linguaSalva = localStorage.getItem('bigroom_lingua');
-      if (linguaSalva && linguaSalva === 'en') {
-        setTimeout(() => mudarIdioma('en'), 1000);
-      }
-    }
-  </script>
-  <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-  
   <style>
-    /* ESCONDE A BARRA FEIA DO GOOGLE TRADUTOR */
-    .goog-te-banner-frame.skiptranslate { display: none !important; }
-    .goog-te-banner-frame { display: none !important; }
-    #goog-gt-tt { display: none !important; }
-    body { top: 0px !important; }
-    #google_translate_element { display: none !important; }
-    .goog-tooltip { display: none !important; }
-    .goog-tooltip:hover { display: none !important; }
-    .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
-    
     .hero { text-align: center; padding: 5rem 2rem 3rem; }
     .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero h1 span { color: var(--laranja); }
@@ -111,7 +64,7 @@
     .btn-nav-cadastro:hover { background: #ea580c; }
     body { user-select: none; -webkit-user-drag: none; }
     
-    /* ESTILOS DO TRADUTOR */
+    /* ESTILOS DO TRADUTOR CUSTOMIZADO */
     .tradutor { display: flex; align-items: center; gap: 5px; margin-right: 15px; border: 1px solid var(--borda); border-radius: 8px; padding: 2px; background: rgba(0,0,0,0.3); }
     .btn-idioma { background: transparent; border: none; color: #fff; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 1.1rem; transition: 0.2s; opacity: 0.6; }
     .btn-idioma:hover { opacity: 1; background: rgba(255,255,255,0.1); }
@@ -121,9 +74,9 @@
 <body>
 
   <div class="tela-banido" id="telaBanido">
-      <h1>🚫 ACESSO NEGADO</h1>
-      <p>Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room.</p>
-      <p style="margin-top: 1rem; font-size: 0.9rem;">Seu endereço IP e Dispositivo foram registrados.</p>
+      <h1 data-i18n="ban_title">🚫 ACESSO NEGADO</h1>
+      <p data-i18n="ban_desc">Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room.</p>
+      <p style="margin-top: 1rem; font-size: 0.9rem;" data-i18n="ban_ip">Seu endereço IP e Dispositivo foram registrados.</p>
   </div>
 
   <div class="bg-animation">
@@ -133,74 +86,73 @@
   <header class="navbar">
     <a href="index.html" class="logo">🎮 BIG<span>Room</span></a>
     <nav>
-      <a href="precos.html">Créditos</a>
-      <a href="como-funciona.html">Como funciona</a>
+      <a href="precos.html" data-i18n="nav_credits">Créditos</a>
+      <a href="como-funciona.html" data-i18n="nav_how">Como funciona</a>
       
       <div class="user-area">
-        <!-- BOTÕES DE TRADUÇÃO -->
         <div class="tradutor">
-            <button class="btn-idioma ativo" id="btn-pt" onclick="mudarIdioma('pt')" title="Português">🇧🇷</button>
-            <button class="btn-idioma" id="btn-en" onclick="mudarIdioma('en')" title="English">🇺🇸</button>
+            <button class="btn-idioma ativo" id="btn-pt" onclick="traduzir('pt')" title="Português">🇧🇷</button>
+            <button class="btn-idioma" id="btn-en" onclick="traduzir('en')" title="English">🇺🇸</button>
         </div>
 
-        <div class="saldo" id="saldoDisplay" style="display: none;">Saldo: <strong>R$ 0,00</strong></div>
+        <div class="saldo" id="saldoDisplay" style="display: none;"><span data-i18n="nav_balance">Saldo</span>: <strong>R$ 0,00</strong></div>
         <div id="botoesDeslogado" style="display: flex;">
-          <button class="btn-nav-login" onclick="abrirModal('login')">Entrar</button>
-          <button class="btn-nav-cadastro" onclick="abrirModal('cadastro')">Criar Conta</button>
+          <button class="btn-nav-login" onclick="abrirModal('login')" data-i18n="nav_login">Entrar</button>
+          <button class="btn-nav-cadastro" onclick="abrirModal('cadastro')" data-i18n="nav_register">Criar Conta</button>
         </div>
         <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
           <span style="color:var(--laranja); font-weight:bold;" id="nomeUsuario"></span>
-          <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sair()">Sair</button>
+          <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sair()" data-i18n="nav_logout">Sair</button>
         </div>
       </div>
     </nav>
   </header>
 
   <section class="hero">
-    <h1>Sua <span>Lan House</span> no Navegador</h1>
-    <p>Acesso total a um PC Gamer pela internet. Jogue, instale mods, baixe jogos e use a internet com total liberdade.</p>
+    <h1><span data-i18n="hero_title_1">Sua</span> <span>Lan House</span> <span data-i18n="hero_title_2">no Navegador</span></h1>
+    <p data-i18n="hero_sub">Acesso total a um PC Gamer pela internet. Jogue, instale mods, baixe jogos e use a internet com total liberdade.</p>
     <div class="video-showcase">
       <video src="games_showcase_final.mp4" autoplay loop muted playsinline></video>
     </div>
     <div class="status-card">
-      <div class="status-row"><span class="dot"></span><strong>Servidores ONLINE</strong></div>
+      <div class="status-row"><span class="dot"></span><strong data-i18n="status_online">Servidores ONLINE</strong></div>
       <div class="status-grid">
-        <div><span>Status do PC</span><strong>Pronto</strong></div>
-        <div><span>Ping estimado</span><strong>~35 ms</strong></div>
-        <div><span>Máquinas Top</span><strong>Disponíveis</strong></div>
-        <div><span>Anti-Cheat</span><strong>Ativo</strong></div>
+        <div><span data-i18n="status_pc">Status do PC</span><strong data-i18n="status_ready">Pronto</strong></div>
+        <div><span data-i18n="status_ping">Ping estimado</span><strong>~35 ms</strong></div>
+        <div><span data-i18n="status_top">Máquinas Top</span><strong data-i18n="status_avail">Disponíveis</strong></div>
+        <div><span data-i18n="status_anti">Anti-Cheat</span><strong data-i18n="status_active">Ativo</strong></div>
       </div>
-      <button class="btn-primary" onclick="window.location.href='precos.html'">Comprar Créditos</button>
+      <button class="btn-primary" onclick="window.location.href='precos.html'" data-i18n="hero_btn">Comprar Créditos</button>
     </div>
   </section>
 
   <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 20px; margin: 2rem auto; backdrop-filter: blur(5px);">
-    <h2>Máquinas Disponíveis</h2>
-    <p class="sub">Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.</p>
+    <h2 data-i18n="pcs_title">Máquinas Disponíveis</h2>
+    <p class="sub" data-i18n="pcs_sub">Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.</p>
     <div class="pcs-grid">
-      <div class="pc-card"><h3>💻 Plano Básico</h3><p><strong>Ideal para:</strong> Jogos leves, eSports e Minecraft.<br><br>Roda muitos jogos com gráficos integrados de ótima qualidade.</p></div>
-      <div class="pc-card"><h3>🎮 Plano Médio</h3><p><strong>Ideal para:</strong> Jogos AAA e Multiplayer.<br><br>Excelente processamento. Recomendado para jogar em 1080p com boa fluidez.</p></div>
-      <div class="pc-card" style="border-color: var(--laranja);"><h3>🚀 Plano Top (VIP)</h3><p><strong>Ideal para:</strong> Gráficos no máximo e 2K.<br><br>Nossa máquina mais forte, com tela 2K e processador de última geração para rodar tudo no Ultra.</p></div>
+      <div class="pc-card"><h3 data-i18n="pcs_basic">💻 Plano Básico</h3><p data-i18n="pcs_basic_desc">Ideal para: Jogos leves, eSports e Minecraft. Roda muitos jogos com gráficos integrados de ótima qualidade.</p></div>
+      <div class="pc-card"><h3 data-i18n="pcs_mid">🎮 Plano Médio</h3><p data-i18n="pcs_mid_desc">Ideal para: Jogos AAA e Multiplayer. Excelente processamento. Recomendado para jogar em 1080p com boa fluidez.</p></div>
+      <div class="pc-card" style="border-color: var(--laranja);"><h3 data-i18n="pcs_vip">🚀 Plano Top (VIP)</h3><p data-i18n="pcs_vip_desc">Ideal para: Gráficos no máximo e 2K. Nossa máquina mais forte, com tela 2K e processador de última geração para rodar tudo no Ultra.</p></div>
     </div>
   </section>
 
   <section class="section">
-    <h2>Uma Biblioteca Infinita</h2>
-    <p class="sub">Passe o mouse sobre a imagem para remover o filtro de privacidade. Seus dados nunca são expostos.</p>
+    <h2 data-i18n="lib_title">Uma Biblioteca Infinita</h2>
+    <p class="sub" data-i18n="lib_sub">Passe o mouse sobre a imagem para remover o filtro de privacidade. Seus dados nunca são expostos.</p>
     <div class="image-container">
       <img src="steam-jogos.jpg" alt="Biblioteca de Jogos">
-      <div class="censor-blur"><div class="censor-text">🔒 Dados do Usuário Protegidos (Passe o mouse)</div></div>
+      <div class="censor-blur"><div class="censor-text" data-i18n="lib_censor">🔒 Dados do Usuário Protegidos (Passe o mouse)</div></div>
     </div>
   </section>
 
   <section class="section">
-    <h2>Um PC de verdade, sem amarras</h2>
-    <p class="sub">Diferente de consoles, aqui você tem a liberdade de um computador real.</p>
+    <h2 data-i18n="feat_title">Um PC de verdade, sem amarras</h2>
+    <p class="sub" data-i18n="feat_sub">Diferente de consoles, aqui você tem a liberdade de um computador real.</p>
     <div class="features-list">
-      <div class="feature-item"><h4>🛒 Steam, Epic e Steam Tools</h4><p>Baixe seus jogos favoritos, acesse sua conta e jogue tranquilamente. Suporte total a ferramentas para adquirir jogos gratuitamente.</p></div>
-      <div class="feature-item"><h4>⛏️ Minecraft, Mods e Shaders</h4><p>Jogue fora das lojas oficiais (TLauncher). Instale mods, shaders pesados e crie seus próprios servidores sem restrições.</p></div>
-      <div class="feature-item"><h4>🌐 Navegação Livre</h4><p>Acesso ao Google, YouTube e navegação web. Com opções de segurança ativadas e permitidas apenas se o Desenvolvedor autorizar.</p></div>
-      <div class="feature-item"><h4>🔒 Privacidade Total</h4><p>Não há como mudar senhas, acessar e-mails ou contas bancárias. O sistema é limpo e formata sozinho após cada sessão.</p></div>
+      <div class="feature-item"><h4 data-i18n="feat_steam">🛒 Steam, Epic e Steam Tools</h4><p data-i18n="feat_steam_desc">Baixe seus jogos favoritos, acesse sua conta e jogue tranquilamente. Suporte total a ferramentas para adquirir jogos gratuitamente.</p></div>
+      <div class="feature-item"><h4 data-i18n="feat_mine">⛏️ Minecraft, Mods e Shaders</h4><p data-i18n="feat_mine_desc">Jogue fora das lojas oficiais (TLauncher). Instale mods, shaders pesados e crie seus próprios servidores sem restrições.</p></div>
+      <div class="feature-item"><h4 data-i18n="feat_web">🌐 Navegação Livre</h4><p data-i18n="feat_web_desc">Acesso ao Google, YouTube e navegação web. Com opções de segurança ativadas e permitidas apenas se o Desenvolvedor autorizar.</p></div>
+      <div class="feature-item"><h4 data-i18n="feat_priv">🔒 Privacidade Total</h4><p data-i18n="feat_priv_desc">Não há como mudar senhas, acessar e-mails ou contas bancárias. O sistema é limpo e formata sozinho após cada sessão.</p></div>
     </div>
   </section>
 
@@ -208,39 +160,111 @@
     <div class="seguranca-box">
       <div style="font-size: 4rem;">🛡️</div>
       <div>
-        <h3>Regras de Segurança e Anti-Hack</h3>
-        <p><strong>Dentro do jogo é diversão:</strong> Você tem total liberdade para usar mods, cheats, trainers ou hacks nos jogos que baixar.<br><br><strong>Fora do jogo é proibido:</strong> Tentar invadir, burlar pagamentos, injetar scripts ou alterar o código do nosso site resultará em banimento imediato, bloqueio de IP e medidas legais.</p>
+        <h3 data-i18n="sec_title">Regras de Segurança e Anti-Hack</h3>
+        <p data-i18n="sec_desc">Dentro do jogo é diversão: Você tem total liberdade para usar mods, cheats, trainers ou hacks nos jogos que baixar. Fora do jogo é proibido: Tentar invadir, burlar pagamentos, injetar scripts ou alterar o código do nosso site resultará em banimento imediato, bloqueio de IP e medidas legais.</p>
       </div>
     </div>
   </section>
 
   <footer>
     <div class="footer-grid">
-      <div class="footer-col"><h4>Sobre o Projeto</h4><p>Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.</p></div>
-      <div class="footer-col"><h4>Equipe e Créditos</h4><p><strong>Idealizador:</strong> Luiz</p><p><strong>Criador:</strong> ComandoGame</p><p><strong>Design:</strong> Você</p><p><strong>Colaborador:</strong> Kalleo</p></div>
-      <div class="footer-col"><h4>Diretrizes de Uso</h4><a href="termos.html">Termos de Serviço</a><a href="privacidade.html">Política de Privacidade</a><a href="regras.html">Regras da Comunidade</a><a href="reembolsos.html">Reembolsos e Cancelamentos</a></div>
-      <div class="footer-col"><h4>Suporte</h4><a href="suporte.html">Central de Ajuda / FAQ</a><a href="#">Comunidade no Discord (Em breve)</a><a href="#">Contatar Desenvolvedor (Em breve)</a></div>
+      <div class="footer-col"><h4 data-i18n="foot_about">Sobre o Projeto</h4><p data-i18n="foot_about_desc">Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.</p></div>
+      <div class="footer-col"><h4 data-i18n="foot_credits">Equipe e Créditos</h4><p><strong>Idealizador:</strong> Luiz</p><p><strong>Criador:</strong> ComandoGame</p><p><strong>Design:</strong> Você</p><p><strong>Colaborador:</strong> Kalleo</p></div>
+      <div class="footer-col"><h4 data-i18n="foot_guide">Diretrizes de Uso</h4><a href="termos.html" data-i18n="foot_terms">Termos de Serviço</a><a href="privacidade.html" data-i18n="foot_privacy">Política de Privacidade</a><a href="regras.html" data-i18n="foot_rules">Regras da Comunidade</a><a href="reembolsos.html" data-i18n="foot_refund">Reembolsos e Cancelamentos</a></div>
+      <div class="footer-col"><h4 data-i18n="foot_support">Suporte</h4><a href="suporte.html" data-i18n="foot_faq">Central de Ajuda / FAQ</a><a href="#" data-i18n="foot_discord">Comunidade no Discord (Em breve)</a><a href="#" data-i18n="foot_dev">Contatar Desenvolvedor (Em breve)</a></div>
     </div>
-    <div class="footer-bottom">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
+    <div class="footer-bottom" data-i18n="foot_rights">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
   </footer>
 
   <div class="modal-bg" id="modalBg">
     <div class="modal">
       <button class="fechar" onclick="fecharModal()">✕</button>
-      <h3 id="modalTitulo">Entrar</h3>
-      <p id="modalSubtitulo">Acesse sua conta para continuar.</p>
+      <h3 id="modalTitulo" data-i18n="modal_login_title">Entrar</h3>
+      <p id="modalSubtitulo" data-i18n="modal_login_sub">Acesse sua conta para continuar.</p>
       <form onsubmit="fazerLogin(event)">
-        <input type="text" id="inpNome" placeholder="Seu nome / Nick" style="display: none;" />
-        <input type="email" id="inpEmail" placeholder="E-mail (Gmail, Hotmail...)" required />
-        <input type="password" id="inpSenha" placeholder="Senha" required />
+        <input type="text" id="inpNome" placeholder="Seu nome / Nick" style="display: none;" data-i18n-placeholder="modal_name_ph" />
+        <input type="email" id="inpEmail" placeholder="E-mail (Gmail, Hotmail...)" required data-i18n-placeholder="modal_email_ph" />
+        <input type="password" id="inpSenha" placeholder="Senha" required data-i18n-placeholder="modal_pass_ph" />
         <button type="submit" class="btn-primary" id="btnSubmitLogin" style="width:100%; margin-top: 1rem; display: flex; justify-content: center; align-items: center; gap: 10px;">
-          <span id="btnLoginText">Entrar</span>
+          <span id="btnLoginText" data-i18n="modal_btn_login">Entrar</span>
         </button>
       </form>
     </div>
   </div>
 
   <script>
+    // --- SISTEMA DE TRADUÇÃO (i18n) ---
+    const traducoes = {
+        pt: {
+            nav_credits: "Créditos", nav_how: "Como funciona", nav_balance: "Saldo", nav_login: "Entrar", nav_register: "Criar Conta", nav_logout: "Sair",
+            hero_title_1: "Sua", hero_title_2: "no Navegador", hero_sub: "Acesso total a um PC Gamer pela internet. Jogue, instale mods, baixe jogos e use a internet com total liberdade.",
+            hero_btn: "Comprar Créditos", status_online: "Servidores ONLINE", status_pc: "Status do PC", status_ready: "Pronto", status_ping: "Ping estimado", status_top: "Máquinas Top", status_avail: "Disponíveis", status_anti: "Anti-Cheat", status_active: "Ativo",
+            pcs_title: "Máquinas Disponíveis", pcs_sub: "Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.",
+            pcs_basic: "💻 Plano Básico", pcs_basic_desc: "Ideal para: Jogos leves, eSports e Minecraft. Roda muitos jogos com gráficos integrados de ótima qualidade.",
+            pcs_mid: "🎮 Plano Médio", pcs_mid_desc: "Ideal para: Jogos AAA e Multiplayer. Excelente processamento. Recomendado para jogar em 1080p com boa fluidez.",
+            pcs_vip: "🚀 Plano Top (VIP)", pcs_vip_desc: "Ideal para: Gráficos no máximo e 2K. Nossa máquina mais forte, com tela 2K e processador de última geração para rodar tudo no Ultra.",
+            lib_title: "Uma Biblioteca Infinita", lib_sub: "Passe o mouse sobre a imagem para remover o filtro de privacidade. Seus dados nunca são expostos.", lib_censor: "🔒 Dados do Usuário Protegidos (Passe o mouse)",
+            feat_title: "Um PC de verdade, sem amarras", feat_sub: "Diferente de consoles, aqui você tem a liberdade de um computador real.",
+            feat_steam: "🛒 Steam, Epic e Steam Tools", feat_steam_desc: "Baixe seus jogos favoritos, acesse sua conta e jogue tranquilamente. Suporte total a ferramentas para adquirir jogos gratuitamente.",
+            feat_mine: "⛏️ Minecraft, Mods e Shaders", feat_mine_desc: "Jogue fora das lojas oficiais (TLauncher). Instale mods, shaders pesados e crie seus próprios servidores sem restrições.",
+            feat_web: "🌐 Navegação Livre", feat_web_desc: "Acesso ao Google, YouTube e navegação web. Com opções de segurança ativadas e permitidas apenas se o Desenvolvedor autorizar.",
+            feat_priv: "🔒 Privacidade Total", feat_priv_desc: "Não há como mudar senhas, acessar e-mails ou contas bancárias. O sistema é limpo e formata sozinho após cada sessão.",
+            sec_title: "Regras de Segurança e Anti-Hack", sec_desc: "Dentro do jogo é diversão: Você tem total liberdade para usar mods, cheats, trainers ou hacks nos jogos que baixar. Fora do jogo é proibido: Tentar invadir, burlar pagamentos, injetar scripts ou alterar o código do nosso site resultará em banimento imediato, bloqueio de IP e medidas legais.",
+            foot_about: "Sobre o Projeto", foot_about_desc: "Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.",
+            foot_credits: "Equipe e Créditos", foot_guide: "Diretrizes de Uso", foot_terms: "Termos de Serviço", foot_privacy: "Política de Privacidade", foot_rules: "Regras da Comunidade", foot_refund: "Reembolsos e Cancelamentos",
+            foot_support: "Suporte", foot_faq: "Central de Ajuda / FAQ", foot_discord: "Comunidade no Discord (Em breve)", foot_dev: "Contatar Desenvolvedor (Em breve)", foot_rights: "© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.",
+            modal_login_title: "Entrar", modal_login_sub: "Acesse sua conta para continuar.", modal_name_ph: "Seu nome / Nick", modal_email_ph: "E-mail (Gmail, Hotmail...)", modal_pass_ph: "Senha", modal_btn_login: "Entrar",
+            ban_title: "🚫 ACESSO NEGADO", ban_desc: "Sua conta foi permanentemente suspensa por violar os Termos de Serviço do BIG-Room.", ban_ip: "Seu endereço IP e Dispositivo foram registrados."
+        },
+        en: {
+            nav_credits: "Credits", nav_how: "How it works", nav_balance: "Balance", nav_login: "Login", nav_register: "Sign Up", nav_logout: "Logout",
+            hero_title_1: "Your", hero_title_2: "in Your Browser", hero_sub: "Full access to a gaming PC via the internet. Play games, install mods, download games, and use the internet with complete freedom.",
+            hero_btn: "Buy Credits", status_online: "Servers ONLINE", status_pc: "PC Status", status_ready: "Ready", status_ping: "Estimated ping", status_top: "Top Machines", status_avail: "Available", status_anti: "Anti-Cheat", status_active: "Active",
+            pcs_title: "Available Machines", pcs_sub: "You don't need to understand graphics cards. We deliver the power ready for gaming.",
+            pcs_basic: "💻 Basic Plan", pcs_basic_desc: "Ideal for: Light games, eSports, and Minecraft. Runs many games with great integrated graphics quality.",
+            pcs_mid: "🎮 Mid Plan", pcs_mid_desc: "Ideal for: AAA games and Multiplayer. Excellent processing. Recommended for 1080p with good fluidity.",
+            pcs_vip: "🚀 Top Plan (VIP)", pcs_vip_desc: "Ideal for: Max graphics and 2K. Our strongest machine, with 2K screen and last-gen processor to run everything on Ultra.",
+            lib_title: "An Infinite Library", lib_sub: "Hover over the image to remove the privacy filter. Your data is never exposed.", lib_censor: "🔒 User Data Protected (Hover)",
+            feat_title: "A real PC, without limits", feat_sub: "Unlike consoles, here you have the freedom of a real computer.",
+            feat_steam: "🛒 Steam, Epic, and Steam Tools", feat_steam_desc: "Download your favorite games, access your account, and play smoothly. Full support for tools to acquire games for free.",
+            feat_mine: "⛏️ Minecraft, Mods, and Shaders", feat_mine_desc: "Play outside official stores (TLauncher). Install mods, heavy shaders, and create your own servers without restrictions.",
+            feat_web: "🌐 Free Browsing", feat_web_desc: "Access Google, YouTube, and web browsing. With security options enabled and allowed only if the Developer authorizes.",
+            feat_priv: "🔒 Total Privacy", feat_priv_desc: "There is no way to change passwords, access emails, or bank accounts. The system is clean and formats itself after each session.",
+            sec_title: "Security and Anti-Hack Rules", sec_desc: "In-game is fun: You have total freedom to use mods, cheats, trainers, or hacks in the games you download. Outside the game is forbidden: Trying to invade, bypass payments, inject scripts, or alter our website's code will result in immediate ban, IP block, and legal action.",
+            foot_about: "About the Project", foot_about_desc: "A modern Lan House in the cloud, allowing anyone to play and work on a powerful PC without buying one.",
+            foot_credits: "Team & Credits", foot_guide: "Usage Guidelines", foot_terms: "Terms of Service", foot_privacy: "Privacy Policy", foot_rules: "Community Rules", foot_refund: "Refunds & Cancellations",
+            foot_support: "Support", foot_faq: "Help Center / FAQ", foot_discord: "Discord Community (Coming soon)", foot_dev: "Contact Developer (Coming soon)", foot_rights: "© 2026 BIG-Room — Cloud Gaming. All rights reserved.",
+            modal_login_title: "Login", modal_login_sub: "Access your account to continue.", modal_name_ph: "Your name / Nick", modal_email_ph: "Email (Gmail, Hotmail...)", modal_pass_ph: "Password", modal_btn_login: "Login",
+            ban_title: "🚫 ACCESS DENIED", ban_desc: "Your account has been permanently suspended for violating BIG-Room's Terms of Service.", ban_ip: "Your IP address and Device have been registered."
+        }
+    };
+
+    function traduzir(idioma) {
+        // Atualiza os textos
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const chave = el.getAttribute('data-i18n');
+            if (traducoes[idioma] && traducoes[idioma][chave]) {
+                el.innerText = traducoes[idioma][chave];
+            }
+        });
+        
+        // Atualiza os placeholders dos inputs
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const chave = el.getAttribute('data-i18n-placeholder');
+            if (traducoes[idioma] && traducoes[idioma][chave]) {
+                el.placeholder = traducoes[idioma][chave];
+            }
+        });
+
+        // Atualiza os botões ativos
+        document.getElementById('btn-pt').classList.remove('ativo');
+        document.getElementById('btn-en').classList.remove('ativo');
+        document.getElementById('btn-' + idioma).classList.add('ativo');
+        
+        // Salva a preferência
+        localStorage.setItem('bigroom_lingua', idioma);
+    }
+
     // --- PROTEÇÃO CONTRA CURIOSOS ---
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.onkeydown = function(e) {
@@ -276,6 +300,10 @@
 
     // Inicializa as funções de tela
     window.onload = () => {
+        // Verifica a língua salva
+        const linguaSalva = localStorage.getItem('bigroom_lingua');
+        if (linguaSalva) { traduzir(linguaSalva); }
+
         fetch(`${API_URL}/api/saldo/1`).catch(()=>{}); 
         sincronizarSaldo();
         setInterval(sincronizarSaldo, 5000);
@@ -285,17 +313,17 @@
         modoModal = modo;
         document.getElementById('modalBg').classList.add('ativo');
         if (modo === 'cadastro') {
-            document.getElementById('modalTitulo').innerText = "Criar Conta";
-            document.getElementById('modalSubtitulo').innerText = "Preencha seus dados para começar.";
+            document.getElementById('modalTitulo').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Sign Up" : "Criar Conta";
+            document.getElementById('modalSubtitulo').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Fill in your details to get started." : "Preencha seus dados para começar.";
             document.getElementById('inpNome').style.display = 'block';
             document.getElementById('inpNome').required = true;
-            document.getElementById('btnLoginText').innerText = "Cadastrar";
+            document.getElementById('btnLoginText').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Sign Up" : "Cadastrar";
         } else {
-            document.getElementById('modalTitulo').innerText = "Entrar";
-            document.getElementById('modalSubtitulo').innerText = "Acesse sua conta para continuar.";
+            document.getElementById('modalTitulo').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Login" : "Entrar";
+            document.getElementById('modalSubtitulo').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Access your account to continue." : "Acesse sua conta para continuar.";
             document.getElementById('inpNome').style.display = 'none';
             document.getElementById('inpNome').required = false;
-            document.getElementById('btnLoginText').innerText = "Entrar";
+            document.getElementById('btnLoginText').innerText = localStorage.getItem('bigroom_lingua') === 'en' ? "Login" : "Entrar";
         }
     }
 
@@ -306,7 +334,7 @@
       const btn = document.getElementById('btnSubmitLogin');
       const btnText = document.getElementById('btnLoginText');
       btn.disabled = true;
-      btnText.innerText = "Verificando segurança...";
+      btnText.innerText = "Verificando...";
       
       const nome = document.getElementById('inpNome').value;
       const email = document.getElementById('inpEmail').value;
@@ -363,7 +391,10 @@
         document.getElementById('perfilLogado').style.display = 'flex';
         document.getElementById('saldoDisplay').style.display = 'block';
         document.getElementById('nomeUsuario').innerText = nome;
-        document.getElementById('saldoDisplay').innerHTML = `Saldo: <strong>R$ ${saldo.toFixed(2)}</strong>`;
+        document.getElementById('saldoDisplay').innerHTML = `<span data-i18n="nav_balance">Saldo</span>: <strong>R$ ${saldo.toFixed(2)}</strong>`;
+        // Traduz o "Saldo" se necessário
+        const lingua = localStorage.getItem('bigroom_lingua') || 'pt';
+        traduzir(lingua);
       } else {
         document.getElementById('botoesDeslogado').style.display = 'flex';
         document.getElementById('perfilLogado').style.display = 'none';
