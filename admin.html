@@ -12,9 +12,8 @@
     .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(18,18,18,.95); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--borda); }
     .logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--texto); }
     .logo span { color: var(--laranja); }
-    .navbar nav a { color: #ccc; text-decoration: none; font-size: .95rem; }
     
-    .container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
+    .container { max-width: 1400px; margin: 4rem auto; padding: 0 2rem; }
     h1 { margin-bottom: 2rem; color: var(--laranja); font-size: 2.2rem; }
     
     .login-box { background: var(--bg-card); border: 1px solid var(--borda); padding: 3rem; border-radius: 12px; max-width: 400px; margin: 0 auto; text-align: center; }
@@ -28,25 +27,29 @@
     .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.9rem; margin-bottom: 0.5rem; }
     .metrica-card strong { font-size: 2rem; color: var(--verde); }
     
-    table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; }
-    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--borda); font-size: 0.95rem; }
+    table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; font-size: 0.85rem; }
+    th, td { padding: 0.8rem; text-align: left; border-bottom: 1px solid var(--borda); }
     th { background: #161616; color: var(--laranja); }
     tr:hover { background: rgba(255, 255, 255, 0.02); }
     
-    .acoes { display: flex; gap: 0.5rem; align-items: center; }
-    .btn-acao { padding: 0.4rem 0.8rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; color: #fff; }
+    .acoes { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+    .btn-acao { padding: 0.3rem 0.6rem; border-radius: 4px; border: none; font-weight: bold; cursor: pointer; font-size: 0.75rem; color: #fff; }
     .btn-saldo { background: var(--laranja); }
+    .btn-tempo { background: #3b82f6; }
+    .btn-zerar { background: #6b7280; }
     .btn-banir { background: transparent; border: 1px solid var(--vermelho); color: var(--vermelho); }
     .btn-desbanir { background: transparent; border: 1px solid var(--verde); color: var(--verde); }
-    .status-banido { color: var(--vermelho); font-weight: bold; font-size: 0.8rem; margin-left: 5px; }
+    
+    .tag-plano { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    .tag-tempo { background: rgba(16, 185, 129, 0.2); color: var(--verde); padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+    .tag-banido { color: var(--vermelho); font-weight: bold; font-size: 0.75rem; }
     .btn-sair { background: transparent; color: var(--vermelho); border: 1px solid var(--vermelho); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 2rem; }
-    .codigo-conta { font-family: monospace; font-size: 0.85rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 2px 6px; border-radius: 4px; }
   </style>
 </head>
 <body>
   <header class="navbar">
     <a href="index.html" class="logo">🎮 BIG<span>Room</span> Admin</a>
-    <nav><a href="index.html">← Voltar ao Site</a></nav>
+    <nav><a href="index.html" style="color: #ccc; text-decoration: none;">← Voltar ao Site</a></nav>
   </header>
 
   <div class="container">
@@ -64,18 +67,22 @@
         <div class="metrica-card"><span>Saldo em Contas (R$)</span><strong id="saldoTotal">0,00</strong></div>
       </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Código</th>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Saldo</th>
-            <th>Ações Rápidas</th>
-          </tr>
-        </thead>
-        <tbody id="tabelaUsuarios"></tbody>
-      </table>
+      <div style="overflow-x: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>IP</th>
+              <th>Saldo</th>
+              <th>Sessão Atual</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaUsuarios"></tbody>
+        </table>
+      </div>
 
       <button class="btn-sair" onclick="sairAdmin()">Encerrar Sessão de Admin</button>
     </div>
@@ -127,20 +134,34 @@
 
       usuarios.forEach(user => {
         saldoTotal += user.saldo;
-        const avisoBanido = user.banido === 1 ? '<span class="status-banido">(BANIDO)</span>' : '';
+        
+        const avisoBanido = user.banido === 1 ? '<br><span class="tag-banido">BANIDO</span>' : '';
+        
         const btnBanir = user.banido === 1 
             ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>`
             : `<button class="btn-acao btn-banir" onclick="alterarBanimento(${user.id}, true)">Banir</button>`;
 
+        let sessaoHtml = '<span style="color:#6b7280;">Nenhuma</span>';
+        if (user.plano_ativo && user.plano_ativo !== 'Nenhum') {
+            sessaoHtml = `
+                <div><span class="tag-plano">${user.plano_ativo}</span></div>
+                <div style="margin-top: 4px;"><span class="tag-tempo">${user.tempo_restante} min</span></div>
+            `;
+        }
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><span class="codigo-conta">${user.codigo_conta || 'N/A'}</span></td>
+          <td style="color:#fbbf24; font-family:monospace;">${user.codigo_conta || 'N/A'}</td>
           <td><strong>${user.nome}</strong> ${avisoBanido}</td>
           <td>${user.email}</td>
+          <td style="font-family:monospace; color:#9ca3af;">${user.ip || 'N/A'}</td>
           <td style="color: var(--verde); font-weight: bold;">R$ ${user.saldo.toFixed(2)}</td>
+          <td>${sessaoHtml}</td>
           <td>
             <div class="acoes">
               <button class="btn-acao btn-saldo" onclick="alterarSaldo(${user.id})">+/- Saldo</button>
+              <button class="btn-acao btn-tempo" onclick="adicionarTempo(${user.id})">+ Tempo</button>
+              <button class="btn-acao btn-zerar" onclick="zerarTempo(${user.id})">Zerar</button>
               ${btnBanir}
             </div>
           </td>
@@ -163,6 +184,41 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ idUsuario, valor })
+        });
+        const data = await response.json();
+        if (response.ok) { alert(data.mensagem); carregarPainel(); } else { alert(data.erro); }
+      } catch (error) { alert("Erro no servidor."); }
+    }
+
+    async function adicionarTempo(idUsuario) {
+      let minutosString = prompt("Quantos MINUTOS deseja adicionar? (ex: 30, 60)");
+      if (!minutosString) return;
+      let minutos = parseInt(minutosString);
+      if (isNaN(minutos) || minutos <= 0) return alert("Minutos inválidos.");
+
+      let plano = prompt("Qual o nome do plano? (ex: 1h, VIP, Teste)");
+      if (!plano) plano = "Manual";
+
+      const token = sessionStorage.getItem('adminToken');
+      try {
+        const response = await fetch(`${API_URL}/api/admin/tempo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ idUsuario, minutos, plano })
+        });
+        const data = await response.json();
+        if (response.ok) { alert(data.mensagem); carregarPainel(); } else { alert(data.erro); }
+      } catch (error) { alert("Erro no servidor."); }
+    }
+
+    async function zerarTempo(idUsuario) {
+      if (!confirm("Tem certeza que deseja ZERAR o tempo deste usuário? A sessão será encerrada.")) return;
+      const token = sessionStorage.getItem('adminToken');
+      try {
+        const response = await fetch(`${API_URL}/api/admin/tempo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ idUsuario, minutos: 0, plano: 'Nenhum' })
         });
         const data = await response.json();
         if (response.ok) { alert(data.mensagem); carregarPainel(); } else { alert(data.erro); }
