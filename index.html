@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BIG-Room — Sua Lan House na Nuvem</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .hero { text-align: center; padding: 5rem 2rem 3rem; }
+    .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .hero h1 span { color: var(--laranja); }
+    .hero p { color: var(--texto-fraco); margin-bottom: 2rem; font-size: 1.1rem; max-width: 600px; margin-inline: auto; }
+    .video-showcase { max-width: 900px; margin: 0 auto 3rem; border-radius: 16px; overflow: hidden; border: 1px solid var(--borda); box-shadow: 0 15px 40px rgba(0,0,0,0.8); position: relative; background: #000; }
+    .video-showcase video { width: 100%; display: block; object-fit: cover; }
+    .status-card { padding: 2rem; max-width: 500px; margin: 0 auto; }
+    .status-row { display: flex; align-items: center; gap: .5rem; margin-bottom: 1.5rem; justify-content: center; font-size: 1.1rem; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 10px var(--verde); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
+    .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+    .status-grid > div { background: rgba(22, 22, 22, 0.7); padding: 1rem; border-radius: 8px; text-align: center; border: 1px solid var(--borda); }
+    .status-grid span { display: block; font-size: .8rem; color: var(--texto-fraco); margin-bottom: .3rem; }
+    .status-grid strong { font-size: 1.2rem; color: #fff; }
+    .status-card .btn-primary { width: 100%; padding: 1rem; font-size: 1.1rem; }
+    .pcs-grid { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+    .pc-card { padding: 2rem; width: 320px; text-align: left; transition: 0.3s; }
+    .pc-card:hover { border-color: var(--laranja) !important; transform: translateY(-5px); }
+    .pc-card h3 { color: var(--laranja); margin-bottom: 1rem; font-size: 1.3rem; }
+    .pc-card p { font-size: 0.95rem; color: var(--texto-fraco); line-height: 1.6; }
+    .pc-card strong { color: #fff; }
+    .image-container { position: relative; max-width: 900px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 1px solid var(--borda); background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .image-container img { width: 100%; display: block; object-fit: cover; }
+    .censor-blur { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backdrop-filter: blur(15px); background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; transition: 0.3s; cursor: crosshair; }
+    .censor-blur:hover { backdrop-filter: blur(0px); background: rgba(0,0,0,0); opacity: 0; }
+    .censor-text { background: var(--bg-card); padding: 1rem 2rem; border-radius: 8px; border: 1px solid var(--laranja); font-weight: bold; color: #fff; }
+    .features-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; text-align: left; }
+    .feature-item { padding: 2rem; border-left: 4px solid var(--laranja) !important; transition: 0.3s; }
+    .feature-item:hover { background: rgba(45, 45, 45, 0.9) !important; transform: scale(1.02); }
+    .feature-item h4 { margin-bottom: 0.8rem; color: #fff; font-size: 1.2rem; }
+    .feature-item p { font-size: 0.95rem; color: var(--texto-fraco); line-height: 1.5; }
+    .seguranca-box { background: rgba(239, 68, 68, 0.15) !important; border: 1px solid var(--vermelho) !important; padding: 2.5rem; max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; text-align: left; }
+    .seguranca-box h3 { color: var(--vermelho); margin-bottom: 0.5rem; font-size: 1.4rem; }
+    .seguranca-box p { color: #ddd; font-size: 1rem; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="bg-animation">
+    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="grid-overlay"></div>
+  </div>
+
+  <header class="navbar">
+    <a href="index.html" class="logo">🎮 BIG<span>Room</span></a>
+    <nav>
+      <a href="precos.html">Preços</a>
+      <a href="como-funciona.html">Como funciona</a>
+      <div class="user-area">
+        <div class="saldo" id="saldoDisplay">Saldo: <strong>R$ 0,00</strong></div>
+        <button class="btn-primary" id="btnLogin" onclick="abrirModal()">Entrar / Criar Conta</button>
+        <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
+          <span style="color:var(--laranja); font-weight:bold;" id="nomeUsuario"></span>
+          <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sair()">Sair</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Sua <span>Lan House</span> no Navegador</h1>
+    <p>Acesso total a um PC Gamer pela internet. Jogue, instale mods, baixe jogos e use a internet com total liberdade.</p>
+    <div class="video-showcase">
+      <video src="games_showcase_final.mp4" autoplay loop muted playsinline></video>
+    </div>
+    <div class="status-card">
+      <div class="status-row"><span class="dot"></span><strong>Servidores ONLINE</strong></div>
+      <div class="status-grid">
+        <div><span>Status do PC</span><strong>Pronto</strong></div>
+        <div><span>Ping estimado</span><strong>~35 ms</strong></div>
+        <div><span>Máquinas Top</span><strong>Disponíveis</strong></div>
+        <div><span>Anti-Cheat</span><strong>Ativo</strong></div>
+      </div>
+      <button class="btn-primary" onclick="window.location.href='precos.html'">Iniciar Sessão de Jogo</button>
+    </div>
+  </section>
+
+  <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 20px; margin: 2rem auto; backdrop-filter: blur(5px);">
+    <h2>Máquinas Disponíveis</h2>
+    <p class="sub">Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.</p>
+    <div class="pcs-grid">
+      <div class="pc-card"><h3>💻 Plano Básico</h3><p><strong>Ideal para:</strong> Jogos leves, eSports e Minecraft.<br><br>Roda muitos jogos com gráficos integrados de ótima qualidade.</p></div>
+      <div class="pc-card"><h3>🎮 Plano Médio</h3><p><strong>Ideal para:</strong> Jogos AAA e Multiplayer.<br><br>Excelente processamento. Recomendado para jogar em 1080p com boa fluidez.</p></div>
+      <div class="pc-card" style="border-color: var(--laranja);"><h3>🚀 Plano Top (VIP)</h3><p><strong>Ideal para:</strong> Gráficos no máximo e 2K.<br><br>Nossa máquina mais forte, com tela 2K e processador de última geração para rodar tudo no Ultra.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Uma Biblioteca Infinita</h2>
+    <p class="sub">Passe o mouse sobre a imagem para remover o filtro de privacidade. Seus dados nunca são expostos.</p>
+    <div class="image-container">
+      <img src="steam-jogos.jpg" alt="Biblioteca de Jogos">
+      <div class="censor-blur"><div class="censor-text">🔒 Dados do Usuário Protegidos (Passe o mouse)</div></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Um PC de verdade, sem amarras</h2>
+    <p class="sub">Diferente de consoles, aqui você tem a liberdade de um computador real.</p>
+    <div class="features-list">
+      <div class="feature-item"><h4>🛒 Steam, Epic e Steam Tools</h4><p>Baixe seus jogos favoritos, acesse sua conta e jogue tranquilamente. Suporte total a ferramentas para adquirir jogos gratuitamente.</p></div>
+      <div class="feature-item"><h4>⛏️ Minecraft, Mods e Shaders</h4><p>Jogue fora das lojas oficiais (TLauncher). Instale mods, shaders pesados e crie seus próprios servidores sem restrições.</p></div>
+      <div class="feature-item"><h4>🌐 Navegação Livre</h4><p>Acesso ao Google, YouTube e navegação web. Com opções de segurança ativadas e permitidas apenas se o Desenvolvedor autorizar.</p></div>
+      <div class="feature-item"><h4>🔒 Privacidade Total</h4><p>Não há como mudar senhas, acessar e-mails ou contas bancárias. O sistema é limpo e formata sozinho após cada sessão.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="seguranca-box">
+      <div style="font-size: 4rem;">🛡️</div>
+      <div>
+        <h3>Regras de Segurança e Anti-Hack</h3>
+        <p><strong>Dentro do jogo é diversão:</strong> Você tem total liberdade para usar mods, cheats, trainers ou hacks nos jogos que baixar.<br><br><strong>Fora do jogo é proibido:</strong> Tentar invadir, burlar pagamentos, injetar scripts ou alterar o código do nosso site resultará em banimento imediato, bloqueio de IP e medidas legais.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-col"><h4>Sobre o Projeto</h4><p>Uma Lan House moderna na nuvem, permitindo que qualquer pessoa jogue e trabalhe em um PC potente sem precisar comprar um.</p></div>
+      <div class="footer-col"><h4>Equipe e Créditos</h4><p><strong>Idealizador:</strong> Luiz</p><p><strong>Criador:</strong> ComandoGame</p><p><strong>Design:</strong> Você</p><p><strong>Colaborador:</strong> Kalleo</p></div>
+      <div class="footer-col"><h4>Diretrizes de Uso</h4><a href="termos.html">Termos de Serviço</a><a href="privacidade.html">Política de Privacidade</a><a href="regras.html">Regras da Comunidade</a><a href="reembolsos.html">Reembolsos e Cancelamentos</a></div>
+      <div class="footer-col"><h4>Suporte</h4><a href="suporte.html">Central de Ajuda / FAQ</a><a href="#">Comunidade no Discord (Em breve)</a><a href="#">Contatar Desenvolvedor (Em breve)</a></div>
+    </div>
+    <div class="footer-bottom">© 2026 BIG-Room — Cloud Gaming. Todos os direitos reservados.</div>
+  </footer>
+
+  <div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <button class="fechar" onclick="fecharModal()">✕</button>
+      <h3>Bem-vindo à BIG-Room</h3>
+      <p>Faça login para liberar seus 15 minutos de teste grátis.</p>
+      <form onsubmit="fazerLogin(event)">
+        <input type="text" id="inpNome" placeholder="Seu nome / Nick" required />
+        <input type="email" id="inpEmail" placeholder="Email" required />
+        <input type="password" id="inpSenha" placeholder="Senha" required />
+        <button type="submit" class="btn-primary" style="width:100%; margin-top: 1rem;">Entrar / Cadastrar</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function abrirModal() { document.getElementById('modalBg').classList.add('ativo'); }
+    function fecharModal() { document.getElementById('modalBg').classList.remove('ativo'); }
+    
+    async function fazerLogin(e) {
+      e.preventDefault();
+      const nome = document.getElementById('inpNome').value;
+      const email = document.getElementById('inpEmail').value;
+      const senha = document.getElementById('inpSenha').value;
+
+      try {
+        // CONECTANDO AO SERVIDOR NA NUVEM
+        let response = await fetch('https://big-room-servidor.onrender.com/api/cadastro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nome, email, senha })
+        });
+
+        let data = await response.json();
+
+        // Se o e-mail já existe, tenta logar
+        if (!response.ok && data.erro === "E-mail já cadastrado.") {
+            response = await fetch('https://big-room-servidor.onrender.com/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, senha })
+            });
+            data = await response.json();
+        }
+
+        if (response.ok) {
+            alert(data.mensagem + " Bem-vindo(a)!");
+            localStorage.setItem('bigroom_usuario_id', data.usuario.id);
+            localStorage.setItem('bigroom_usuario', data.usuario.nome);
+            localStorage.setItem('bigroom_saldo', data.usuario.saldo);
+            
+            atualizarInterface(); 
+            fecharModal();
+        } else {
+            alert("Erro: " + data.erro);
+        }
+      } catch (error) {
+        alert("Erro ao conectar com o servidor. O Render pode estar acordando. Aguarde 30 segundos e tente novamente.");
+      }
+    }
+
+    function sair() {
+      localStorage.removeItem('bigroom_usuario');
+      localStorage.removeItem('bigroom_usuario_id');
+      localStorage.removeItem('bigroom_saldo');
+      atualizarInterface();
+    }
+
+    function atualizarInterface() {
+      const nome = localStorage.getItem('bigroom_usuario');
+      const saldo = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
+      
+      if (nome) {
+        document.getElementById('btnLogin').style.display = 'none';
+        document.getElementById('perfilLogado').style.display = 'flex';
+        document.getElementById('saldoDisplay').style.display = 'block';
+        document.getElementById('nomeUsuario').innerText = nome;
+        document.getElementById('saldoDisplay').innerHTML = `Saldo: <strong>R$ ${saldo.toFixed(2)}</strong>`;
+      } else {
+        document.getElementById('btnLogin').style.display = 'block';
+        document.getElementById('perfilLogado').style.display = 'none';
+        document.getElementById('saldoDisplay').style.display = 'none';
+      }
+    }
+
+    atualizarInterface();
+  </script>
+</body>
+</html>

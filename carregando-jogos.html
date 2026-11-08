@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Preparando Jogos — BIG-Room</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { background: #000; color: #fff; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+    .video-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; opacity: 0.6; }
+    .video-bg video { width: 100%; height: 100%; object-fit: cover; }
+    .overlay-content { position: relative; z-index: 2; text-align: center; background: rgba(0,0,0,0.8); padding: 2rem 4rem; border-radius: 16px; border: 1px solid #f97316; backdrop-filter: blur(10px); width: 90%; max-width: 500px; }
+    .logo { font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem; }
+    .logo span { color: #f97316; }
+    .status-text { font-size: 1.1rem; color: #ccc; margin-bottom: 1.5rem; }
+    .progress-container { width: 100%; background: rgba(255,255,255,0.1); border-radius: 50px; height: 20px; overflow: hidden; position: relative; margin-bottom: 1rem; border: 1px solid #333; }
+    .progress-bar { height: 100%; width: 0%; background: #f97316; border-radius: 50px; transition: width 1s linear; }
+    .timer { font-size: 1.5rem; font-weight: bold; color: #f97316; }
+  </style>
+</head>
+<body>
+  <div class="video-bg">
+    <video src="games_scroll_all.mp4" autoplay loop muted playsinline></video>
+  </div>
+  <div class="overlay-content">
+    <div class="logo">🎮 BIG<span>Room</span></div>
+    <div class="status-text">Buscando seus jogos e carregando texturas...</div>
+    <div class="progress-container"><div class="progress-bar" id="barra"></div></div>
+    <div class="timer" id="tempo">60s</div>
+  </div>
+  <script>
+    let tempoTotal = 60;
+    let tempoAtual = 0;
+    let intervalo = setInterval(() => {
+      tempoAtual++;
+      let progresso = (tempoAtual / tempoTotal) * 100;
+      document.getElementById('barra').style.width = progresso + '%';
+      document.getElementById('tempo').innerText = (tempoTotal - tempoAtual) + 's';
+      if (tempoAtual >= tempoTotal) {
+        clearInterval(intervalo);
+        window.location.href = 'jogar.html'; 
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

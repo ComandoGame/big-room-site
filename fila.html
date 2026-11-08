@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fila de Espera — BIG-Room</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+    :root { --laranja: #f97316; --laranja-esc: #ea580c; --bg: #121212; --bg-card: #1e1e1e; --borda: #333333; --texto: #f3f4f6; --texto-fraco: #9ca3af; --cinza-esc: #2d2d2d; --verde: #10b981; }
+    body { background: var(--bg); color: var(--texto); }
+    
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(18,18,18,.9); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--borda); }
+    .logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--texto); }
+    .logo span { color: var(--laranja); }
+    .navbar nav { display: flex; align-items: center; gap: 1.5rem; }
+    .navbar nav a { color: #ccc; text-decoration: none; font-size: .95rem; }
+    .navbar nav a:hover { color: var(--laranja); }
+    .btn-outline { padding: .6rem 1.2rem; border-radius: 8px; border: 1px solid var(--laranja); color: var(--laranja); background: transparent; cursor: pointer; }
+    
+    .container { max-width: 800px; margin: 5rem auto; padding: 0 2rem; text-align: center; }
+    h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    p { color: var(--texto-fraco); margin-bottom: 3rem; }
+    
+    .wait-card { background: var(--bg-card); border: 1px solid var(--laranja); border-radius: 16px; padding: 3rem 2rem; box-shadow: 0 0 30px rgba(249, 115, 22, 0.15); }
+    .position { font-size: 1.2rem; margin-bottom: 1.5rem; }
+    .position strong { font-size: 3rem; color: var(--laranja); display: block; margin-top: 0.5rem; }
+    
+    .progress-container { width: 100%; background: #161616; border-radius: 10px; height: 20px; margin-bottom: 1.5rem; overflow: hidden; border: 1px solid var(--borda); }
+    .progress-bar { height: 100%; width: 0%; background: var(--laranja); border-radius: 10px; transition: width 0.5s ease; box-shadow: 0 0 10px var(--laranja); }
+    
+    .status-text { color: var(--texto-fraco); font-size: 0.95rem; display: flex; justify-content: space-between; margin-bottom: 2rem; }
+    .btn-cancelar { background: transparent; color: #ef4444; border: 1px solid #ef4444; padding: 0.8rem 2rem; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+    .btn-cancelar:hover { background: #ef4444; color: #fff; }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <a href="index.html" class="logo">🎮 BIG<span>Room</span></a>
+    <nav>
+      <a href="fila.html" style="color:var(--laranja); font-weight:bold;">Fila ao vivo</a>
+      <a href="precos.html">Preços</a>
+      <a href="como-funciona.html">Como funciona</a>
+      <div class="user-area" id="userArea">
+        <button class="btn-primary" id="btnLogin" onclick="window.location.href='index.html'" style="background:var(--laranja); border:none; padding:0.6rem 1.2rem; border-radius:8px; color:#fff; cursor:pointer;">Entrar</button>
+        <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
+          <span style="color:var(--laranja); font-weight:bold;" id="nomeUsuario"></span>
+          <button class="btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sair()">Sair</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>⏳ Você está na fila</h1>
+    <p>Não feche esta página. Assim que um PC for liberado, você será chamado.</p>
+
+    <div class="wait-card">
+      <div class="position">Sua posição atual<strong id="posicao">3º</strong></div>
+      
+      <div class="progress-container">
+        <div class="progress-bar" id="barra"></div>
+      </div>
+      
+      <div class="status-text">
+        <span id="statusText">Aguardando jogadores saírem...</span>
+        <span id="tempoEstimado">~15 min</span>
+      </div>
+
+      <button class="btn-cancelar" onclick="window.location.href='index.html'">Sair da fila</button>
+    </div>
+  </div>
+
+  <script>
+    // Lógica de Login Básica para mostrar o nome no topo
+    function atualizarInterface() {
+      const nome = localStorage.getItem('bigroom_usuario');
+      const btnLogin = document.getElementById('btnLogin');
+      const perfil = document.getElementById('perfilLogado');
+      if (nome) {
+        btnLogin.style.display = 'none';
+        perfil.style.display = 'flex';
+        document.getElementById('nomeUsuario').innerText = nome;
+      } else {
+        btnLogin.style.display = 'block';
+        perfil.style.display = 'none';
+      }
+    }
+    function sair() { localStorage.removeItem('bigroom_usuario'); atualizarInterface(); }
+    atualizarInterface();
+
+    // Lógica da Barra de Carregamento
+    let progresso = 10;
+    let posicao = 3;
+    const barra = document.getElementById('barra');
+    const txtPosicao = document.getElementById('posicao');
+    const txtStatus = document.getElementById('statusText');
+    
+    setInterval(() => {
+      if (progresso < 100) {
+        progresso += 2;
+        barra.style.width = progresso + '%';
+      }
+      if (progresso >= 100 && posicao > 0) {
+        posicao = 0;
+        txtPosicao.innerText = "É a sua vez!";
+        txtPosicao.style.color = "#10b981";
+        txtStatus.innerText = "Conectando ao servidor...";
+        setTimeout(() => {
+          alert("PC Liberado! Redirecionando para o jogo... (Simulação)");
+          window.location.href = 'index.html';
+        }, 2000);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

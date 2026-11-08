@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>BIG-Room — Painel do Host</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .painel { max-width: 1000px; margin: 2rem auto; padding: 0 2rem; }
+    .painel h1 { margin-bottom: 2rem; }
+    .painel .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .metrica { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1.2rem; }
+    .metrica span { font-size: .8rem; color: var(--texto-fraco); display: block; }
+    .metrica strong { font-size: 1.6rem; }
+    table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: 12px; overflow: hidden; }
+    th, td { padding: .8rem; text-align: left; border-bottom: 1px solid var(--borda); font-size: .9rem; }
+    th { background: #0f0f18; color: var(--texto-fraco); font-weight: 600; }
+    .badge { padding: 2px 8px; border-radius: 6px; font-size: .75rem; }
+    .badge.ok { background: rgba(34,197,94,.15); color: var(--verde); }
+    .badge.espera { background: rgba(234,179,8,.15); color: #eab308; }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">🎮 BIG<span>Room</span> · Host</div>
+    <nav><a href="index.html">← Voltar ao site</a></nav>
+  </header>
+
+  <div class="painel">
+    <h1>🖥️ Painel do Host</h1>
+
+    <div class="metricas">
+      <div class="metrica"><span>Jogadores ativos</span><strong id="mAtivos">0</strong></div>
+      <div class="metrica"><span>Na fila</span><strong id="mFila">0</strong></div>
+      <div class="metrica"><span>Vagas livres</span><strong id="mLivres">0</strong></div>
+      <div class="metrica"><span>Receita estimada (hoje)</span><strong id="mReceita">R$ 0</strong></div>
+    </div>
+
+    <h2 style="margin-bottom:1rem">Slots</h2>
+    <table>
+      <thead><tr><th>Slot</th><th>Status</th><th>Jogador</th><th>Tempo restante</th></tr></thead>
+      <tbody id="tabelaSlots"></tbody>
+    </table>
+
+    <h2 style="margin:2rem 0 1rem">Fila de espera</h2>
+    <table>
+      <thead><tr><th>#</th><th>Jogador</th><th>Entrou há</th></tr></thead>
+      <tbody id="tabelaFila"></tbody>
+    </table>
+  </div>
+
+  <script>
+    function render() {
+      const estado = JSON.parse(localStorage.getItem('bigroom_estado') || '{}');
+      const slots = estado.slots || [];
+      const fila = estado.fila || [];
+
+      document.getElementById('mAtivos').textContent = slots.filter(s => s.status === 'ocupado').length;
+      document.getElementById('mFila').textContent = fila.length;
+      document.getElementById('mLivres').textContent = slots.filter(s => s.status === 'livre').length;
+      document.getElementById('mReceita').textContent = `R$ ${(slots.filter(s => s.status === 'ocupado').length * 5).toFixed(2)}`;
+
+      document.getElementById('tabelaSlots').innerHTML = slots.map(s => `
+        <tr>
+          <td>#${s.id}</td>
+          <td><span class="badge ${s.status === 'livre' ? 'ok' : 'espera'}">${s.status}</span></td>
+          <td>${s.jogador || '—'}</td>
+          <td>${s.status === 'ocupado' ? Math.floor(Math.random()*60)+' min' : '—'}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('tabelaFila').innerHTML = fila.length === 0
+        ? '<tr><td colspan="3" style="color:#666">Ninguém na fila</td></tr>'
+        : fila.map((f, i) => `
+          <tr>
+            <td>${i+1}º</td>
+            <td>${f.nome}</td>
+            <td>${Math.floor((Date.now()-f.tempo)/60000)} min</td>
+          </tr>
+        `).join('');
+    }
+    render();
+    setInterval(render, 3000);
+  </script>
+</body>
+</html>

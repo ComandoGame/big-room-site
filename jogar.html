@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Preparando PC — BIG-Room</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, sans-serif; }
+    body { background: #000; color: #fff; height: 100vh; overflow: hidden; }
+    
+    .loading-video-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    .loading-video-container video { width: 100%; height: 100%; object-fit: cover; }
+    
+    .btn-pausar { 
+      position: absolute; top: 2rem; right: 2rem; z-index: 10; 
+      background: rgba(239, 68, 68, 0.8); border: 1px solid #ef4444; 
+      color: #fff; padding: 0.8rem 1.5rem; border-radius: 8px; 
+      font-weight: bold; cursor: pointer; transition: 0.2s; backdrop-filter: blur(5px); 
+    }
+    .btn-pausar:hover { background: #ef4444; transform: scale(1.05); }
+    
+    .tela-pausa { 
+      display: none; position: absolute; inset: 0; background: rgba(0,0,0,0.95); 
+      z-index: 100; flex-direction: column; align-items: center; justify-content: center; text-align: center; 
+    }
+    .tela-pausa h2 { font-size: 2.5rem; color: #f97316; margin-bottom: 1rem; }
+    .tela-pausa p { color: #ccc; margin-bottom: 2rem; font-size: 1.2rem; max-width: 500px; }
+    .btn-continuar { background: #f97316; color: #fff; border: none; padding: 1rem 2rem; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; }
+    
+    .tela-jogo { 
+      display: none; position: absolute; inset: 0; background: #111; z-index: 200; 
+      flex-direction: column; align-items: center; justify-content: center; text-align: center; 
+    }
+    .tela-jogo h2 { color: #10b981; font-size: 3rem; }
+    
+    /* Animação de carregamento (Spinner) */
+    .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: #f97316; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 1rem auto; display: none; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+  
+  <!-- CONECTANDO SOCKET.IO À NUVEM -->
+  <script src="https://big-room-servidor.onrender.com/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <button class="btn-pausar" id="btnPausar" onclick="pausarSessao()">⏸ Sair de Sessão</button>
+
+  <div class="loading-video-container" id="telaCarregando">
+    <video src="loading_bigroom.mp4" autoplay muted loop playsinline></video>
+  </div>
+
+  <div class="tela-pausa" id="telaPausa">
+    <h2>Sessão Pausada</h2>
+    <p id="msgPausa">Você tem tempo de jogo salvo na sua conta.</p>
+    <button class="btn-continuar" onclick="retomarSessao()">Retomar Jogo</button>
+    <button style="margin-top: 1rem; background: none; border: none; color: #888; cursor: pointer;" onclick="window.location.href='index.html'">Sair de vez (Perder tempo)</button>
+  </div>
+
+  <div class="tela-jogo" id="telaJogo">
+    <h2>✅ Conectado!</h2>
+    <p style="margin-top: 1rem; color: #ccc;">Máquina alocada com sucesso. Iniciando o jogo...</p>
+    <p style="margin-top: 0.5rem; color: #f97316;" id="infoConexao"></p>
+  </div>
+
+  <script>
+    let socket;
+    const tempoSalvo = localStorage.getItem('bigroom_tempo_restante');
+
+    if (tempoSalvo) {
+      document.getElementById('telaCarregando').style.display = 'none';
+      document.getElementById('btnPausar').style.display = 'none';
+      document.getElementById('telaPausa').style.display = 'flex';
+      document.getElementById('msgPausa').innerText = `Você tem ${tempoSalvo} minutos salvos. Deseja continuar de onde parou?`;
+    } else {
+      iniciarConexao();
+    }
+
+    function iniciarConexao() {
+      document.getElementById('telaCarregando').style.display = 'block';
+      document.getElementById('telaPausa').style.display = 'none';
+      document.getElementById('telaJogo').style.display = 'none';
+      document.getElementById('btnPausar').style.display = 'block';
+
+      try {
+        // CONECTANDO AO SERVIDOR NA NUVEM
+        socket = io('https://big-room-servidor.onrender.com', {
+            transports: ['websocket'] // Força WebSocket (mais rápido na nuvem)
+        });
+        
+        socket.on('connect', () => {
+          console.log("Conectado ao servidor na nuvem.");
+          socket.emit('iniciar_maquina');
+        });
+
+        socket.on('maquina_pronta', (dados) => {
+          document.getElementById('telaCarregando').style.display = 'none';
+          document.getElementById('telaJogo').style.display = 'flex';
+          document.getElementById('infoConexao').innerText = `IP: ${dados.ip} | Porta: ${dados.porta}`;
+          
+          setTimeout(() => {
+            window.location.href = 'tela-jogo.html';
+          }, 2000);
+        });
+
+        socket.on('connect_error', (err) => {
+          console.error("Erro de conexão:", err);
+          // Se o servidor na nuvem estiver dormindo, mostra a simulação
+          document.getElementById('telaCarregando').style.display = 'none';
+          document.getElementById('telaJogo').style.display = 'flex';
+          document.getElementById('infoConexao').innerText = "Simulação (Servidor acordando...)";
+          setTimeout(() => {
+            window.location.href = 'tela-jogo.html';
+          }, 3000);
+        });
+
+      } catch (e) {
+        console.error("Erro no Socket:", e);
+      }
+
+      // Rede de segurança extra (6 segundos)
+      setTimeout(() => {
+        if(document.getElementById('telaJogo').style.display !== 'flex'){
+          document.getElementById('telaCarregando').style.display = 'none';
+          document.getElementById('telaJogo').style.display = 'flex';
+          document.getElementById('infoConexao').innerText = "Conectando (Modo Offline)...";
+          setTimeout(() => {
+            window.location.href = 'tela-jogo.html';
+          }, 2000);
+        }
+      }, 6000);
+    }
+
+    function pausarSessao() {
+      let tempoRestante = 45;
+      localStorage.setItem('bigroom_tempo_restante', tempoRestante.toString());
+      alert(`Sessão pausada! Você tem ${tempoRestante} minutos salvos.`);
+      window.location.href = 'index.html';
+    }
+
+    function retomarSessao() {
+      let tempoSalvoAgora = localStorage.getItem('bigroom_tempo_restante');
+      localStorage.removeItem('bigroom_tempo_restante');
+      alert(`Retomando jogo... Você tem ${tempoSalvoAgora} minutos restando.`);
+      document.getElementById('telaPausa').style.display = 'none';
+      iniciarConexao();
+    }
+  </script>
+</body>
+</html>
