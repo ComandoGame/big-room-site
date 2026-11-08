@@ -5,7 +5,7 @@
   <title>Preços e Planos — BIG-Room</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    .container { max-width: 1100px; margin: 4rem auto; padding: 0 2rem; text-align: center; }
+    .container { max-width: 1100px; margin: 4rem auto; padding: 0 2rem; text-align: center; position: relative; z-index: 1; }
     h1 { font-size: 2.8rem; margin-bottom: 0.5rem; color: #fff; }
     .sub { color: var(--texto-fraco); margin-bottom: 4rem; font-size: 1.1rem; }
     .cards { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; align-items: stretch; }
@@ -35,7 +35,6 @@
       <a href="como-funciona.html">Como funciona</a>
       <div class="user-area">
         <div class="saldo" id="saldoDisplay">Saldo: <strong>R$ 0,00</strong></div>
-        <button class="btn-add-saldo" onclick="abrirCheckout()">+ Adicionar Saldo</button>
         <button class="btn-outline" id="btnLogin" onclick="window.location.href='index.html'">Entrar</button>
         <div id="perfilLogado" style="display:none; align-items:center; gap:10px;">
           <span style="color:var(--laranja); font-weight:bold;" id="nomeUsuario"></span>
@@ -48,28 +47,14 @@
     <h1>Escolha seu Plano</h1>
     <p class="sub">Pague apenas pelo tempo que for jogar.</p>
     <div class="cards">
-      <div class="card"><h3>Teste Grátis</h3><p class="preco">R$ 0</p><p class="detalhe">15 min únicos</p><ul><li>720p / 30 FPS</li><li>Apenas 1 vez</li><li class="no">Save em nuvem</li></ul><button class="btn-card escuro" onclick="iniciarPlano('teste', 0)">Iniciar Teste</button></div>
-      <div class="card"><h3>Meia hora</h3><p class="preco">R$ 3</p><p class="detalhe">Sessão de 30 min</p><ul><li>1080p / 60 FPS</li><li>Save local</li><li>Fila normal</li></ul><button class="btn-card escuro" onclick="iniciarPlano('30min', 3)">Iniciar Plano</button></div>
-      <div class="card destaque"><span class="tag">Mais Popular</span><h3>Hora Cheia</h3><p class="preco">R$ 5</p><p class="detalhe">Sessão de 60 min</p><ul><li>1080p / 60 FPS</li><li>Save em nuvem</li><li>Fila prioritária</li></ul><button class="btn-card laranja" onclick="iniciarPlano('1h', 5)">Iniciar Plano</button></div>
-      <div class="card"><h3>Combo Premium</h3><p class="preco">R$ 20</p><p class="detalhe">5 horas acumuláveis</p><ul><li>2K / 120+ FPS</li><li>Gráficos customizáveis</li><li>Save em nuvem</li><li>Fila VIP</li></ul><button class="btn-card escuro" onclick="iniciarPlano('5h', 20)">Iniciar Plano</button></div>
+      <div class="card"><h3>Teste Grátis</h3><p class="preco">R$ 0</p><p class="detalhe">15 min (1x por semana)</p><ul><li>720p / 30 FPS</li><li>Apenas 1 vez por semana</li><li class="no">Save em nuvem</li></ul><button class="btn-card escuro" onclick="iniciarTeste()">Iniciar Teste</button></div>
+      <div class="card"><h3>Meia hora</h3><p class="preco">R$ 3</p><p class="detalhe">Sessão de 30 min</p><ul><li>1080p / 60 FPS</li><li>Save local</li><li>Fila normal</li></ul><button class="btn-card escuro" onclick="iniciarPlano('30min', 3, 30)">Iniciar Plano</button></div>
+      <div class="card destaque"><span class="tag">Mais Popular</span><h3>Hora Cheia</h3><p class="preco">R$ 5</p><p class="detalhe">Sessão de 60 min</p><ul><li>1080p / 60 FPS</li><li>Save em nuvem</li><li>Fila prioritária</li></ul><button class="btn-card laranja" onclick="iniciarPlano('1h', 5, 60)">Iniciar Plano</button></div>
+      <div class="card"><h3>Combo Premium</h3><p class="preco">R$ 20</p><p class="detalhe">5 horas acumuláveis</p><ul><li>2K / 120+ FPS</li><li>Gráficos customizáveis</li><li>Save em nuvem</li><li>Fila VIP</li></ul><button class="btn-card escuro" onclick="iniciarPlano('5h', 20, 300)">Iniciar Plano</button></div>
     </div>
   </div>
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
-
-    async function sincronizarSaldo() {
-        const id = localStorage.getItem('bigroom_usuario_id');
-        if (!id) return;
-
-        try {
-            const response = await fetch(`${API_URL}/api/saldo/${id}`);
-            if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('bigroom_saldo', data.saldo);
-                atualizarInterface();
-            }
-        } catch (error) { console.log("Servidor dormindo..."); }
-    }
 
     function atualizarInterface() {
       const nome = localStorage.getItem('bigroom_usuario');
@@ -86,42 +71,51 @@
         document.getElementById('saldoDisplay').style.display = 'none';
       }
     }
-    function sair() { 
-        localStorage.removeItem('bigroom_usuario'); 
-        localStorage.removeItem('bigroom_usuario_id');
-        localStorage.removeItem('bigroom_saldo');
-        atualizarInterface(); 
+    function sair() { localStorage.clear(); atualizarInterface(); }
+
+    async function iniciarTeste() {
+      const id = localStorage.getItem('bigroom_usuario_id');
+      if (!id) { alert("Faça login primeiro!"); return; }
+      
+      try {
+        const response = await fetch(`${API_URL}/api/teste-gratis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idUsuario: id })
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+            localStorage.setItem('bigroom_tempo_restante', data.tempo);
+            alert("Teste Grátis liberado! Iniciando...");
+            window.location.href = 'carregando-jogos.html';
+        } else {
+            alert(data.erro);
+        }
+      } catch (error) { alert("Erro de conexão."); }
     }
 
-    function abrirCheckout() {
-      alert("Em breve o pagamento via Pix estará disponível! Por enquanto, peça ao Admin para adicionar saldo.");
-    }
-
-    async function iniciarPlano(nomePlano, preco) {
-      const usuarioId = localStorage.getItem('bigroom_usuario_id');
-      if (!usuarioId) { alert("Faça login primeiro!"); window.location.href = 'index.html'; return; }
+    async function iniciarPlano(nomePlano, preco, minutos) {
+      const id = localStorage.getItem('bigroom_usuario_id');
+      if (!id) { alert("Faça login primeiro!"); window.location.href = 'index.html'; return; }
       
       let saldoAtual = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
-      
-      if (nomePlano === 'teste') { window.location.href = 'carregando-jogos.html?plano=teste'; return; }
-      
       if (saldoAtual < preco) {
-        alert(`Saldo insuficiente! Você tem R$ ${saldoAtual.toFixed(2)} e o plano custa R$ ${preco.toFixed(2)}.`);
+        alert(`Saldo insuficiente! Você tem R$ ${saldoAtual.toFixed(2)}.`);
         return; 
       }
       
-      // DESCONTA NO SERVIDOR
       try {
         const response = await fetch(`${API_URL}/api/descontar`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ idUsuario: usuarioId, valor: preco })
+            body: JSON.stringify({ idUsuario: id, valor: preco, minutos: minutos, plano: nomePlano })
         });
         const data = await response.json();
 
         if (response.ok) {
             localStorage.setItem('bigroom_saldo', data.novoSaldo);
-            localStorage.setItem('bigroom_tempo_restante', preco === 5 ? '60' : (preco === 3 ? '30' : '300'));
+            localStorage.setItem('bigroom_tempo_restante', minutos);
             atualizarInterface();
             alert(`Pagamento aprovado! Iniciando PC...`);
             window.location.href = 'carregando-jogos.html';
@@ -129,14 +123,11 @@
             alert("Erro: " + data.erro);
         }
       } catch (error) {
-        alert("Erro ao conectar com o servidor para pagar. Recarregue a página.");
+        alert("Erro ao conectar com o servidor para pagar.");
       }
     }
 
-    // Roda ao abrir a página
-    window.onload = () => { fetch(`${API_URL}/api/saldo/1`).catch(()=>{}); sincronizarSaldo(); }
-    atualizarInterface();
-    setInterval(sincronizarSaldo, 15000);
+    window.onload = atualizarInterface;
   </script>
 </body>
 </html>
