@@ -12,6 +12,7 @@
     .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background: rgba(18,18,18,.95); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--borda); }
     .logo { font-size: 1.5rem; font-weight: bold; text-decoration: none; color: var(--texto); }
     .logo span { color: var(--laranja); }
+    .navbar nav a { color: #ccc; text-decoration: none; font-size: .95rem; }
     
     .container { max-width: 1200px; margin: 4rem auto; padding: 0 2rem; }
     h1 { margin-bottom: 2rem; color: var(--laranja); font-size: 2.2rem; }
@@ -32,16 +33,11 @@
     th { background: #161616; color: var(--laranja); }
     tr:hover { background: rgba(255, 255, 255, 0.02); }
     
-    /* Botões de Ação */
     .acoes { display: flex; gap: 0.5rem; align-items: center; }
-    .btn-acao { padding: 0.4rem 0.8rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; transition: 0.2s; color: #fff; }
+    .btn-acao { padding: 0.4rem 0.8rem; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; font-size: 0.85rem; color: #fff; }
     .btn-saldo { background: var(--laranja); }
-    .btn-saldo:hover { background: #ea580c; }
     .btn-banir { background: transparent; border: 1px solid var(--vermelho); color: var(--vermelho); }
-    .btn-banir:hover { background: var(--vermelho); color: #fff; }
     .btn-desbanir { background: transparent; border: 1px solid var(--verde); color: var(--verde); }
-    .btn-desbanir:hover { background: var(--verde); color: #fff; }
-    
     .status-banido { color: var(--vermelho); font-weight: bold; font-size: 0.8rem; margin-left: 5px; }
     .btn-sair { background: transparent; color: var(--vermelho); border: 1px solid var(--vermelho); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 2rem; }
   </style>
@@ -49,7 +45,7 @@
 <body>
   <header class="navbar">
     <a href="index.html" class="logo">🎮 BIG<span>Room</span> Admin</a>
-    <nav><a href="index.html" style="color:#ccc; text-decoration:none;">← Voltar ao Site</a></nav>
+    <nav><a href="index.html">← Voltar ao Site</a></nav>
   </header>
 
   <div class="container">
@@ -86,31 +82,60 @@
 
   <script>
     const API_URL = 'https://big-room-servidor.onrender.com';
-    let senhaSalva = ""; 
+
+    window.onload = () => {
+        if (sessionStorage.getItem('adminToken')) {
+            carregarPainel();
+        }
+    }
 
     async function fazerLoginAdmin() {
       const senha = document.getElementById('senhaAdmin').value;
-      senhaSalva = senha;
       
       try {
-        const response = await fetch(`${API_URL}/api/admin/usuarios`, {
+        const response = await fetch(`${API_URL}/api/admin/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ senhaAdmin: senha })
+          body: JSON.stringify({ senha })
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          document.getElementById('telaLogin').style.display = 'none';
-          document.getElementById('painelDados').style.display = 'block';
-          renderizarTabela(data.usuarios);
+          sessionStorage.setItem('adminToken', data.token);
+          carregarPainel();
         } else {
           alert("❌ " + data.erro);
         }
       } catch (error) {
         alert("Erro ao conectar. Aguarde 30s (servidor acordando).");
       }
+    }
+
+    async function carregarPainel() {
+        const token = sessionStorage.getItem('adminToken');
+        
+        try {
+            const response = await fetch(`${API_URL}/api/admin/usuarios`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById('telaLogin').style.display = 'none';
+                document.getElementById('painelDados').style.display = 'block';
+                renderizarTabela(data.usuarios);
+            } else {
+                alert("Sessão expirada. Faça login novamente.");
+                sairAdmin();
+            }
+        } catch (error) {
+            alert("Erro ao carregar dados.");
+        }
     }
 
     function renderizarTabela(usuarios) {
@@ -120,8 +145,6 @@
 
       usuarios.forEach(user => {
         saldoTotal += user.saldo;
-        
-        // Se estiver banido, mostra o aviso
         const avisoBanido = user.banido === 1 ? '<span class="status-banido">(BANIDO)</span>' : '';
         const btnBanir = user.banido === 1 
             ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>`
@@ -154,17 +177,22 @@
       let valor = parseFloat(valorString.replace(',', '.'));
       if (isNaN(valor)) return alert("Valor inválido.");
 
+      const token = sessionStorage.getItem('adminToken');
+
       try {
         const response = await fetch(`${API_URL}/api/admin/saldo`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ senhaAdmin: senhaSalva, idUsuario, valor })
+          headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ idUsuario, valor })
         });
         const data = await response.json();
         
         if (response.ok) {
           alert(data.mensagem);
-          fazerLoginAdmin(); // Recarrega a tabela
+          carregarPainel(); 
         } else { alert(data.erro); }
       } catch (error) { alert("Erro no servidor."); }
     }
@@ -173,23 +201,28 @@
       const acao = banir ? "BANIR" : "DESBANIR";
       if (!confirm(`Tem certeza que deseja ${acao} este usuário?`)) return;
 
+      const token = sessionStorage.getItem('adminToken');
+
       try {
         const response = await fetch(`${API_URL}/api/admin/banir`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ senhaAdmin: senhaSalva, idUsuario, banir })
+          headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ idUsuario, banir })
         });
         const data = await response.json();
         
         if (response.ok) {
           alert(data.mensagem);
-          fazerLoginAdmin(); // Recarrega a tabela
+          carregarPainel(); 
         } else { alert(data.erro); }
       } catch (error) { alert("Erro no servidor."); }
     }
 
     function sairAdmin() {
-      senhaSalva = "";
+      sessionStorage.removeItem('adminToken');
       document.getElementById('telaLogin').style.display = 'block';
       document.getElementById('painelDados').style.display = 'none';
       document.getElementById('senhaAdmin').value = '';
