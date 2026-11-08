@@ -10,45 +10,51 @@
     .header-admin { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
     .header-admin h1 { color: #fff; font-size: 2rem; font-weight: 800; }
     
+    .abas { display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--borda); padding-bottom: 1rem; }
+    .aba { background: transparent; border: none; color: var(--texto-fraco); font-size: 1.1rem; font-weight: bold; cursor: pointer; padding: 0.5rem 1rem; border-radius: 8px; transition: 0.2s; }
+    .aba:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .aba.ativa { color: var(--laranja); background: rgba(249, 115, 22, 0.1); border: 1px solid var(--laranja); }
+
     .login-box { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); padding: 3rem; border-radius: 16px; max-width: 400px; margin: 0 auto; text-align: center; }
-    .login-box h2 { margin-bottom: 1.5rem; color: #fff; }
-    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 10px; border: 1px solid var(--borda); background: rgba(0,0,0,0.5); color: #fff; font-size: 1rem; }
-    .login-box button { width: 100%; padding: 1rem; border-radius: 10px; background: linear-gradient(135deg, var(--laranja), var(--laranja-esc)); color: #fff; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; }
+    .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 10px; border: 1px solid var(--borda); background: rgba(0,0,0,0.5); color: #fff; }
+    .login-box button { width: 100%; padding: 1rem; border-radius: 10px; background: var(--laranja); color: #fff; border: none; font-weight: bold; cursor: pointer; }
     
     .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
     .metrica-card { padding: 2rem; text-align: center; border-top: 4px solid var(--laranja); background: var(--bg-card); border-radius: 12px; }
-    .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.95rem; margin-bottom: 0.5rem; font-weight: 500; }
+    .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.95rem; margin-bottom: 0.5rem; }
     .metrica-card strong { font-size: 2.5rem; color: #fff; font-weight: 800; }
 
     .users-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
-    .user-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); border-radius: 16px; padding: 1.5rem; position: relative; }
-    .user-card.banido { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); }
-    
+    .user-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); border-radius: 16px; padding: 1.5rem; }
     .user-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 1rem; }
     .user-name { font-size: 1.2rem; font-weight: bold; color: #fff; }
-    .user-code { font-family: monospace; font-size: 0.8rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 2px 6px; border-radius: 4px; }
     .user-email { color: var(--texto-fraco); font-size: 0.9rem; display: block; margin-top: 0.2rem; }
-    
-    .user-info-row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; font-size: 0.9rem; }
-    .user-info-row span { color: var(--texto-fraco); }
-    .user-info-row strong { color: #fff; }
+    .user-code { font-family: monospace; font-size: 0.8rem; color: #fbbf24; background: rgba(251, 191, 36, 0.1); padding: 2px 6px; border-radius: 4px; }
     
     .saldo-destaque { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-    .saldo-destaque span { color: var(--verde); font-weight: bold; font-size: 0.9rem; }
+    .saldo-destaque span { color: var(--verde); font-weight: bold; }
     .saldo-destaque strong { color: var(--verde); font-size: 1.4rem; }
-
+    
     .sessao-box { background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
     .tag-plano { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
     .tag-tempo { background: rgba(16, 185, 129, 0.2); color: var(--verde); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
-    .tag-banido { color: var(--vermelho); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
-    
+
     .acoes { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-    .btn-acao { flex: 1; padding: 0.6rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.8rem; color: #fff; display: flex; align-items: center; justify-content: center; }
+    .btn-acao { flex: 1; padding: 0.6rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.8rem; color: #fff; }
     .btn-saldo { background: rgba(249, 115, 22, 0.2); color: var(--laranja); border: 1px solid var(--laranja); }
     .btn-tempo { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
     .btn-zerar { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid #6b7280; }
     .btn-banir { background: rgba(239, 68, 68, 0.2); color: var(--vermelho); border: 1px solid var(--vermelho); }
     .btn-desbanir { background: rgba(16, 185, 129, 0.2); color: var(--verde); border: 1px solid var(--verde); }
+
+    /* Estilos das Mensagens */
+    .mensagens-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
+    .msg-card { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1.5rem; }
+    .msg-header { display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 0.5rem; }
+    .msg-nome { font-weight: bold; color: #fff; }
+    .msg-data { font-size: 0.8rem; color: var(--texto-fraco); }
+    .msg-email { color: var(--laranja); font-size: 0.9rem; }
+    .msg-texto { color: #ccc; font-size: 0.95rem; line-height: 1.5; margin-top: 0.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -61,8 +67,8 @@
 
   <div class="admin-container">
     <div class="header-admin">
-      <h1>🖥️ Controle de Usuários</h1>
-      <button class="btn-outline" onclick="sairAdmin()" id="btnSair" style="display:none;">Sair do Painel</button>
+      <h1>🖥️ Painel do Host</h1>
+      <button class="btn-outline" onclick="sairAdmin()" id="btnSair" style="display:none;">Sair</button>
     </div>
 
     <div class="login-box" id="telaLogin">
@@ -72,19 +78,47 @@
     </div>
 
     <div id="painelDados" style="display: none;">
-      <div class="metricas">
-        <div class="metrica-card"><span>Total de Usuários</span><strong id="totalUsuarios">0</strong></div>
-        <div class="metrica-card"><span>Saldo Total em Contas</span><strong id="saldoTotal" style="color: var(--verde);">R$ 0,00</strong></div>
+      <!-- ABAS -->
+      <div class="abas">
+        <button class="aba ativa" id="aba-usuarios" onclick="mudarAba('usuarios')">👥 Usuários</button>
+        <button class="aba" id="aba-mensagens" onclick="mudarAba('mensagens')">✉️ Mensagens</button>
       </div>
-      <div class="users-grid" id="usersGrid"></div>
+
+      <!-- CONTEÚDO: USUÁRIOS -->
+      <div id="conteudo-usuarios">
+        <div class="metricas">
+          <div class="metrica-card"><span>Total de Usuários</span><strong id="totalUsuarios">0</strong></div>
+          <div class="metrica-card"><span>Saldo em Contas</span><strong id="saldoTotal" style="color: var(--verde);">R$ 0,00</strong></div>
+        </div>
+        <div class="users-grid" id="usersGrid"></div>
+      </div>
+
+      <!-- CONTEÚDO: MENSAGENS -->
+      <div id="conteudo-mensagens" style="display: none;">
+        <div class="mensagens-grid" id="msgGrid"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    document.addEventListener('contextmenu', e => e.preventDefault());
     const API_URL = 'https://big-room-servidor.onrender.com';
 
     window.onload = () => { if (sessionStorage.getItem('adminToken')) carregarPainel(); }
+
+    function mudarAba(aba) {
+        document.querySelectorAll('.aba').forEach(b => b.classList.remove('ativa'));
+        document.getElementById(`aba-${aba}`).classList.add('ativa');
+        
+        if (aba === 'usuarios') {
+            document.getElementById('conteudo-usuarios').style.display = 'block';
+            document.getElementById('conteudo-mensagens').style.display = 'none';
+            carregarPainel();
+        } else {
+            document.getElementById('conteudo-usuarios').style.display = 'none';
+            document.getElementById('conteudo-mensagens').style.display = 'block';
+            carregarMensagens();
+        }
+    }
 
     async function fazerLoginAdmin() {
       const senha = document.getElementById('senhaAdmin').value;
@@ -103,6 +137,10 @@
     }
 
     async function carregarPainel() {
+        document.getElementById('telaLogin').style.display = 'none';
+        document.getElementById('painelDados').style.display = 'block';
+        document.getElementById('btnSair').style.display = 'block';
+        
         const token = sessionStorage.getItem('adminToken');
         try {
             const response = await fetch(`${API_URL}/api/admin/usuarios`, {
@@ -111,9 +149,6 @@
             });
             if (response.ok) {
                 const data = await response.json();
-                document.getElementById('telaLogin').style.display = 'none';
-                document.getElementById('painelDados').style.display = 'block';
-                document.getElementById('btnSair').style.display = 'block';
                 renderizarCards(data.usuarios);
             } else { sairAdmin(); }
         } catch (error) { alert("Erro ao carregar dados."); }
@@ -127,7 +162,6 @@
       usuarios.forEach(user => {
         saldoTotal += user.saldo;
         const isBanido = user.banido === 1;
-        const statusClass = isBanido ? 'banido' : '';
         const btnBanir = isBanido 
             ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>`
             : `<button class="btn-acao btn-banir" onclick="alterarBanimento(${user.id}, true)">Banir</button>`;
@@ -138,18 +172,18 @@
         }
 
         const card = document.createElement('div');
-        card.className = `user-card ${statusClass}`;
+        card.className = `user-card`;
         card.innerHTML = `
           <div class="user-header">
             <div>
-              <div class="user-name">${user.nome} ${isBanido ? '<span class="tag-banido">(Banido)</span>' : ''}</div>
+              <div class="user-name">${user.nome} ${isBanido ? '<span style="color:red;font-size:0.8rem;">(Banido)</span>' : ''}</div>
               <span class="user-email">${user.email}</span>
             </div>
             <span class="user-code">${user.codigo_conta || 'N/A'}</span>
           </div>
           <div class="saldo-destaque"><span>Saldo em Conta:</span><strong>R$ ${user.saldo.toFixed(2)}</strong></div>
-          <div class="user-info-row"><span>Endereço IP:</span><strong>${user.ip || 'Desconhecido'}</strong></div>
-          <div class="user-info-row"><span>Hardware ID:</span><strong style="font-size:0.7rem;">${user.visitor_id || 'Desconhecido'}</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:0.5rem;"><span style="color:var(--texto-fraco);">IP:</span><strong>${user.ip || 'Desc.'}</strong></div>
+          <div style="display:flex;justify-content:space-between;font-size:0.9rem;margin-bottom:0.5rem;"><span style="color:var(--texto-fraco);">Hardware:</span><strong style="font-size:0.7rem;">${user.visitor_id || 'Desc.'}</strong></div>
           <div class="sessao-box"><span style="color: var(--texto-fraco); font-size: 0.85rem;">Sessão:</span><div style="display: flex; gap: 0.5rem;">${sessaoHtml}</div></div>
           <div class="acoes">
             <button class="btn-acao btn-saldo" onclick="alterarSaldo(${user.id})">+/- Saldo</button>
@@ -165,68 +199,79 @@
       document.getElementById('saldoTotal').innerText = `R$ ${saldoTotal.toFixed(2)}`;
     }
 
+    // --- LÓGICA DE MENSAGENS ---
+    async function carregarMensagens() {
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            const response = await fetch(`${API_URL}/api/admin/mensagens`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                renderizarMensagens(data.mensagens);
+            }
+        } catch (error) { alert("Erro ao carregar mensagens."); }
+    }
+
+    function renderizarMensagens(mensagens) {
+        const grid = document.getElementById('msgGrid');
+        grid.innerHTML = '';
+        
+        if (mensagens.length === 0) {
+            grid.innerHTML = '<p style="color:#888;">Nenhuma mensagem recebida ainda.</p>';
+            return;
+        }
+
+        mensagens.forEach(msg => {
+            const dataFormatada = new Date(msg.data_envio).toLocaleString('pt-BR');
+            const card = document.createElement('div');
+            card.className = 'msg-card';
+            card.innerHTML = `
+                <div class="msg-header">
+                    <span class="msg-nome">${msg.nome}</span>
+                    <span class="msg-data">${dataFormatada}</span>
+                </div>
+                <div class="msg-email">${msg.email}</div>
+                <div class="msg-texto">${msg.mensagem}</div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    // --- FUNÇÕES DO USUÁRIO ---
     async function alterarSaldo(idUsuario) {
       let valorString = prompt("Digite o valor para ADICIONAR (ex: 50) ou REMOVER (ex: -10):");
       if (!valorString) return;
       let valor = parseFloat(valorString.replace(',', '.'));
       if (isNaN(valor)) return alert("Valor inválido.");
       const token = sessionStorage.getItem('adminToken');
-      try {
-        const response = await fetch(`${API_URL}/api/admin/saldo`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ idUsuario, valor })
-        });
-        const data = await response.json();
-        if (response.ok) { alert(data.mensagem); carregarPainel(); } else { alert(data.erro); }
-      } catch (error) { alert("Erro no servidor."); }
+      await fetch(`${API_URL}/api/admin/saldo`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idUsuario, valor }) });
+      carregarPainel();
     }
 
     async function adicionarTempo(idUsuario) {
       let minutosString = prompt("Quantos MINUTOS deseja adicionar? (ex: 30, 60)");
       if (!minutosString) return;
       let minutos = parseInt(minutosString);
-      if (isNaN(minutos) || minutos <= 0) return alert("Minutos inválidos.");
       let plano = prompt("Qual o nome do plano? (ex: 1h, VIP, Teste)") || "Manual";
       const token = sessionStorage.getItem('adminToken');
-      try {
-        const response = await fetch(`${API_URL}/api/admin/tempo`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ idUsuario, minutos, plano })
-        });
-        const data = await response.json();
-        if (response.ok) { alert(data.mensagem); carregarPainel(); } else { alert(data.erro); }
-      } catch (error) { alert("Erro no servidor."); }
+      await fetch(`${API_URL}/api/admin/tempo`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idUsuario, minutos, plano }) });
+      carregarPainel();
     }
 
     async function zerarTempo(idUsuario) {
-      if (!confirm("Tem certeza que deseja ZERAR o tempo deste usuário?")) return;
+      if (!confirm("Tem certeza que deseja ZERAR o tempo?")) return;
       const token = sessionStorage.getItem('adminToken');
-      try {
-        const response = await fetch(`${API_URL}/api/admin/tempo`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ idUsuario, minutos: 0, plano: 'Nenhum' })
-        });
-        const data = await response.json();
-        if (response.ok) { alert(data.mensagem); carregarPainel(); } else { alert(data.erro); }
-      } catch (error) { alert("Erro no servidor."); }
+      await fetch(`${API_URL}/api/admin/tempo`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idUsuario, minutos: 0, plano: 'Nenhum' }) });
+      carregarPainel();
     }
 
     async function alterarBanimento(idUsuario, banir) {
-      const acao = banir ? "BANIR" : "DESBANIR";
-      if (!confirm(`Tem certeza que deseja ${acao}? O dispositivo e o IP serão bloqueados.`)) return;
+      if (!confirm(`Tem certeza que deseja ${banir ? "BANIR" : "DESBANIR"}?`)) return;
       const token = sessionStorage.getItem('adminToken');
-      try {
-        const response = await fetch(`${API_URL}/api/admin/banir`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ idUsuario, banir })
-        });
-        const data = await response.json();
-        if (response.ok) { alert(data.mensagem); carregarPainel(); } else { alert(data.erro); }
-      } catch (error) { alert("Erro no servidor."); }
+      await fetch(`${API_URL}/api/admin/banir`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ idUsuario, banir }) });
+      carregarPainel();
     }
 
     function sairAdmin() {
