@@ -44,27 +44,28 @@
     .acoes { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
     .btn-acao { flex: 1; padding: 0.6rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.8rem; color: #fff; transition: 0.2s; }
     .btn-saldo { background: rgba(249, 115, 22, 0.2); color: var(--laranja); border: 1px solid var(--laranja); }
-    .btn-saldo:hover { background: var(--laranja); color: #fff; }
     .btn-tempo { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
-    .btn-tempo:hover { background: #3b82f6; color: #fff; }
     .btn-zerar { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid #6b7280; }
-    .btn-zerar:hover { background: #6b7280; color: #fff; }
     .btn-banir { background: rgba(239, 68, 68, 0.2); color: var(--vermelho); border: 1px solid var(--vermelho); }
-    .btn-banir:hover { background: var(--vermelho); color: #fff; }
     .btn-desbanir { background: rgba(16, 185, 129, 0.2); color: var(--verde); border: 1px solid var(--verde); }
-    .btn-desbanir:hover { background: var(--verde); color: #fff; }
 
     /* ESTILOS DAS MENSAGENS (TICKETS) */
     .mensagens-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
-    .msg-card { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; }
+    .msg-card { background: var(--bg-card); border: 1px solid var(--borda); border-radius: 12px; padding: 1.5rem; display: flex; flex-direction: column; transition: 0.3s; }
+    .msg-card.respondida { opacity: 0.7; border-color: rgba(16, 185, 129, 0.3); }
+    
     .msg-header { display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 0.5rem; }
     .msg-nome { font-weight: bold; color: #fff; }
     .msg-data { font-size: 0.8rem; color: var(--texto-fraco); }
     .msg-email { color: var(--laranja); font-size: 0.9rem; }
     .msg-texto { color: #ccc; font-size: 0.95rem; line-height: 1.5; margin-top: 0.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; flex-grow: 1; }
     
-    .btn-gmail { background: #ea4335; color: #fff; border: none; padding: 0.8rem; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; text-decoration: none;}
+    .btn-gmail { background: #ea4335; color: #fff; border: none; padding: 0.8rem; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 1rem; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; text-decoration: none; width: 100%; }
     .btn-gmail:hover { background: #c5221f; transform: translateY(-2px); }
+    
+    .btn-marcar { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid #6b7280; padding: 0.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 0.5rem; font-size: 0.8rem; width: 100%; transition: 0.2s; }
+    .btn-marcar:hover { background: var(--verde); color: #fff; border-color: var(--verde); }
+    .tag-respondida { color: var(--verde); font-weight: bold; font-size: 0.8rem; margin-top: 1rem; text-align: center; }
   </style>
 </head>
 <body>
@@ -218,27 +219,43 @@
 
         mensagens.forEach(msg => {
             const dataFormatada = new Date(msg.data_envio).toLocaleString('pt-BR');
+            const isRespondida = msg.respondida === 1;
             
             const assunto = encodeURIComponent(`Resposta BIG-Room - Suporte`);
             const corpo = encodeURIComponent(`Olá ${msg.nome},\n\nEstamos respondendo à sua mensagem:\n"${msg.mensagem}"\n\n---\nAtenciosamente,\nEquipe BIG-Room.`);
             const linkGmail = `https://mail.google.com/mail/?view=cm&fs=1&to=${msg.email}&su=${assunto}&body=${corpo}`;
 
+            // Se estiver respondida, mostra um check verde. Se não, mostra o botão de marcar.
+            const footerAcao = isRespondida 
+                ? `<div class="tag-respondida">✅ Respondida</div>`
+                : `<button class="btn-marcar" onclick="marcarRespondida(${msg.id})">Marcar como Respondido</button>`;
+
             const card = document.createElement('div');
-            card.className = 'msg-card';
+            card.className = `msg-card ${isRespondida ? 'respondida' : ''}`;
             card.innerHTML = `
                 <div class="msg-header">
-                    <span class="msg-nome">${msg.nome}</span>
+                    <span class="msg-nome">${msg.nome} ${isRespondida ? '✅' : ''}</span>
                     <span class="msg-data">${dataFormatada}</span>
                 </div>
                 <div class="msg-email">${msg.email}</div>
                 <div class="msg-texto">${msg.mensagem}</div>
-                <a href="${linkGmail}" target="_blank" class="btn-gmail">
-                    ✉️ Responder no Gmail
-                </a>
+                ${!isRespondida ? `<a href="${linkGmail}" target="_blank" class="btn-gmail">✉️ Responder no Gmail</a>` : ''}
+                ${footerAcao}
             `;
-            grid.appendChild(msgCard);
             grid.appendChild(card);
         });
+    }
+
+    async function marcarRespondida(idMensagem) {
+        const token = sessionStorage.getItem('adminToken');
+        try {
+            await fetch(`${API_URL}/api/admin/marcar-respondida`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ idMensagem })
+            });
+            carregarMensagens(); // Recarrega a tela
+        } catch (e) { alert("Erro."); }
     }
 
     async function alterarSaldo(idUsuario) {
