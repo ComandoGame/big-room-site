@@ -55,6 +55,22 @@
     </div>
   </div>
   <script>
+    const API_URL = 'https://big-room-servidor.onrender.com';
+
+    async function sincronizarSaldo() {
+        const id = localStorage.getItem('bigroom_usuario_id');
+        if (!id) return;
+
+        try {
+            const response = await fetch(`${API_URL}/api/saldo/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('bigroom_saldo', data.saldo);
+                atualizarInterface();
+            }
+        } catch (error) { console.log("Servidor dormindo..."); }
+    }
+
     function atualizarInterface() {
       const nome = localStorage.getItem('bigroom_usuario');
       const saldo = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
@@ -76,36 +92,51 @@
         localStorage.removeItem('bigroom_saldo');
         atualizarInterface(); 
     }
+
     function abrirCheckout() {
-      let valor = prompt("Quanto deseja adicionar de saldo? (Ex: 10, 20, 50)\n\n*(Aviso: Em breve o Pix estará integrado. Por enquanto, é apenas uma simulação).*");
-      if (valor && !isNaN(valor) && valor > 0) {
-        let saldoAtual = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
-        localStorage.setItem('bigroom_saldo', (saldoAtual + parseFloat(valor)).toFixed(2));
-        atualizarInterface();
-        alert(`Sucesso! R$ ${parseFloat(valor).toFixed(2)} adicionados à sua carteira local.`);
-      }
+      alert("Em breve o pagamento via Pix estará disponível! Por enquanto, peça ao Admin para adicionar saldo.");
     }
-    function iniciarPlano(nomePlano, preco) {
-      const usuario = localStorage.getItem('bigroom_usuario');
-      if (!usuario) { alert("Faça login primeiro!"); window.location.href = 'index.html'; return; }
+
+    async function iniciarPlano(nomePlano, preco) {
+      const usuarioId = localStorage.getItem('bigroom_usuario_id');
+      if (!usuarioId) { alert("Faça login primeiro!"); window.location.href = 'index.html'; return; }
       
       let saldoAtual = parseFloat(localStorage.getItem('bigroom_saldo') || '0');
       
       if (nomePlano === 'teste') { window.location.href = 'carregando-jogos.html?plano=teste'; return; }
       
       if (saldoAtual < preco) {
-        if (confirm(`Saldo insuficiente! Você tem R$ ${saldoAtual.toFixed(2)}.\nDeseja adicionar saldo?`)) { abrirCheckout(); }
+        alert(`Saldo insuficiente! Você tem R$ ${saldoAtual.toFixed(2)} e o plano custa R$ ${preco.toFixed(2)}.`);
         return; 
       }
       
-      localStorage.setItem('bigroom_saldo', (saldoAtual - preco).toFixed(2));
-      localStorage.setItem('bigroom_tempo_restante', preco === 5 ? '60' : (preco === 3 ? '30' : '300'));
-      atualizarInterface();
-      
-      alert(`Pagamento aprovado! Iniciando PC...`);
-      window.location.href = 'carregando-jogos.html';
+      // DESCONTA NO SERVIDOR
+      try {
+        const response = await fetch(`${API_URL}/api/descontar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idUsuario: usuarioId, valor: preco })
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem('bigroom_saldo', data.novoSaldo);
+            localStorage.setItem('bigroom_tempo_restante', preco === 5 ? '60' : (preco === 3 ? '30' : '300'));
+            atualizarInterface();
+            alert(`Pagamento aprovado! Iniciando PC...`);
+            window.location.href = 'carregando-jogos.html';
+        } else {
+            alert("Erro: " + data.erro);
+        }
+      } catch (error) {
+        alert("Erro ao conectar com o servidor para pagar. Recarregue a página.");
+      }
     }
+
+    // Roda ao abrir a página
+    window.onload = () => { fetch(`${API_URL}/api/saldo/1`).catch(()=>{}); sincronizarSaldo(); }
     atualizarInterface();
+    setInterval(sincronizarSaldo, 15000);
   </script>
 </body>
 </html>
