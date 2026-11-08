@@ -23,7 +23,7 @@
     .metrica-card strong { font-size: 2.5rem; color: #fff; font-weight: 800; }
 
     /* GRID DE USUÁRIOS */
-    .users-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+    .users-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
     .user-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); border-radius: 16px; padding: 1.5rem; transition: 0.3s; position: relative; }
     .user-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-3px); }
     .user-card.banido { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); }
@@ -36,9 +36,22 @@
     .user-info-row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; font-size: 0.9rem; }
     .user-info-row span { color: var(--texto-fraco); }
     .user-info-row strong { color: #fff; }
-    .user-info-row strong.saldo { color: var(--verde); }
-    .user-info-row strong.ip { font-family: monospace; color: #9ca3af; }
+    .user-info-row strong.ip { font-family: monospace; color: #9ca3af; font-size: 0.8rem; }
     
+    /* DESTAQUE DO SALDO */
+    .saldo-destaque { 
+        background: rgba(16, 185, 129, 0.1); 
+        border: 1px solid rgba(16, 185, 129, 0.3); 
+        padding: 0.8rem; 
+        border-radius: 8px; 
+        margin-bottom: 1rem; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+    }
+    .saldo-destaque span { color: var(--verde); font-weight: bold; font-size: 0.9rem; }
+    .saldo-destaque strong { color: var(--verde); font-size: 1.4rem; }
+
     .sessao-box { background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
     .tag-plano { background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
     .tag-tempo { background: rgba(16, 185, 129, 0.2); color: var(--verde); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; }
@@ -84,7 +97,7 @@
     <div id="painelDados" style="display: none;">
       <div class="metricas">
         <div class="metrica-card"><span>Total de Usuários</span><strong id="totalUsuarios">0</strong></div>
-        <div class="metrica-card"><span>Saldo em Contas</span><strong id="saldoTotal" style="color: var(--verde);">R$ 0,00</strong></div>
+        <div class="metrica-card"><span>Saldo Total em Contas</span><strong id="saldoTotal" style="color: var(--verde);">R$ 0,00</strong></div>
       </div>
       <div class="users-grid" id="usersGrid"></div>
     </div>
@@ -155,7 +168,7 @@
             ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>`
             : `<button class="btn-acao btn-banir" onclick="alterarBanimento(${user.id}, true)">Banir</button>`;
 
-        let sessaoHtml = `<span style="color:#6b7280; font-size: 0.85rem;">Nenhuma sessão ativa</span>`;
+        let sessaoHtml = `<span style="color:#6b7280; font-size: 0.85rem;">Nenhuma sessão</span>`;
         if (user.plano_ativo && user.plano_ativo !== 'Nenhum') {
             sessaoHtml = `
                 <div><span class="tag-plano">${user.plano_ativo}</span></div>
@@ -174,21 +187,23 @@
             <span class="user-code">${user.codigo_conta || 'N/A'}</span>
           </div>
           
-          <div class="user-info-row">
+          <!-- NOVO DESTAQUE DO SALDO -->
+          <div class="saldo-destaque">
             <span>Saldo em Conta:</span>
-            <strong class="saldo">R$ ${user.saldo.toFixed(2)}</strong>
+            <strong>R$ ${user.saldo.toFixed(2)}</strong>
           </div>
+
           <div class="user-info-row">
             <span>Endereço IP:</span>
             <strong class="ip">${user.ip || 'Desconhecido'}</strong>
           </div>
           <div class="user-info-row">
-            <span>Hardware (Fingerprint):</span>
+            <span>Hardware ID:</span>
             <strong class="ip" style="font-size:0.7rem;">${user.visitor_id || 'Desconhecido'}</strong>
           </div>
           
           <div class="sessao-box">
-            <span style="color: var(--texto-fraco); font-size: 0.85rem;">Sessão Atual:</span>
+            <span style="color: var(--texto-fraco); font-size: 0.85rem;">Sessão:</span>
             <div style="display: flex; gap: 0.5rem;">${sessaoHtml}</div>
           </div>
 
