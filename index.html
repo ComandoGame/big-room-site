@@ -38,22 +38,36 @@
       if (select) {
         select.value = idioma;
         select.dispatchEvent(new Event('change'));
-        // Salva a escolha no localStorage
         localStorage.setItem('bigroom_lingua', idioma);
+        
+        // Atualiza o visual dos botões
+        document.getElementById('btn-pt').classList.remove('ativo');
+        document.getElementById('btn-en').classList.remove('ativo');
+        document.getElementById('btn-' + idioma).classList.add('ativo');
       }
     }
 
     // Verifica se o usuário já tinha escolhido inglês antes de recarregar
     window.onload = function() {
       const linguaSalva = localStorage.getItem('bigroom_lingua');
-      if (linguaSalva) {
-        setTimeout(() => mudarIdioma(linguaSalva), 1000);
+      if (linguaSalva && linguaSalva === 'en') {
+        setTimeout(() => mudarIdioma('en'), 1000);
       }
     }
   </script>
   <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
   
   <style>
+    /* ESCONDE A BARRA FEIA DO GOOGLE TRADUTOR */
+    .goog-te-banner-frame.skiptranslate { display: none !important; }
+    .goog-te-banner-frame { display: none !important; }
+    #goog-gt-tt { display: none !important; }
+    body { top: 0px !important; }
+    #google_translate_element { display: none !important; }
+    .goog-tooltip { display: none !important; }
+    .goog-tooltip:hover { display: none !important; }
+    .goog-text-highlight { background-color: transparent !important; border: none !important; box-shadow: none !important; }
+    
     .hero { text-align: center; padding: 5rem 2rem 3rem; }
     .hero h1 { font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
     .hero h1 span { color: var(--laranja); }
@@ -102,9 +116,6 @@
     .btn-idioma { background: transparent; border: none; color: #fff; padding: 5px 8px; border-radius: 6px; cursor: pointer; font-size: 1.1rem; transition: 0.2s; opacity: 0.6; }
     .btn-idioma:hover { opacity: 1; background: rgba(255,255,255,0.1); }
     .btn-idioma.ativo { opacity: 1; background: rgba(249, 115, 22, 0.2); border: 1px solid var(--laranja); }
-    /* Esconde a barra feia do Google Translate */
-    .goog-te-banner-frame.skiptranslate { display: none !important; }
-    body { top: 0px !important; }
   </style>
 </head>
 <body>
@@ -163,7 +174,6 @@
     </div>
   </section>
 
-  <!-- Restante das Seções (Máquinas, Imagem, Features, Segurança) mantidos iguais -->
   <section class="section" style="background: rgba(22, 22, 22, 0.4); border-radius: 20px; margin: 2rem auto; backdrop-filter: blur(5px);">
     <h2>Máquinas Disponíveis</h2>
     <p class="sub">Não precisa entender de placa de vídeo. Nós entregamos a potência pronta para o jogo.</p>
@@ -264,6 +274,7 @@
         } catch (error) { }
     }
 
+    // Inicializa as funções de tela
     window.onload = () => {
         fetch(`${API_URL}/api/saldo/1`).catch(()=>{}); 
         sincronizarSaldo();
