@@ -10,22 +10,18 @@
     .header-admin { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
     .header-admin h1 { color: #fff; font-size: 2rem; font-weight: 800; }
     
-    /* LOGIN BOX */
-    .login-box { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); padding: 3rem; border-radius: 16px; max-width: 400px; margin: 0 auto; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .login-box { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); padding: 3rem; border-radius: 16px; max-width: 400px; margin: 0 auto; text-align: center; }
     .login-box h2 { margin-bottom: 1.5rem; color: #fff; }
     .login-box input { width: 100%; padding: 1rem; margin-bottom: 1rem; border-radius: 10px; border: 1px solid var(--borda); background: rgba(0,0,0,0.5); color: #fff; font-size: 1rem; }
     .login-box button { width: 100%; padding: 1rem; border-radius: 10px; background: linear-gradient(135deg, var(--laranja), var(--laranja-esc)); color: #fff; border: none; font-weight: bold; font-size: 1rem; cursor: pointer; }
     
-    /* MÉTRICAS */
     .metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-    .metrica-card { padding: 2rem; text-align: center; border-top: 4px solid var(--laranja); }
+    .metrica-card { padding: 2rem; text-align: center; border-top: 4px solid var(--laranja); background: var(--bg-card); border-radius: 12px; }
     .metrica-card span { display: block; color: var(--texto-fraco); font-size: 0.95rem; margin-bottom: 0.5rem; font-weight: 500; }
     .metrica-card strong { font-size: 2.5rem; color: #fff; font-weight: 800; }
 
-    /* GRID DE USUÁRIOS */
     .users-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
-    .user-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); border-radius: 16px; padding: 1.5rem; transition: 0.3s; position: relative; }
-    .user-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-3px); }
+    .user-card { background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--borda); border-radius: 16px; padding: 1.5rem; position: relative; }
     .user-card.banido { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05); }
     
     .user-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; border-bottom: 1px solid var(--borda); padding-bottom: 1rem; }
@@ -36,19 +32,8 @@
     .user-info-row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; font-size: 0.9rem; }
     .user-info-row span { color: var(--texto-fraco); }
     .user-info-row strong { color: #fff; }
-    .user-info-row strong.ip { font-family: monospace; color: #9ca3af; font-size: 0.8rem; }
     
-    /* DESTAQUE DO SALDO */
-    .saldo-destaque { 
-        background: rgba(16, 185, 129, 0.1); 
-        border: 1px solid rgba(16, 185, 129, 0.3); 
-        padding: 0.8rem; 
-        border-radius: 8px; 
-        margin-bottom: 1rem; 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-    }
+    .saldo-destaque { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.8rem; border-radius: 8px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
     .saldo-destaque span { color: var(--verde); font-weight: bold; font-size: 0.9rem; }
     .saldo-destaque strong { color: var(--verde); font-size: 1.4rem; }
 
@@ -58,24 +43,16 @@
     .tag-banido { color: var(--vermelho); font-weight: bold; font-size: 0.8rem; text-transform: uppercase; }
     
     .acoes { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
-    .btn-acao { flex: 1; padding: 0.6rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.8rem; color: #fff; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .btn-acao { flex: 1; padding: 0.6rem; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 0.8rem; color: #fff; display: flex; align-items: center; justify-content: center; }
     .btn-saldo { background: rgba(249, 115, 22, 0.2); color: var(--laranja); border: 1px solid var(--laranja); }
-    .btn-saldo:hover { background: var(--laranja); color: #fff; }
     .btn-tempo { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
-    .btn-tempo:hover { background: #3b82f6; color: #fff; }
     .btn-zerar { background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid #6b7280; }
-    .btn-zerar:hover { background: #6b7280; color: #fff; }
     .btn-banir { background: rgba(239, 68, 68, 0.2); color: var(--vermelho); border: 1px solid var(--vermelho); }
-    .btn-banir:hover { background: var(--vermelho); color: #fff; }
     .btn-desbanir { background: rgba(16, 185, 129, 0.2); color: var(--verde); border: 1px solid var(--verde); }
-    .btn-desbanir:hover { background: var(--verde); color: #fff; }
   </style>
 </head>
 <body>
-
-  <div class="bg-animation">
-    <div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="grid-overlay"></div>
-  </div>
+  <div class="bg-animation"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div><div class="grid-overlay"></div></div>
 
   <header class="navbar">
     <a href="index.html" class="logo">🎮 BIG<span>Room</span> Admin</a>
@@ -104,21 +81,10 @@
   </div>
 
   <script>
-    // --- PROTEÇÃO CONTRA CURIOSOS ---
-    document.addEventListener('contextmenu', event => event.preventDefault());
-    document.onkeydown = function(e) {
-        if(e.keyCode == 123) return false; 
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; 
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; 
-        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; 
-        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; 
-    };
-
+    document.addEventListener('contextmenu', e => e.preventDefault());
     const API_URL = 'https://big-room-servidor.onrender.com';
 
-    window.onload = () => {
-        if (sessionStorage.getItem('adminToken')) carregarPainel();
-    }
+    window.onload = () => { if (sessionStorage.getItem('adminToken')) carregarPainel(); }
 
     async function fazerLoginAdmin() {
       const senha = document.getElementById('senhaAdmin').value;
@@ -133,7 +99,7 @@
           sessionStorage.setItem('adminToken', data.token);
           carregarPainel();
         } else { alert("❌ " + data.erro); }
-      } catch (error) { alert("Erro ao conectar. Aguarde 30 segundos e tente novamente."); }
+      } catch (error) { alert("Erro ao conectar."); }
     }
 
     async function carregarPainel() {
@@ -160,20 +126,15 @@
 
       usuarios.forEach(user => {
         saldoTotal += user.saldo;
-        
         const isBanido = user.banido === 1;
         const statusClass = isBanido ? 'banido' : '';
-        
         const btnBanir = isBanido 
             ? `<button class="btn-acao btn-desbanir" onclick="alterarBanimento(${user.id}, false)">Desbanir</button>`
             : `<button class="btn-acao btn-banir" onclick="alterarBanimento(${user.id}, true)">Banir</button>`;
 
         let sessaoHtml = `<span style="color:#6b7280; font-size: 0.85rem;">Nenhuma sessão</span>`;
         if (user.plano_ativo && user.plano_ativo !== 'Nenhum') {
-            sessaoHtml = `
-                <div><span class="tag-plano">${user.plano_ativo}</span></div>
-                <div><span class="tag-tempo">${user.tempo_restante} min</span></div>
-            `;
+            sessaoHtml = `<div><span class="tag-plano">${user.plano_ativo}</span></div><div><span class="tag-tempo">${user.tempo_restante} min</span></div>`;
         }
 
         const card = document.createElement('div');
@@ -186,27 +147,10 @@
             </div>
             <span class="user-code">${user.codigo_conta || 'N/A'}</span>
           </div>
-          
-          <!-- NOVO DESTAQUE DO SALDO -->
-          <div class="saldo-destaque">
-            <span>Saldo em Conta:</span>
-            <strong>R$ ${user.saldo.toFixed(2)}</strong>
-          </div>
-
-          <div class="user-info-row">
-            <span>Endereço IP:</span>
-            <strong class="ip">${user.ip || 'Desconhecido'}</strong>
-          </div>
-          <div class="user-info-row">
-            <span>Hardware ID:</span>
-            <strong class="ip" style="font-size:0.7rem;">${user.visitor_id || 'Desconhecido'}</strong>
-          </div>
-          
-          <div class="sessao-box">
-            <span style="color: var(--texto-fraco); font-size: 0.85rem;">Sessão:</span>
-            <div style="display: flex; gap: 0.5rem;">${sessaoHtml}</div>
-          </div>
-
+          <div class="saldo-destaque"><span>Saldo em Conta:</span><strong>R$ ${user.saldo.toFixed(2)}</strong></div>
+          <div class="user-info-row"><span>Endereço IP:</span><strong>${user.ip || 'Desconhecido'}</strong></div>
+          <div class="user-info-row"><span>Hardware ID:</span><strong style="font-size:0.7rem;">${user.visitor_id || 'Desconhecido'}</strong></div>
+          <div class="sessao-box"><span style="color: var(--texto-fraco); font-size: 0.85rem;">Sessão:</span><div style="display: flex; gap: 0.5rem;">${sessaoHtml}</div></div>
           <div class="acoes">
             <button class="btn-acao btn-saldo" onclick="alterarSaldo(${user.id})">+/- Saldo</button>
             <button class="btn-acao btn-tempo" onclick="adicionarTempo(${user.id})">+ Tempo</button>
@@ -243,10 +187,7 @@
       if (!minutosString) return;
       let minutos = parseInt(minutosString);
       if (isNaN(minutos) || minutos <= 0) return alert("Minutos inválidos.");
-
-      let plano = prompt("Qual o nome do plano? (ex: 1h, VIP, Teste)");
-      if (!plano) plano = "Manual";
-
+      let plano = prompt("Qual o nome do plano? (ex: 1h, VIP, Teste)") || "Manual";
       const token = sessionStorage.getItem('adminToken');
       try {
         const response = await fetch(`${API_URL}/api/admin/tempo`, {
@@ -260,7 +201,7 @@
     }
 
     async function zerarTempo(idUsuario) {
-      if (!confirm("Tem certeza que deseja ZERAR o tempo deste usuário? A sessão será encerrada.")) return;
+      if (!confirm("Tem certeza que deseja ZERAR o tempo deste usuário?")) return;
       const token = sessionStorage.getItem('adminToken');
       try {
         const response = await fetch(`${API_URL}/api/admin/tempo`, {
@@ -293,7 +234,6 @@
       document.getElementById('telaLogin').style.display = 'block';
       document.getElementById('painelDados').style.display = 'none';
       document.getElementById('btnSair').style.display = 'none';
-      document.getElementById('senhaAdmin').value = '';
     }
   </script>
 </body>
